@@ -5,7 +5,10 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "strictNullChecks": true,
+    "target": "ES5",
+    "downlevelIteration": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"],
