@@ -9,12 +9,12 @@ import { Room } from '../Room';
 import { GameMap } from '../GameMap';
 
 describe('GameMap', () => {
-  let player: Player, room: Room, map: GameMap;
+  let player: Player, lobby: Room, map: GameMap;
 
   beforeEach(() => {
     player = createRandomPlayer();
-    room = createRandomRoom();
-    map = new GameMap(room);
+    lobby = createRandomRoom();
+    map = new GameMap(lobby);
   });
 
   it('should place a player', () => {
@@ -45,9 +45,9 @@ describe('GameMap', () => {
 
     map.spawnPlayer(player);
 
-    room.link(linkedRoom1, direction1);
-    room.link(linkedRoom2, direction2);
-    room.link(linkedRoom3, direction3);
+    lobby.link(linkedRoom1, direction1);
+    lobby.link(linkedRoom2, direction2);
+    lobby.link(linkedRoom3, direction3);
 
     expect(map.getPlayerPossibleDirections(player)).toHaveLength(3);
   });
@@ -58,8 +58,23 @@ describe('GameMap', () => {
 
     expect(map.movePlayer(player, direction)).toBe(false);
 
-    room.link(createRandomRoom(), direction);
+    lobby.link(createRandomRoom(), direction);
 
     expect(map.movePlayer(player, direction)).toBe(true);
+  });
+
+  it('should move player along direction', () => {
+    const direction = createRandomDirection();
+    const hallway = createRandomRoom();
+
+    map.spawnPlayer(player);
+
+    expect(map.getPlayerLocation(player)).toBe(lobby);
+
+    lobby.link(hallway, direction);
+
+    map.movePlayer(player, direction);
+
+    expect(map.getPlayerLocation(player)).toBe(hallway);
   });
 });

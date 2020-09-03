@@ -11,12 +11,12 @@ export class Room {
 
   constructor(private config: RoomConfig) {}
 
-  link(room: Room, pathway: Direction): boolean {
-    if (this._exits.has(pathway)) {
+  link(room: Room, direction: Direction): boolean {
+    if (this._exits.has(direction)) {
       return false;
     }
 
-    this._exits.set(pathway, room);
+    this._exits.set(direction, room);
 
     return true;
   }

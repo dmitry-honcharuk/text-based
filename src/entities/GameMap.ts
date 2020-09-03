@@ -39,6 +39,10 @@ export class GameMap {
     return true;
   }
 
+  getPlayerLocation(player: Player): Room | null {
+    return this.playerLocations.get(player) ?? null;
+  }
+
   get playersNumber(): number {
     return this.playerLocations.size;
   }

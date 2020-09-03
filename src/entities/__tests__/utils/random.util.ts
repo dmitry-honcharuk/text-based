@@ -27,12 +27,15 @@ export function createRandomDirection() {
   });
 }
 
-export function createRandomMap() {
-  return new GameMap(createRandomRoom());
+export function createRandomMap(room: Room = createRandomRoom()) {
+  return new GameMap(room);
 }
 
-export function createRandomGame(players: Player[] = []) {
-  const game = new Game(createRandomMap());
+export function createRandomGame(
+  players: Player[] = [],
+  map = createRandomMap(),
+) {
+  const game = new Game(map);
 
   if (players.length) {
     for (const player of players) {
