@@ -1,6 +1,6 @@
 import { Game } from '../domain/Game';
 
-import { PlayerExistsError } from './Errors/PlayerExistsError';
+import { PlayerExistsError } from '../Errors/PlayerExistsError';
 import { Player } from '../domain/Player';
 import { Factory } from '../utils/Factory';
 

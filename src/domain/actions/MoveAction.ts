@@ -1,8 +1,9 @@
 import { BaseAction } from './BaseAction';
-import { Direction } from '../Direction';
+import { Game } from '../Game';
+import { Player } from '../Player';
 
-export class MoveAction extends BaseAction<{ direction: Direction }> {
-  apply() {
-    return this.game.map.movePlayer(this.issuer, this.context.direction);
+export class MoveAction extends BaseAction<{ direction: string }> {
+  apply(game: Game, issuer: Player) {
+    return game.map.movePlayer(issuer, this.context.direction);
   }
 }

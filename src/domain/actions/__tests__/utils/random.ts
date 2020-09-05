@@ -12,16 +12,16 @@ interface Callback<T> {
 
 export function createRandomAction<T>(context: T, cb?: Callback<T>) {
   class RandomAction extends BaseAction<T> {
-    apply() {
+    apply(game: Game, issuer: Player) {
       if (!cb) {
         return false;
       }
 
-      return cb(this.issuer, this.game, this.context);
+      return cb(issuer, game, this.context);
     }
   }
 
   const player = createRandomPlayer();
 
-  return new RandomAction(player, createRandomGame([player]), context);
+  return new RandomAction(context);
 }

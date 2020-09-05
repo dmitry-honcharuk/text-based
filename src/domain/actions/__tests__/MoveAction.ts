@@ -29,11 +29,11 @@ describe('MoveAction', () => {
 
     game.addPlayer(player);
 
-    const moveAction = new MoveAction(player, game, {
-      direction: southCorridor,
+    const moveAction = new MoveAction({
+      direction: southCorridor.id,
     });
 
-    game.registerAction(moveAction);
+    game.registerAction(moveAction, player);
 
     expect(game.map.getPlayerLocation(player)).toBe(lobby);
 

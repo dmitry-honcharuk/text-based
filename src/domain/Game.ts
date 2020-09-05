@@ -4,7 +4,7 @@ import { BaseAction } from './actions/BaseAction';
 
 export class Game {
   private _players: Set<Player> = new Set();
-  private _currentTurnActions: Set<BaseAction<unknown>> = new Set();
+  private _currentTurnActions: Map<BaseAction<unknown>, Player> = new Map();
   private _isStarted = false;
 
   constructor(private _map: GameMap) {}
@@ -24,13 +24,14 @@ export class Game {
     return true;
   }
 
-  registerAction(action: BaseAction<unknown>) {
-    this._currentTurnActions.add(action);
+  // @TODO Should return false if player is not in the game?
+  registerAction(action: BaseAction<unknown>, issuer: Player) {
+    this._currentTurnActions.set(action, issuer);
   }
 
   applyActions() {
-    for (const action of this._currentTurnActions) {
-      action.apply();
+    for (const [action, issuer] of this._currentTurnActions) {
+      action.apply(this, issuer);
       this._currentTurnActions.delete(action);
     }
   }

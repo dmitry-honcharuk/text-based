@@ -21,7 +21,7 @@ export class GameMap {
     return playerRoom.exits;
   }
 
-  movePlayer(player: Player, direction: Direction): boolean {
+  movePlayer(player: Player, direction: string): boolean {
     const playerRoom = this.playerLocations.get(player);
 
     if (!playerRoom) {

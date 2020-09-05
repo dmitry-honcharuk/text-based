@@ -56,11 +56,11 @@ describe('GameMap', () => {
     const direction = createRandomDirection();
     map.spawnPlayer(player);
 
-    expect(map.movePlayer(player, direction)).toBe(false);
+    expect(map.movePlayer(player, direction.id)).toBe(false);
 
     lobby.link(createRandomRoom(), direction);
 
-    expect(map.movePlayer(player, direction)).toBe(true);
+    expect(map.movePlayer(player, direction.id)).toBe(true);
   });
 
   it('should move player along direction', () => {
@@ -73,7 +73,7 @@ describe('GameMap', () => {
 
     lobby.link(hallway, direction);
 
-    map.movePlayer(player, direction);
+    map.movePlayer(player, direction.id);
 
     expect(map.getPlayerLocation(player)).toBe(hallway);
   });

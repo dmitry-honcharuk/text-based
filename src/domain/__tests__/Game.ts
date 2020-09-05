@@ -59,12 +59,22 @@ describe('Game', () => {
       count++;
       return true;
     });
+    const action2 = createRandomAction({}, () => {
+      count++;
+      return true;
+    });
+    const action3 = createRandomAction({}, () => {
+      count++;
+      return true;
+    });
 
-    game.registerAction(action1);
+    game.registerAction(action1, player);
+    game.registerAction(action2, player);
+    game.registerAction(action3, player);
 
     game.applyActions();
 
-    expect(count).toBe(1);
+    expect(count).toBe(3);
   });
 
   it('should check if player with given name exists', () => {

@@ -40,8 +40,8 @@ describe('Room', () => {
   });
 
   it('should return a destination along a direction', () => {
-    expect(lobby.getDestination(direction)).toBeNull();
+    expect(lobby.getDestination(direction.id)).toBeNull();
     lobby.link(hallway, direction);
-    expect(lobby.getDestination(direction)).toBe(hallway);
+    expect(lobby.getDestination(direction.id)).toBe(hallway);
   });
 });

@@ -8,6 +8,7 @@ interface RoomConfig {
 
 export class Room {
   private _exits: Map<Direction, Room> = new Map();
+  private _exitKeys: Map<string, Direction> = new Map();
 
   constructor(private config: RoomConfig) {}
 
@@ -17,6 +18,7 @@ export class Room {
     }
 
     this._exits.set(direction, room);
+    this._exitKeys.set(direction.id, direction);
 
     return true;
   }
@@ -25,8 +27,14 @@ export class Room {
     return this.exits.some((exit) => exit.isSameDirection(direction));
   }
 
-  getDestination(direction: Direction): Room | null {
-    return this._exits.get(direction) ?? null;
+  getDestination(direction: string): Room | null {
+    const exitKey = this._exitKeys.get(direction);
+
+    if (!exitKey) {
+      return null;
+    }
+
+    return this._exits.get(exitKey) ?? null;
   }
 
   get exits(): Direction[] {
