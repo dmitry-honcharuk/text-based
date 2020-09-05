@@ -1,3 +1,3 @@
 export interface Factory<R, U> {
-  (config?: U): R;
+  (config: U): R;
 }
