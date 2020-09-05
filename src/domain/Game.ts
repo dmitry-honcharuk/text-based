@@ -3,19 +3,19 @@ import { GameMap } from './GameMap';
 import { BaseAction } from './actions/BaseAction';
 
 export class Game {
-  private _players: Player[] = [];
+  private _players: Set<Player> = new Set();
   private _currentTurnActions: Set<BaseAction<unknown>> = new Set();
   private _isStarted = false;
 
   constructor(private _map: GameMap) {}
 
   addPlayer(player: Player) {
-    this._players.push(player);
+    this._players.add(player);
     this._map.spawnPlayer(player);
   }
 
   start(): boolean {
-    if (this._players.length === 0 || this._isStarted) {
+    if (this._players.size === 0 || this._isStarted) {
       return false;
     }
 
@@ -35,8 +35,12 @@ export class Game {
     }
   }
 
+  hasPlayer(name: string): boolean {
+    return this.playerNames.includes(name);
+  }
+
   get playerNames(): string[] {
-    return this._players.map(({ name }) => name);
+    return [...this._players.values()].map(({ name }) => name);
   }
 
   get isStarted() {

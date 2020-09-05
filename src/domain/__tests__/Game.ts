@@ -66,4 +66,14 @@ describe('Game', () => {
 
     expect(count).toBe(1);
   });
+
+  it('should check if player with given name exists', () => {
+    const player1 = createRandomPlayer({ name: 'Player 1' });
+
+    expect(game.hasPlayer(player1.name)).toBe(false);
+
+    game.addPlayer(player1);
+
+    expect(game.hasPlayer(player1.name)).toBe(true);
+  });
 });

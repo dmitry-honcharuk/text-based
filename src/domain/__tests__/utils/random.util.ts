@@ -6,9 +6,11 @@ import { Direction } from '../../Direction';
 import { Game } from '../../Game';
 import { GameMap } from '../../GameMap';
 
-export function createRandomPlayer() {
+export function createRandomPlayer({
+  name: playerName = name.firstName(),
+} = {}) {
   return new Player({
-    name: name.firstName(),
+    name: playerName,
   });
 }
 
