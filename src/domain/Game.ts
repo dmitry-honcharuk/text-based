@@ -42,7 +42,6 @@ export class Game {
     return this.playerNames.includes(name);
   }
 
-  // @TODO Test it
   getPlayer(name: string): Player | null {
     return this._players.get(name) ?? null;
   }
