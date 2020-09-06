@@ -5,14 +5,14 @@ import { BaseAction } from './actions/BaseAction';
 type PendingActions = Map<BaseAction<unknown>, Player>;
 
 export class Game {
-  private _players: Set<Player> = new Set();
+  private _players: Map<string, Player> = new Map();
   private _pendingActions: PendingActions = new Map();
   private _isStarted = false;
 
   constructor(private _map: GameMap) {}
 
   addPlayer(player: Player) {
-    this._players.add(player);
+    this._players.set(player.name, player);
     this._map.spawnPlayer(player);
   }
 
@@ -42,8 +42,12 @@ export class Game {
     return this.playerNames.includes(name);
   }
 
+  getPlayer(name: string): Player | null {
+    return this._players.get(name) ?? null;
+  }
+
   get playerNames(): string[] {
-    return [...this._players.values()].map(({ name }) => name);
+    return [...this._players.keys()];
   }
 
   get isStarted() {

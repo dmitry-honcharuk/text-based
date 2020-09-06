@@ -86,4 +86,12 @@ describe('Game', () => {
 
     expect(game.hasPlayer(player1.name)).toBe(true);
   });
+
+  it('should retrieve player by name', () => {
+    expect(game.getPlayer(player.name)).toBeNull();
+
+    game.addPlayer(player);
+
+    expect(game.getPlayer(player.name)).toBe(player);
+  });
 });
