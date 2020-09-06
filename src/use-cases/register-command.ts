@@ -1,7 +1,7 @@
 import { CommandParser } from '../CommandParser';
 import { Game } from '../domain/Game';
-import { Player } from '../domain/Player';
 import { NoSuchPlayerError } from '../Errors/NoSuchPlayerError';
+import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 
 interface Dependencies {
   commandParser: CommandParser;
@@ -25,6 +25,10 @@ export function makeRegisterCommand(dependencies: Dependencies) {
 
     if (!player) {
       throw new NoSuchPlayerError(issuerName);
+    }
+
+    if (!game.isStarted) {
+      throw new GameIsNotStartedError();
     }
 
     game.registerAction(action, player);

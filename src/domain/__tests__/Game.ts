@@ -14,7 +14,7 @@ describe('Game', () => {
     room = new Room({
       id: 'lobby',
       name: 'Lobby',
-      description: 'Sad emtpy lobby',
+      description: 'Sad empty lobby',
     });
     map = new GameMap(room);
     game = new Game(map);
@@ -93,5 +93,17 @@ describe('Game', () => {
     game.addPlayer(player);
 
     expect(game.getPlayer(player.name)).toBe(player);
+  });
+
+  it('should retrieve number of players', () => {
+    expect(game.playersNumber).toBe(0);
+
+    game.addPlayer(player);
+
+    expect(game.playersNumber).toBe(1);
+
+    game.addPlayer(createRandomPlayer());
+
+    expect(game.playersNumber).toBe(2);
   });
 });

@@ -6,7 +6,7 @@ interface CreateGameDependencies {
   createMap: CreateMapFactory;
 }
 
-interface GameConfig {
+export interface GameConfig {
   map: MapConfig;
 }
 
