@@ -1,5 +1,6 @@
 import { Direction } from './Direction';
 import { NPC } from './NPC';
+import { Attackable } from './combat/Attackable';
 
 interface RoomConfig {
   id: string;
@@ -14,6 +15,7 @@ export class Room {
   private _exits: Map<Direction, Room> = new Map();
   private _exitKeys: Map<string, Direction> = new Map();
   private _npc: Set<NPC> = new Set();
+  private _attackables: Map<string, Attackable> = new Map();
 
   constructor(config: RoomConfig) {
     this._id = config.id;
@@ -48,6 +50,15 @@ export class Room {
 
   addNpc(npc: NPC) {
     this._npc.add(npc);
+    this.addAttackable(npc.id, npc)
+  }
+
+  addAttackable(id:string, attackable: Attackable) {
+    this._attackables.set(id, attackable);
+  }
+
+  getAttackable(id: string): Attackable | null {
+    return this._attackables.get(id) ?? null;
   }
 
   get id(): string {

@@ -1,27 +1,31 @@
-import { random, name } from 'faker';
+import { name, random } from 'faker';
 
 import { Room } from '../../Room';
-import { Player } from '../../Player';
+import { Player, PlayerConfig } from '../../Player';
 import { Direction } from '../../Direction';
 import { Game } from '../../Game';
 import { GameMap } from '../../GameMap';
-import { CommandParser, ActionFactory } from '../../../CommandParser';
-import { NPCConfig, NPC } from '../../NPC';
+import { ActionFactory, CommandParser } from '../../../CommandParser';
+import { NPC, NPCConfig } from '../../NPC';
 
-export function createRandomPlayer({
-  name: playerName = name.firstName(),
-} = {}) {
-  return new Player({
-    name: playerName,
-  });
+export function createRandomPlayer(config: PlayerConfig = {
+  name: name.firstName(),
+}) {
+  return new Player(config);
 }
 
-export function createRandomRoom() {
-  return new Room({
+export function createRandomRoom(npc?: NPC[]) {
+  const room = new Room({
     id: random.uuid(),
     name: random.uuid(),
     description: random.words(),
   });
+
+  if (npc) {
+    npc.forEach((n) => room.addNpc(n));
+  }
+
+  return room;
 }
 
 export function createRandomDirection() {
