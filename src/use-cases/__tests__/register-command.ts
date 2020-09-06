@@ -8,9 +8,10 @@ import {
 import { Player } from '../../domain/Player';
 import { makeRegisterCommand } from '../register-command';
 import { UnknownCommandError } from '../../Errors/UnknownCommandError';
-import { name, random } from 'faker';
+import { random } from 'faker';
 import { createRandomAction } from '../../domain/actions/__tests__/utils/random';
 import { NoSuchPlayerError } from '../../Errors/NoSuchPlayerError';
+import { GameIsNotStartedError } from '../../Errors/GameIsNotStartedError';
 
 describe('Register command', () => {
   let game: Game, commandParser: CommandParser, player: Player;
@@ -49,12 +50,31 @@ describe('Register command', () => {
     }).toThrowError(new NoSuchPlayerError(player.name));
   });
 
+  it.only('should throw if game is not started yet', () => {
+    const commandName = random.word();
+
+    commandParser.registerCommand(commandName, createRandomAction);
+
+    game.addPlayer(player);
+
+    const registerCommand = makeRegisterCommand({
+      commandParser,
+      game,
+    });
+
+    expect(() => {
+      registerCommand({ command: commandName, issuerName: player.name });
+    }).toThrowError(new GameIsNotStartedError());
+  });
+
   it.only('should properly register the command', () => {
     const commandName = random.word();
 
     commandParser.registerCommand(commandName, createRandomAction);
 
     game.addPlayer(player);
+
+    game.start();
 
     const registerCommand = makeRegisterCommand({
       commandParser,

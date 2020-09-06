@@ -46,6 +46,10 @@ export class Game {
     return this._players.get(name) ?? null;
   }
 
+  get playersNumber(): number {
+    return this._players.size;
+  }
+
   get playerNames(): string[] {
     return [...this._players.keys()];
   }
