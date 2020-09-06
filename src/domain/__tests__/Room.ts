@@ -1,4 +1,8 @@
-import { createRandomDirection, createRandomRoom } from './utils/random.util';
+import {
+  createRandomDirection,
+  createRandomRoom,
+  createRandomNpc,
+} from './utils/random.util';
 
 import { Room } from '../Room';
 import { Direction } from '../Direction';
@@ -43,5 +47,12 @@ describe('Room', () => {
     expect(lobby.getDestination(direction.id)).toBeNull();
     lobby.link(hallway, direction);
     expect(lobby.getDestination(direction.id)).toBe(hallway);
+  });
+
+  it('should properly add an npc', () => {
+    const npc = createRandomNpc();
+    lobby.addNpc(npc);
+
+    expect(lobby.npc.has(npc)).toBe(true);
   });
 });
