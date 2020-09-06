@@ -5,6 +5,7 @@ import { Player } from '../../Player';
 import { Direction } from '../../Direction';
 import { Game } from '../../Game';
 import { GameMap } from '../../GameMap';
+import { CommandParser, ActionFactory } from '../../../CommandParser';
 
 export function createRandomPlayer({
   name: playerName = name.firstName(),
@@ -46,4 +47,18 @@ export function createRandomGame(
   }
 
   return game;
+}
+
+export function createRandomCommandParser(
+  commands?: Map<string, ActionFactory>,
+) {
+  const parser = new CommandParser();
+
+  if (commands) {
+    for (const [command, factory] of commands) {
+      parser.registerCommand(command, factory);
+    }
+  }
+
+  return parser;
 }

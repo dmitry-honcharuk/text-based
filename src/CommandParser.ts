@@ -1,9 +1,8 @@
 import { BaseAction } from './domain/actions/BaseAction';
 import { UnknownCommandError } from './Errors/UnknownCommandError';
-import { Player } from './domain/Player';
 import { Factory } from './utils/Factory';
 
-type ActionFactory = Factory<BaseAction<unknown>, { target: string }>;
+export type ActionFactory = Factory<BaseAction<unknown>, { target: string }>;
 
 export class CommandParser {
   private commandActionMap: Map<string, ActionFactory> = new Map();
