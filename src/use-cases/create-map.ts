@@ -2,6 +2,7 @@ import { Room } from '../domain/Room';
 import { Direction } from '../domain/Direction';
 import { GameMap } from '../domain/GameMap';
 import { Factory } from '../utils/Factory';
+import { NPC } from '../domain/NPC';
 
 type RoomId = string;
 
@@ -16,11 +17,17 @@ interface RoomExit {
   destination: RoomId;
 }
 
+interface NPCConfig {
+  id: string;
+  name: string;
+}
+
 interface RoomConfig {
   id: RoomId;
   name: string;
   description: string;
   exits?: RoomExit[];
+  npc?: NPCConfig[];
 }
 
 type RoomsMap = Map<string, Room>;
@@ -47,7 +54,15 @@ function buildRooms(roomConfigs: RoomConfig[]): RoomsMap {
   const rooms: RoomsMap = new Map();
 
   for (const config of roomConfigs) {
-    rooms.set(config.id, new Room(config));
+    const room = new Room(config);
+
+    if (config.npc) {
+      config.npc.forEach(npc => {
+        room.addNpc(new NPC(npc))
+      });
+    }
+
+    rooms.set(config.id, room);
   }
 
   return rooms;

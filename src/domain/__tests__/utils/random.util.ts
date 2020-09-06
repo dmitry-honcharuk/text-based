@@ -6,6 +6,7 @@ import { Direction } from '../../Direction';
 import { Game } from '../../Game';
 import { GameMap } from '../../GameMap';
 import { CommandParser, ActionFactory } from '../../../CommandParser';
+import { NPCConfig, NPC } from '../../NPC';
 
 export function createRandomPlayer({
   name: playerName = name.firstName(),
@@ -61,4 +62,10 @@ export function createRandomCommandParser(
   }
 
   return parser;
+}
+
+export function createRandomNpc(
+  npcConfig: NPCConfig = { id: random.word(), name: name.firstName() },
+) {
+  return new NPC(npcConfig);
 }
