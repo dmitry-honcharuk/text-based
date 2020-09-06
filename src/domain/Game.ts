@@ -2,9 +2,11 @@ import { Player } from './Player';
 import { GameMap } from './GameMap';
 import { BaseAction } from './actions/BaseAction';
 
+type PendingActions = Map<BaseAction<unknown>, Player>;
+
 export class Game {
   private _players: Set<Player> = new Set();
-  private _currentTurnActions: Map<BaseAction<unknown>, Player> = new Map();
+  private _pendingActions: PendingActions = new Map();
   private _isStarted = false;
 
   constructor(private _map: GameMap) {}
@@ -26,13 +28,13 @@ export class Game {
 
   // @TODO Should return false if player is not in the game?
   registerAction(action: BaseAction<unknown>, issuer: Player) {
-    this._currentTurnActions.set(action, issuer);
+    this._pendingActions.set(action, issuer);
   }
 
   applyActions() {
-    for (const [action, issuer] of this._currentTurnActions) {
+    for (const [action, issuer] of this._pendingActions) {
       action.apply(this, issuer);
-      this._currentTurnActions.delete(action);
+      this._pendingActions.delete(action);
     }
   }
 
