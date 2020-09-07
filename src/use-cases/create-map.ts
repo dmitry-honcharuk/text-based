@@ -20,6 +20,7 @@ interface RoomExit {
 interface NPCConfig {
   id: string;
   name: string;
+  health?: number;
 }
 
 interface RoomConfig {
