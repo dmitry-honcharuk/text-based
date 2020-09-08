@@ -1,3 +1,4 @@
+import { random } from 'faker';
 import { Game } from '../../domain/Game';
 import { CommandParser } from '../../CommandParser';
 import {
@@ -8,18 +9,20 @@ import {
 import { Player } from '../../domain/Player';
 import { makeRegisterCommand } from '../register-command';
 import { UnknownCommandError } from '../../Errors/UnknownCommandError';
-import { random } from 'faker';
 import { createRandomAction } from '../../domain/actions/__tests__/utils/random';
 import { NoSuchPlayerError } from '../../Errors/NoSuchPlayerError';
 import { GameIsNotStartedError } from '../../Errors/GameIsNotStartedError';
+import { createRandomActionManager } from '../../domain/__tests__/utils/random.util';
+import { ActionManager } from '../../domain/ActionManager';
 
 describe('Register command', () => {
-  let game: Game, commandParser: CommandParser, player: Player;
+  let game: Game, commandParser: CommandParser, player: Player, actionManager: ActionManager;
 
   beforeEach(() => {
     game = createRandomGame();
     commandParser = createRandomCommandParser();
     player = createRandomPlayer();
+    actionManager = createRandomActionManager();
   });
 
   it('should throw if command was not registered in parser', () => {
@@ -28,6 +31,7 @@ describe('Register command', () => {
     const registerCommand = makeRegisterCommand({
       commandParser,
       game,
+      actionManager,
     });
 
     expect(() => {
@@ -43,6 +47,7 @@ describe('Register command', () => {
     const registerCommand = makeRegisterCommand({
       commandParser,
       game,
+      actionManager,
     });
 
     expect(() => {
@@ -50,7 +55,7 @@ describe('Register command', () => {
     }).toThrowError(new NoSuchPlayerError(player.name));
   });
 
-  it.only('should throw if game is not started yet', () => {
+  it('should throw if game is not started yet', () => {
     const commandName = random.word();
 
     commandParser.registerCommand(commandName, createRandomAction);
@@ -60,6 +65,7 @@ describe('Register command', () => {
     const registerCommand = makeRegisterCommand({
       commandParser,
       game,
+      actionManager,
     });
 
     expect(() => {
@@ -67,7 +73,7 @@ describe('Register command', () => {
     }).toThrowError(new GameIsNotStartedError());
   });
 
-  it.only('should properly register the command', () => {
+  it('should properly register the command', () => {
     const commandName = random.word();
 
     commandParser.registerCommand(commandName, createRandomAction);
@@ -79,6 +85,7 @@ describe('Register command', () => {
     const registerCommand = makeRegisterCommand({
       commandParser,
       game,
+      actionManager,
     });
 
     expect(() => {

@@ -7,6 +7,7 @@ import { Game } from '../../Game';
 import { GameMap } from '../../GameMap';
 import { ActionFactory, CommandParser } from '../../../CommandParser';
 import { NPC, NPCConfig } from '../../NPC';
+import { ActionManager } from '../../ActionManager';
 
 export function createRandomPlayer(config: PlayerConfig = {
   name: name.firstName(),
@@ -72,4 +73,8 @@ export function createRandomNpc(
   npcConfig: NPCConfig = { id: random.word(), name: name.firstName() },
 ) {
   return new NPC(npcConfig);
+}
+
+export function createRandomActionManager(game: Game = createRandomGame()): ActionManager {
+  return new ActionManager(game);
 }

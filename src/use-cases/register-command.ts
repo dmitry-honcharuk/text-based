@@ -2,10 +2,12 @@ import { CommandParser } from '../CommandParser';
 import { Game } from '../domain/Game';
 import { NoSuchPlayerError } from '../Errors/NoSuchPlayerError';
 import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
+import { ActionManager } from '../domain/ActionManager';
 
 interface Dependencies {
   commandParser: CommandParser;
   game: Game;
+  actionManager: ActionManager,
 }
 
 interface Config {
@@ -14,7 +16,7 @@ interface Config {
 }
 
 export function makeRegisterCommand(dependencies: Dependencies) {
-  const { commandParser, game } = dependencies;
+  const { commandParser, game, actionManager } = dependencies;
 
   return function registerCommand(config: Config) {
     const { command, issuerName } = config;
@@ -31,6 +33,6 @@ export function makeRegisterCommand(dependencies: Dependencies) {
       throw new GameIsNotStartedError();
     }
 
-    game.registerAction(action, player);
+    actionManager.registerAction(action, player);
   };
 }

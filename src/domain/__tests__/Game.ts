@@ -4,7 +4,6 @@ import { Player } from '../Player';
 import { Room } from '../Room';
 import { GameMap } from '../GameMap';
 import { Game } from '../Game';
-import { createRandomAction } from '../actions/__tests__/utils/random';
 
 describe('Game', () => {
   let player: Player, room: Room, map: GameMap, game: Game;
@@ -51,30 +50,6 @@ describe('Game', () => {
     game.addPlayer(player2);
 
     expect(game.playerNames).toEqual([player1.name, player2.name]);
-  });
-
-  it('should apply all given actions on turns end', () => {
-    let count = 0;
-    const action1 = createRandomAction({}, () => {
-      count++;
-      return true;
-    });
-    const action2 = createRandomAction({}, () => {
-      count++;
-      return true;
-    });
-    const action3 = createRandomAction({}, () => {
-      count++;
-      return true;
-    });
-
-    game.registerAction(action1, player);
-    game.registerAction(action2, player);
-    game.registerAction(action3, player);
-
-    game.applyActions();
-
-    expect(count).toBe(3);
   });
 
   it('should check if player with given name exists', () => {
