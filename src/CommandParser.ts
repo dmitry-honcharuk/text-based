@@ -1,13 +1,11 @@
-import { BaseAction } from './domain/actions/BaseAction';
 import { UnknownCommandError } from './Errors/UnknownCommandError';
 import { Factory } from './utils/Factory';
+import { Action } from './domain/actions/Action';
 
-export type ActionFactory = Factory<BaseAction<unknown>, { target: string }>;
+export type ActionFactory = Factory<Action, { target: string }>;
 
 export class CommandParser {
   private commandActionMap: Map<string, ActionFactory> = new Map();
-
-  constructor() {}
 
   registerCommand(name: string, commandFactory: ActionFactory) {
     this.commandActionMap.set(name, commandFactory);

@@ -5,6 +5,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "test:coverage": "yarn test --coverage",
+    "test:ci:coverage": "CI=true yarn test:coverage",
     "clear": "rimraf dist/",
     "dev": "npm run build && concurrently \"tsc --watch\" \"nodemon\"",
     "build": "npm run clear && tsc"

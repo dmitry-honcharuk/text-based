@@ -52,28 +52,14 @@ describe('GameMap', () => {
     expect(map.getPlayerPossibleDirections(player)).toHaveLength(3);
   });
 
-  it('should move player along direction', () => {
-    const direction = createRandomDirection();
-    map.spawnPlayer(player);
-
-    expect(map.movePlayer(player, direction.id)).toBe(false);
-
-    lobby.link(createRandomRoom(), direction);
-
-    expect(map.movePlayer(player, direction.id)).toBe(true);
-  });
-
-  it('should move player along direction', () => {
-    const direction = createRandomDirection();
+  it('should set player location', () => {
     const hallway = createRandomRoom();
 
     map.spawnPlayer(player);
 
     expect(map.getPlayerLocation(player)).toBe(lobby);
 
-    lobby.link(hallway, direction);
-
-    map.movePlayer(player, direction.id);
+    map.setPLayerLocation(player, hallway);
 
     expect(map.getPlayerLocation(player)).toBe(hallway);
   });

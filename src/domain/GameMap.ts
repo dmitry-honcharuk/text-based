@@ -21,26 +21,12 @@ export class GameMap {
     return playerRoom.exits;
   }
 
-  movePlayer(player: Player, direction: string): boolean {
-    const playerRoom = this.playerLocations.get(player);
-
-    if (!playerRoom) {
-      return false;
-    }
-
-    const destination = playerRoom.getDestination(direction);
-
-    if (!destination) {
-      return false;
-    }
-
-    this.playerLocations.set(player, destination);
-
-    return true;
-  }
-
   getPlayerLocation(player: Player): Room | null {
     return this.playerLocations.get(player) ?? null;
+  }
+
+  setPLayerLocation(player: Player, destination: Room): void {
+    this.playerLocations.set(player, destination);
   }
 
   get playersNumber(): number {

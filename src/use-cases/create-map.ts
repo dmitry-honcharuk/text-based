@@ -71,7 +71,7 @@ function buildRooms(roomConfigs: RoomConfig[]): RoomsMap {
 
 function linkRooms(rooms: RoomsMap, roomConfigs: RoomConfig[]) {
   for (const config of roomConfigs) {
-    const room = rooms.get(config.id);
+    const room = rooms.get(config.id) as Room;
 
     for (const exit of config.exits ?? []) {
       const destination = rooms.get(exit.destination);
@@ -80,7 +80,7 @@ function linkRooms(rooms: RoomsMap, roomConfigs: RoomConfig[]) {
         throw new Error(`No exit room configuration (${exit.destination})`);
       }
 
-      room?.link(destination, new Direction(exit));
+      room.link(destination, new Direction(exit));
     }
   }
 }

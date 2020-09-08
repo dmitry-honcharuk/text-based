@@ -1,3 +1,5 @@
+import { random } from 'faker';
+
 import {
   createRandomDirection,
   createRandomRoom,
@@ -14,6 +16,22 @@ describe('Room', () => {
     direction = createRandomDirection();
     lobby = createRandomRoom();
     hallway = createRandomRoom();
+  });
+
+  it('should properly initiate instance', () => {
+    const id = random.word();
+    const name = random.word();
+    const description = random.words();
+
+    const room = new Room({
+      id,
+      name,
+      description,
+    });
+
+    expect(room.id).toBe(id);
+    expect(room.name).toBe(name);
+    expect(room.description).toBe(description);
   });
 
   it('should return TRUE if pathway was added', () => {

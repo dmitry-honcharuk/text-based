@@ -15,7 +15,13 @@ export function createRandomPlayer(config: PlayerConfig = {
   return new Player(config);
 }
 
-export function createRandomRoom(npc?: NPC[]) {
+type RandomRoomConfig = {
+  npc?: NPC[];
+  exits?: Map<Direction, Room>;
+};
+export function createRandomRoom(config: RandomRoomConfig = {}) {
+  const { npc, exits } = config;
+
   const room = new Room({
     id: random.uuid(),
     name: random.uuid(),
@@ -24,6 +30,12 @@ export function createRandomRoom(npc?: NPC[]) {
 
   if (npc) {
     npc.forEach((n) => room.addNpc(n));
+  }
+
+  if (exits) {
+    for (const [direction, destination] of exits) {
+      room.link(destination, direction);
+    }
   }
 
   return room;
@@ -70,9 +82,14 @@ export function createRandomCommandParser(
 }
 
 export function createRandomNpc(
-  npcConfig: NPCConfig = { id: random.word(), name: name.firstName() },
+  npcConfig: Partial<NPCConfig> = {},
 ) {
-  return new NPC(npcConfig);
+  const { id = random.word(), name: npcName = name.firstName() } = npcConfig;
+
+  return new NPC({
+    id,
+    name: npcName,
+  });
 }
 
 export function createRandomActionManager(game: Game = createRandomGame()): ActionManager {

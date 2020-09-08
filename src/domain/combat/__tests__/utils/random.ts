@@ -1,19 +1,15 @@
+import { random } from 'faker';
+
 import { Attackable } from '../../Attackable';
 import { Attacker } from '../../Attacker';
 
-export function createRandomAttackable(config: { health: number }): Attackable {
-  let health = config.health;
-
+export function createRandomAttackable(): Attackable {
   return {
     get health() {
-      return health;
+      return random.number();
     },
-    increaseHealth(amount: number) {
-      health += amount;
-    },
-    decreaseHealth(amount: number) {
-      health -= amount;
-    }
+    increaseHealth: jest.fn(),
+    decreaseHealth: jest.fn(),
   };
 }
 
