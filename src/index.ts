@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { CreateGameUseCase } from './domain/usecases/CreateGameUseCase';
 import { InMemoryRoomRepository } from './data/repositories/InMemoryRoomRepository';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';

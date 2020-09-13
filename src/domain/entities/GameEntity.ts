@@ -1,12 +1,12 @@
-interface Config {
+export interface Config {
   id: string;
 }
 
 export class GameEntity {
-  constructor(private _id: string) {}
+  private readonly _id: string;
 
-  static from(config: Config): GameEntity {
-    return new GameEntity(config.id);
+  constructor(config: Config) {
+    this._id = config.id;
   }
 
   get id(): string {

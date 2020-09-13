@@ -1,4 +1,4 @@
-interface Config {
+export interface Config {
   id: string;
   name: string;
   description: string;

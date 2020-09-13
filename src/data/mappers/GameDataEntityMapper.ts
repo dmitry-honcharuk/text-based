@@ -4,6 +4,8 @@ import { GameData } from '../entities/GameData';
 
 export class GameDataEntityMapper extends EntityMapper<GameData, GameEntity> {
   map(dataEntity: GameData): GameEntity {
-    return new GameEntity(dataEntity.id);
+    return new GameEntity({
+      id: dataEntity.id,
+    });
   }
 }

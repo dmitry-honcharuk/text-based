@@ -4,7 +4,7 @@ interface RoomDataExit {
   destination: RoomData;
 }
 
-interface Config {
+export interface Config {
   id: string;
   name: string;
   description: string;
@@ -17,7 +17,7 @@ export class RoomData {
   private readonly _gameId: string;
   private readonly _name: string;
   private readonly _description: string;
-  private _exits: RoomDataExit[] = [];
+  private readonly _exits: RoomDataExit[] = [];
 
   constructor(config: Config) {
     this._id = config.id;

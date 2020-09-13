@@ -1,7 +1,7 @@
 import { GameRepository } from '../repositories/GameRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { RoomEntity } from '../entities/RoomEntity';
-import { UseCase } from './usecase';
+import { UseCase } from './UseCase';
 
 import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
