@@ -5,7 +5,7 @@ import { GameRepository } from '../../domain/repositories/GameRepository';
 import { RoomRepository } from '../../domain/repositories/RoomRepository';
 import { GameConfigValidator } from '../../domain/entities/GameConfigValidator';
 
-import { createRouter } from './routes';
+import { createRouter } from './router';
 
 type ServerConfig = {
   port: number;
@@ -26,7 +26,9 @@ export class Server {
   }
 
   public run(config: ServerConfig): void {
-    this.server.listen(config.port);
+    this.server.listen(config.port, () => {
+      console.log(`Server listens on port: ${config.port}`);
+    });
   }
 
   private useMiddlewares() {

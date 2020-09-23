@@ -7,13 +7,13 @@ export class GameConfigValidator {
   constructor(private schema: Joi.Schema) {}
 
   validate(config: GameConfig) {
-    GameConfigValidator.validateRoomExistence(config);
-
     const { error } = this.schema.validate(config);
 
     if (error) {
       throw new WrongGameConfigError(error.message);
     }
+
+    GameConfigValidator.validateRoomExistence(config);
   }
 
   private static validateRoomExistence(config: GameConfig) {
