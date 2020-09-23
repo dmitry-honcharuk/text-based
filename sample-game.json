@@ -1,0 +1,10 @@
+{
+  "startingRoom": "lobby",
+  "rooms": [
+    {
+      "id": "lobby",
+      "name": "Great lobby",
+      "description": "Enormous dark scary lobby"
+    }
+  ]
+}
