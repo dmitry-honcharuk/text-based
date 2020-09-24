@@ -1,4 +1,5 @@
 import { random } from 'faker';
+import { GameConfigValidator } from '../../GameConfigValidator';
 import { GameEntity } from '../../GameEntity';
 import { RoomEntity, Config as RoomEntityConfig } from '../../RoomEntity';
 
@@ -22,4 +23,10 @@ export function createRoomEntityMock(config: Partial<RoomEntityConfig> = {}) {
     description,
     gameId,
   });
+}
+
+export function createGameConfigValidatorMock(): GameConfigValidator {
+  return ({
+    validate: jest.fn(),
+  } as unknown) as GameConfigValidator;
 }

@@ -8,6 +8,8 @@ import { createGameEntityMock } from '../../entities/__tests__/utils/mocks';
 
 describe('CreateGameUseCase', () => {
   it('should create a game', async () => {
+    expect.assertions(6);
+
     const gameId = random.word();
     const roomRepository: RoomRepository = {
       linkRooms: jest.fn(),

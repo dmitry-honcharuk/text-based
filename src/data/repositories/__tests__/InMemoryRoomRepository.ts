@@ -10,6 +10,8 @@ import { RoomEntity } from '../../../domain/entities/RoomEntity';
 
 describe('InMemoryRoomRepository', () => {
   it('should create a room', async () => {
+    expect.assertions(2);
+
     const mappingResult = random.word();
     const mapper = {
       map: jest.fn(() => (mappingResult as unknown) as RoomData),
@@ -24,12 +26,14 @@ describe('InMemoryRoomRepository', () => {
   });
 
   it('should throw if there is no source room to link', async () => {
+    expect.assertions(1);
+
     const roomRepository = new InMemoryRoomRepository(
       createRoomEntityDataMapperMock(),
     );
     const id = random.word();
 
-    expect(
+    await expect(
       roomRepository.linkRooms(id, {
         id: random.word(),
         name: random.word(),
@@ -39,6 +43,8 @@ describe('InMemoryRoomRepository', () => {
   });
 
   it('should throw if there is no destination room to link', async () => {
+    expect.assertions(1);
+
     const roomRepository = new InMemoryRoomRepository(
       createRoomEntityDataMapperMock(),
     );
@@ -61,6 +67,8 @@ describe('InMemoryRoomRepository', () => {
   });
 
   it('should link two rooms', async () => {
+    expect.assertions(3);
+
     const sourceId = random.word();
     const destinationId = random.word();
 

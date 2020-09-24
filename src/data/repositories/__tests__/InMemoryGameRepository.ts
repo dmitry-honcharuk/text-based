@@ -4,6 +4,8 @@ import { GameEntity } from '../../../domain/entities/GameEntity';
 
 describe('InMemoryGameRepository', () => {
   it('should create a game', async () => {
+    expect.assertions(3);
+
     const mappingResult = random.word();
     const mapper = {
       map: jest.fn(() => (mappingResult as unknown) as GameEntity),
