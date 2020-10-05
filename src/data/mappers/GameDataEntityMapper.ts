@@ -6,6 +6,7 @@ export class GameDataEntityMapper extends EntityMapper<GameData, GameEntity> {
   map(dataEntity: GameData): GameEntity {
     return new GameEntity({
       id: dataEntity.id,
+      isStarted: dataEntity.isStarted,
     });
   }
 }
