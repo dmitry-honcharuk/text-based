@@ -4,6 +4,7 @@ export interface Config {
 
 export class GameEntity {
   private readonly _id: string;
+  private readonly _isStarted: boolean = false;
 
   constructor(config: Config) {
     this._id = config.id;
@@ -11,5 +12,9 @@ export class GameEntity {
 
   get id(): string {
     return this._id;
+  }
+
+  get isStarted(): boolean {
+    return this._isStarted;
   }
 }
