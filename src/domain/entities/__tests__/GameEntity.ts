@@ -7,5 +7,6 @@ describe('GameEntity', () => {
     const gameEntity = new GameEntity({ id });
 
     expect(gameEntity.id).toBe(id);
+    expect(gameEntity.isStarted).toBe(false);
   });
 });
