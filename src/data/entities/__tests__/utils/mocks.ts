@@ -4,13 +4,13 @@ import { IdGenerator } from '../../IdGenerator';
 import { Config as RoomDataConfig, RoomData } from '../../RoomData';
 
 export function createGameDataMock(
-  config: Partial<GameDataConfig> = {},
+  config: Partial<GameDataConfig & { isStarted: boolean }> = {},
 ): GameData {
-  const { id = random.word() } = config;
+  const { id = random.word(), isStarted = false } = config;
 
   return {
     id,
-    isStarted: false,
+    isStarted,
   } as GameData;
 }
 

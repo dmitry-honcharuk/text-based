@@ -96,9 +96,9 @@ describe('InMemoryGameRepository', () => {
 
     await gameRepository.createGame();
 
-    const unstartedGame = await gameRepository.getGameById(gameId);
+    const notStartedGame = await gameRepository.getGameById(gameId);
 
-    expect(unstartedGame?.isStarted).toBe(false);
+    expect(notStartedGame?.isStarted).toBe(false);
 
     await gameRepository.startGame(gameId);
 

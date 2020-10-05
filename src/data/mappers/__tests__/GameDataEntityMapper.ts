@@ -10,5 +10,16 @@ describe('GameDataEntityMapper', () => {
     const gameEntity = gameDataEntityMapper.map(gameData);
 
     expect(gameEntity.id).toBe(gameData.id);
+    expect(gameEntity.isStarted).toBe(gameData.isStarted);
+  });
+
+  it('should map started GameData to GameEntity', () => {
+    const gameDataEntityMapper = new GameDataEntityMapper();
+
+    const gameData = createGameDataMock({ isStarted: true });
+
+    const gameEntity = gameDataEntityMapper.map(gameData);
+
+    expect(gameEntity.isStarted).toBe(true);
   });
 });

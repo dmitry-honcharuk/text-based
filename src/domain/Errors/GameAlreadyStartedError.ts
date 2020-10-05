@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { DomainError } from './DomainError';
 
 export class GameAlreadyStartedError extends DomainError {

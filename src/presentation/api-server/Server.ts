@@ -26,9 +26,12 @@ export class Server {
   }
 
   public run(config: ServerConfig): void {
-    this.server.listen(config.port, () => {
-      console.log(`Server listens on port: ${config.port}`);
-    });
+    this.server.listen(config.port,
+      /* istanbul ignore next */
+      () => {
+        console.log(`Server listens on port: ${config.port}`);
+      },
+  );
   }
 
   private useMiddlewares() {
