@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { random } from 'faker';
 import { GameRepository } from '../../../../domain/repositories/GameRepository';
-import { createGameRepositoryMock } from '../../../../domain/repositories/__tests__/utils/mocks';
+import { PlayerRepository } from '../../../../domain/repositories/PlayerRepository';
+import {
+  createGameRepositoryMock,
+  createPlayerRepositoryMock,
+} from '../../../../domain/repositories/__tests__/utils/mocks';
 import { StartGameUseCase } from '../../../../domain/usecases/StartGameUseCase';
 import { buildStartGameRoute } from '../buildStartGameRoute';
 
@@ -9,20 +13,24 @@ jest.mock('../../../../domain/usecases/StartGameUseCase');
 
 describe('buildStartGameRoute', () => {
   let params: { gameId: string },
+    body: { playerName: string },
     expressRequest: Request,
     expressResponse: Response,
-    gameRepository: GameRepository,
+    gameRepo: GameRepository,
+    playerRepo: PlayerRepository,
     expressNext: NextFunction,
     startGameUseCase: StartGameUseCase;
 
   beforeEach(() => {
     params = { gameId: random.word() };
-    expressRequest = ({ params } as unknown) as Request;
+    body = { playerName: random.word() };
+    expressRequest = ({ params, body } as unknown) as Request;
     expressResponse = ({
       json: jest.fn(),
     } as unknown) as Response;
     expressNext = jest.fn();
-    gameRepository = createGameRepositoryMock();
+    gameRepo = createGameRepositoryMock();
+    playerRepo = createPlayerRepositoryMock();
     startGameUseCase = ({
       execute: jest.fn(),
     } as unknown) as StartGameUseCase;
@@ -43,7 +51,8 @@ describe('buildStartGameRoute', () => {
     });
 
     const startGameRoute = buildStartGameRoute({
-      gameRepository,
+      gameRepository: gameRepo,
+      playerRepository: playerRepo,
     });
 
     await startGameRoute(expressRequest, expressResponse, expressNext);
@@ -56,17 +65,19 @@ describe('buildStartGameRoute', () => {
     expect.assertions(6);
 
     const startGameRoute = buildStartGameRoute({
-      gameRepository,
+      gameRepository: gameRepo,
+      playerRepository: playerRepo,
     });
 
     await startGameRoute(expressRequest, expressResponse, expressNext);
 
     expect(StartGameUseCase).toHaveBeenCalledTimes(1);
-    expect(StartGameUseCase).toHaveBeenCalledWith(gameRepository);
+    expect(StartGameUseCase).toHaveBeenCalledWith(gameRepo, playerRepo);
 
     expect(startGameUseCase.execute).toHaveBeenCalledTimes(1);
     expect(startGameUseCase.execute).toHaveBeenCalledWith({
       gameId: params.gameId,
+      playerName: body.playerName,
     });
 
     expect(expressResponse.json).toHaveBeenCalledTimes(1);

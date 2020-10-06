@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { createRouter as createGamesRouter } from '../games';
-
 import { createGameConfigValidatorMock } from '../../../domain/entities/__tests__/utils/mocks';
 import {
   createGameRepositoryMock,
+  createPlayerRepositoryMock,
   createRoomRepositoryMock,
 } from '../../../domain/repositories/__tests__/utils/mocks';
+import { createRouter as createGamesRouter } from '../games';
 import { createRouter } from '../router';
 
 jest.mock('express');
@@ -25,6 +25,7 @@ describe('Api server router', () => {
       gameRepository: createGameRepositoryMock(),
       roomRepository: createRoomRepositoryMock(),
       gameConfigValidator: createGameConfigValidatorMock(),
+      playerRepository: createPlayerRepositoryMock(),
     });
 
     expect(router).toEqual(expressRouter);
