@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { GameDataEntityMapper } from './data/mappers/GameDataEntityMapper';
+import { GameEntityMapper } from './data/mappers/GameEntityMapper';
 import { PlayerDataEntityMapper } from './data/mappers/PlayerDataEntityMapper';
 import { RoomEntityDataMapper } from './data/mappers/RoomEntityDataMapper';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
@@ -20,7 +20,7 @@ const playerRepository = new InMemoryPlayerRepository(
 
 const server = new Server(
   new InMemoryGameRepository(
-    new GameDataEntityMapper(),
+    new GameEntityMapper(),
     new IncrementingIdGenerator(),
     playerRepository,
   ),

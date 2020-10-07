@@ -3,13 +3,13 @@ import { GameRepository } from '../../domain/repositories/GameRepository';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
 import { GameData } from '../entities/GameData';
 import { IdGenerator } from '../entities/IdGenerator';
-import { GameDataEntityMapper } from '../mappers/GameDataEntityMapper';
+import { GameEntityMapper } from '../mappers/GameEntityMapper';
 
 export class InMemoryGameRepository implements GameRepository {
   public readonly games: GameData[] = [];
 
   constructor(
-    private gameDataEntityMapper: GameDataEntityMapper,
+    private gameEntityMapper: GameEntityMapper,
     private idGenerator: IdGenerator,
     private playerRepository: PlayerRepository,
   ) {}
@@ -19,7 +19,7 @@ export class InMemoryGameRepository implements GameRepository {
 
     this.games.push(gameDataEntity);
 
-    return this.gameDataEntityMapper.map(gameDataEntity);
+    return this.gameEntityMapper.fromDataToEntity(gameDataEntity);
   }
 
   async startGame(gameId: string): Promise<void> {
@@ -39,6 +39,6 @@ export class InMemoryGameRepository implements GameRepository {
 
     const players = await this.playerRepository.getGamePlayers(gameId);
 
-    return this.gameDataEntityMapper.map(gameData, players);
+    return this.gameEntityMapper.fromDataToEntity(gameData, players);
   }
 }
