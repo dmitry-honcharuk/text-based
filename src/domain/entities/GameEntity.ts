@@ -1,15 +1,19 @@
+import { PlayerEntity } from './PlayerEntity';
+
 export interface Config {
   id: string;
+  isStarted?: boolean;
+  players?: PlayerEntity[];
 }
 
 export class GameEntity {
-  private readonly _id: string;
+  public readonly id: string;
+  public readonly isStarted: boolean = false;
+  public readonly players: PlayerEntity[];
 
   constructor(config: Config) {
-    this._id = config.id;
-  }
-
-  get id(): string {
-    return this._id;
+    this.id = config.id;
+    this.isStarted = config.isStarted ?? false;
+    this.players = config.players ?? [];
   }
 }

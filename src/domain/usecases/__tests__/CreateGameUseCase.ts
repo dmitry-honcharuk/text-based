@@ -1,10 +1,11 @@
-import { CreateGameUseCase } from '../CreateGameUseCase';
-import { RoomRepository } from '../../repositories/RoomRepository';
-import { GameRepository } from '../../repositories/GameRepository';
-import { GameConfigValidator } from '../../entities/GameConfigValidator';
-import { GameConfig } from '../../entities/game-config';
 import { random } from 'faker';
+import { GameConfig } from '../../entities/game-config';
+import { GameConfigValidator } from '../../entities/GameConfigValidator';
 import { createGameEntityMock } from '../../entities/__tests__/utils/mocks';
+import { GameRepository } from '../../repositories/GameRepository';
+import { RoomRepository } from '../../repositories/RoomRepository';
+import { createGameRepositoryMock } from '../../repositories/__tests__/utils/mocks';
+import { CreateGameUseCase } from '../CreateGameUseCase';
 
 describe('CreateGameUseCase', () => {
   it('should create a game', async () => {
@@ -15,11 +16,12 @@ describe('CreateGameUseCase', () => {
       linkRooms: jest.fn(),
       createRoom: jest.fn(),
     };
-    const gameRepository: GameRepository = {
-      createGame: jest.fn(() =>
-        Promise.resolve(createGameEntityMock({ id: gameId })),
-      ),
-    };
+    const gameRepository: GameRepository = createGameRepositoryMock();
+
+    ((gameRepository.createGame as unknown) as jest.Mock).mockReturnValue(
+      Promise.resolve(createGameEntityMock({ id: gameId })),
+    );
+
     const gameConfigValidator: GameConfigValidator = ({
       validate: jest.fn(),
     } as unknown) as GameConfigValidator;
@@ -43,7 +45,7 @@ describe('CreateGameUseCase', () => {
             {
               roomId: exitRoomId,
               id: random.word(),
-              name:random.word(),
+              name: random.word(),
             },
           ],
         },

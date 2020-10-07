@@ -1,31 +1,34 @@
-import { random } from 'faker';
-import express, { Express, json } from 'express';
 import cors from 'cors';
-
+import express, { Express, json } from 'express';
+import { random } from 'faker';
+import { GameConfigValidator } from '../../../domain/entities/GameConfigValidator';
 import { createGameConfigValidatorMock } from '../../../domain/entities/__tests__/utils/mocks';
+import { GameRepository } from '../../../domain/repositories/GameRepository';
+import { PlayerRepository } from '../../../domain/repositories/PlayerRepository';
+import { RoomRepository } from '../../../domain/repositories/RoomRepository';
 import {
   createGameRepositoryMock,
+  createPlayerRepositoryMock,
   createRoomRepositoryMock,
 } from '../../../domain/repositories/__tests__/utils/mocks';
-import { Server } from '../Server';
-import { GameRepository } from '../../../domain/repositories/GameRepository';
-import { RoomRepository } from '../../../domain/repositories/RoomRepository';
-import { GameConfigValidator } from '../../../domain/entities/GameConfigValidator';
 import { createRouter } from '../router';
+import { Server } from '../Server';
 
 jest.mock('express');
 jest.mock('cors');
 jest.mock('../router');
 
 describe('Server', () => {
-  let gameRepository: GameRepository,
-    roomRepository: RoomRepository,
+  let gameRepo: GameRepository,
+    roomRepo: RoomRepository,
+    playerRepo: PlayerRepository,
     gameConfigValidator: GameConfigValidator,
     expressAppMock: Express;
 
   beforeEach(() => {
-    gameRepository = createGameRepositoryMock();
-    roomRepository = createRoomRepositoryMock();
+    gameRepo = createGameRepositoryMock();
+    roomRepo = createRoomRepositoryMock();
+    playerRepo = createPlayerRepositoryMock();
     gameConfigValidator = createGameConfigValidatorMock();
     expressAppMock = ({
       use: jest.fn(),
@@ -38,9 +41,10 @@ describe('Server', () => {
 
   it('should not throw on run', () => {
     const server = new Server(
-      gameRepository,
-      roomRepository,
+      gameRepo,
+      roomRepo,
       gameConfigValidator,
+      playerRepo,
     );
 
     expect(() => {
@@ -52,9 +56,10 @@ describe('Server', () => {
     const port = random.number(10000);
 
     const server = new Server(
-      gameRepository,
-      roomRepository,
+      gameRepo,
+      roomRepo,
       gameConfigValidator,
+      playerRepo,
     );
 
     server.run({ port });
@@ -76,9 +81,10 @@ describe('Server', () => {
     (createRouter as jest.Mock).mockReturnValueOnce(routerReturn);
 
     const server = new Server(
-      gameRepository,
-      roomRepository,
+      gameRepo,
+      roomRepo,
       gameConfigValidator,
+      playerRepo,
     );
 
     server.run({ port });

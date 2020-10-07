@@ -1,3 +1,3 @@
-export interface UseCase<T, U> {
-  execute(input: T): U;
+export interface UseCase<InputProps, OutputProps> {
+  execute(input: InputProps): OutputProps;
 }
