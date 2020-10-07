@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import { GameEntityMapper } from './data/mappers/GameEntityMapper';
-import { PlayerDataEntityMapper } from './data/mappers/PlayerDataEntityMapper';
+import { PlayerEntityMapper } from './data/mappers/PlayerEntityMapper';
 import { RoomEntityDataMapper } from './data/mappers/RoomEntityDataMapper';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from './data/repositories/InMemoryPlayerRepository';
@@ -15,7 +15,7 @@ import { Server } from './presentation/api-server/Server';
 
 const playerRepository = new InMemoryPlayerRepository(
   new IncrementingIdGenerator(),
-  new PlayerDataEntityMapper(),
+  new PlayerEntityMapper(),
 );
 
 const server = new Server(

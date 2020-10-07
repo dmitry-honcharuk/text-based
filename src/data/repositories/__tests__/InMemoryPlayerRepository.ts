@@ -6,18 +6,18 @@ import {
   createIdGeneratorMock,
   createPlayerDataMock,
 } from '../../entities/__tests__/utils/mocks';
-import { PlayerDataEntityMapper } from '../../mappers/PlayerDataEntityMapper';
-import { createPlayerDataEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
+import { PlayerEntityMapper } from '../../mappers/PlayerEntityMapper';
+import { createPlayerEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
 import { InMemoryPlayerRepository } from '../InMemoryPlayerRepository';
 
 jest.mock('../../entities/PlayerData');
 
 describe('InMemoryPlayerRepository', () => {
-  let idGenerator: IdGenerator, mapper: PlayerDataEntityMapper;
+  let idGenerator: IdGenerator, mapper: PlayerEntityMapper;
 
   beforeEach(() => {
     idGenerator = createIdGeneratorMock();
-    mapper = createPlayerDataEntityMapperMock();
+    mapper = createPlayerEntityMapperMock();
   });
 
   describe('createPlayer', () => {
@@ -30,7 +30,9 @@ describe('InMemoryPlayerRepository', () => {
       const expectedPlayerData = createPlayerDataMock();
 
       (PlayerData as jest.Mock).mockReturnValueOnce(expectedPlayerData);
-      (mapper.map as jest.Mock).mockReturnValueOnce(expectedPlayerEntity);
+      (mapper.fromDataToEntity as jest.Mock).mockReturnValueOnce(
+        expectedPlayerEntity,
+      );
 
       const repo = new InMemoryPlayerRepository(idGenerator, mapper);
 
@@ -44,8 +46,8 @@ describe('InMemoryPlayerRepository', () => {
 
       expect(actualPlayerEntity).toBe(expectedPlayerEntity);
 
-      expect(mapper.map).toHaveBeenCalledTimes(1);
-      expect(mapper.map).toHaveBeenCalledWith(expectedPlayerData);
+      expect(mapper.fromDataToEntity).toHaveBeenCalledTimes(1);
+      expect(mapper.fromDataToEntity).toHaveBeenCalledWith(expectedPlayerData);
     });
   });
 
@@ -85,9 +87,9 @@ describe('InMemoryPlayerRepository', () => {
       const actualPlayers = await repo.getGamePlayers('1');
 
       expect(actualPlayers).toHaveLength(2);
-      expect(mapper.map).toHaveBeenCalledTimes(2);
-      expect(mapper.map).toHaveBeenNthCalledWith(1, playerData1);
-      expect(mapper.map).toHaveBeenNthCalledWith(2, playerData2);
+      expect(mapper.fromDataToEntity).toHaveBeenCalledTimes(2);
+      expect(mapper.fromDataToEntity).toHaveBeenNthCalledWith(1, playerData1);
+      expect(mapper.fromDataToEntity).toHaveBeenNthCalledWith(2, playerData2);
     });
   });
 });

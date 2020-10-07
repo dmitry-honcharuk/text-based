@@ -2,7 +2,7 @@ import { createPlayerEntityMock } from '../../../domain/entities/__tests__/utils
 import { createGameDataMock } from '../../entities/__tests__/utils/mocks';
 import { GameEntityMapper } from '../GameEntityMapper';
 
-describe('GameDataEntityMapper', () => {
+describe('GameEntityMapper', () => {
   it('should map GameData to GameEntity', () => {
     const mapper = new GameEntityMapper();
 
