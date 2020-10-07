@@ -10,5 +10,10 @@ describe('GameData entity', () => {
     });
 
     expect(gameData.id).toBe(id);
+    expect(gameData.isStarted).toBe(false);
+
+    gameData.isStarted = true;
+
+    expect(gameData.isStarted).toBe(true);
   });
 });

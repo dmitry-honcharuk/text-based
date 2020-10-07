@@ -1,9 +1,7 @@
 name: Testing
 
 on:
-  pull_request:
-    branches:
-      - develop
+  pull_request
 
 jobs:
   test:

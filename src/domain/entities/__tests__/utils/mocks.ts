@@ -1,12 +1,18 @@
 import { random } from 'faker';
 import { GameConfigValidator } from '../../GameConfigValidator';
-import { GameEntity } from '../../GameEntity';
-import { RoomEntity, Config as RoomEntityConfig } from '../../RoomEntity';
+import { Config as GameEntityConfig, GameEntity } from '../../GameEntity';
+import { Config as PlayerEntityConfig, PlayerEntity } from '../../PlayerEntity';
+import { Config as RoomEntityConfig, RoomEntity } from '../../RoomEntity';
 
-export function createGameEntityMock(config: { id: string }) {
-  const { id = random.word() } = config;
+export function createGameEntityMock(
+  config: Partial<GameEntityConfig & { isStarted: boolean }> = {},
+): GameEntity {
+  const { id = random.word(), isStarted = false } = config;
 
-  return new GameEntity({ id });
+  return {
+    id,
+    isStarted,
+  } as GameEntity;
 }
 
 export function createRoomEntityMock(config: Partial<RoomEntityConfig> = {}) {
@@ -29,4 +35,15 @@ export function createGameConfigValidatorMock(): GameConfigValidator {
   return ({
     validate: jest.fn(),
   } as unknown) as GameConfigValidator;
+}
+
+export function createPlayerEntityMock(
+  config: Partial<PlayerEntityConfig> = {},
+): PlayerEntity {
+  const { id = random.word(), name = random.word() } = config;
+
+  return {
+    id,
+    name,
+  };
 }
