@@ -1,17 +1,22 @@
-import { GameRepository } from '../repositories/GameRepository';
 import { GameAlreadyStartedError } from '../Errors/GameAlreadyStartedError';
 import { NoGameError } from '../Errors/NoGameError';
+import { GameRepository } from '../repositories/GameRepository';
+import { PlayerRepository } from '../repositories/PlayerRepository';
 import { UseCase } from './UseCase';
 
 type InputProps = {
   gameId: string;
+  playerName: string;
 };
 
 export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
-  constructor(private gameRepository: GameRepository) {}
+  constructor(
+    private gameRepository: GameRepository,
+    private playerRepository: PlayerRepository,
+  ) {}
 
   async execute(input: InputProps) {
-    const { gameId } = input;
+    const { gameId, playerName } = input;
 
     const game = await this.gameRepository.getGameById(gameId);
 
@@ -23,6 +28,7 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
       throw new GameAlreadyStartedError(gameId);
     }
 
+    await this.playerRepository.createPlayer(playerName, gameId);
     await this.gameRepository.startGame(gameId);
   }
 }
