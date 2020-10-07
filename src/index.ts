@@ -2,7 +2,7 @@
 
 import { GameEntityMapper } from './data/mappers/GameEntityMapper';
 import { PlayerEntityMapper } from './data/mappers/PlayerEntityMapper';
-import { RoomEntityDataMapper } from './data/mappers/RoomEntityDataMapper';
+import { RoomEntityMapper } from './data/mappers/RoomEntityMapper';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from './data/repositories/InMemoryPlayerRepository';
 import { InMemoryRoomRepository } from './data/repositories/InMemoryRoomRepository';
@@ -24,7 +24,7 @@ const server = new Server(
     new IncrementingIdGenerator(),
     playerRepository,
   ),
-  new InMemoryRoomRepository(new RoomEntityDataMapper()),
+  new InMemoryRoomRepository(new RoomEntityMapper()),
   new GameConfigValidator(gameConfigValidationSchema),
   playerRepository,
 );

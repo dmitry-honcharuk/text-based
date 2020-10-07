@@ -1,13 +1,13 @@
 import { createRoomEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
-import { RoomEntityDataMapper } from '../RoomEntityDataMapper';
+import { RoomEntityMapper } from '../RoomEntityMapper';
 
-describe('RoomEntityDataMapper', () => {
+describe('RoomEntityMapper', () => {
   it('should map RoomEntity to RoomData', () => {
-    const roomEntityDataMapper = new RoomEntityDataMapper();
+    const mapper = new RoomEntityMapper();
 
     const roomEntity = createRoomEntityMock();
 
-    const roomData = roomEntityDataMapper.map(roomEntity);
+    const roomData = mapper.fromEntityToData(roomEntity);
 
     expect(roomData.id).toBe(roomEntity.id);
     expect(roomData.gameId).toBe(roomEntity.gameId);

@@ -1,22 +1,18 @@
 import { random } from 'faker';
-import { InMemoryRoomRepository } from '../InMemoryRoomRepository';
-import { RoomData } from '../../entities/RoomData';
 import { createRoomEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
-import { createRoomEntityDataMapperMock } from '../../mappers/__tests__/utils/mocks';
 import { NoRoomError } from '../../../domain/Errors/NoRoomError';
-import { RoomEntityDataMapper } from '../../mappers/RoomEntityDataMapper';
+import { RoomData } from '../../entities/RoomData';
 import { createRoomDataMock } from '../../entities/__tests__/utils/mocks';
-import { RoomEntity } from '../../../domain/entities/RoomEntity';
+import { createRoomEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
+import { InMemoryRoomRepository } from '../InMemoryRoomRepository';
 
 describe('InMemoryRoomRepository', () => {
   it('should create a room', async () => {
     expect.assertions(2);
 
-    const mappingResult = random.word();
-    const mapper = {
-      map: jest.fn(() => (mappingResult as unknown) as RoomData),
-    };
-    const roomRepository = new InMemoryRoomRepository(mapper);
+    const roomRepository = new InMemoryRoomRepository(
+      createRoomEntityMapperMock(),
+    );
 
     expect(roomRepository.rooms).toHaveLength(0);
 
@@ -29,7 +25,7 @@ describe('InMemoryRoomRepository', () => {
     expect.assertions(1);
 
     const roomRepository = new InMemoryRoomRepository(
-      createRoomEntityDataMapperMock(),
+      createRoomEntityMapperMock(),
     );
     const id = random.word();
 
@@ -46,7 +42,9 @@ describe('InMemoryRoomRepository', () => {
     expect.assertions(1);
 
     const roomRepository = new InMemoryRoomRepository(
-      createRoomEntityDataMapperMock(),
+      createRoomEntityMapperMock({
+        fromEntityToData: createRoomDataMock,
+      }),
     );
     const sourceId = random.word();
     const destinationId = random.word();
@@ -88,7 +86,7 @@ describe('InMemoryRoomRepository', () => {
       id: destinationId,
     });
 
-    const map = jest.fn((room: RoomEntity) => {
+    const fromEntityToData = (room: RoomData) => {
       if (room.id === destinationId) {
         return destinationRoomData;
       }
@@ -96,11 +94,13 @@ describe('InMemoryRoomRepository', () => {
       if (room.id === sourceId) {
         return sourceRoomData;
       }
-    });
+    };
 
-    const roomRepository = new InMemoryRoomRepository({
-      map,
-    } as RoomEntityDataMapper);
+    const roomRepository = new InMemoryRoomRepository(
+      createRoomEntityMapperMock({
+        fromEntityToData: fromEntityToData as () => any,
+      }),
+    );
 
     await roomRepository.createRoom(sourceRoomEntity);
     await roomRepository.createRoom(destinationRoomEntity);

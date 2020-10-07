@@ -1,19 +1,19 @@
+import { RoomEntity } from '../../domain/entities/RoomEntity';
+import { NoRoomError } from '../../domain/Errors/NoRoomError';
 import {
   RoomExit,
   RoomRepository,
 } from '../../domain/repositories/RoomRepository';
-import { RoomEntity } from '../../domain/entities/RoomEntity';
 import { RoomData } from '../entities/RoomData';
-import { RoomEntityDataMapper } from '../mappers/RoomEntityDataMapper';
-import { NoRoomError } from '../../domain/Errors/NoRoomError';
+import { RoomEntityMapper } from '../mappers/RoomEntityMapper';
 
 export class InMemoryRoomRepository implements RoomRepository {
   private _rooms: RoomData[] = [];
 
-  constructor(private roomEntityDataMapper: RoomEntityDataMapper) {}
+  constructor(private roomMapper: RoomEntityMapper) {}
 
   async createRoom(room: RoomEntity) {
-    this._rooms.push(this.roomEntityDataMapper.map(room));
+    this._rooms.push(this.roomMapper.fromEntityToData(room));
   }
 
   async linkRooms(sourceId: string, exit: RoomExit) {
