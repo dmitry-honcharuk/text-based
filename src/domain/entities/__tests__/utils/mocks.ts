@@ -1,31 +1,32 @@
 import { random } from 'faker';
 import { GameConfigValidator } from '../../GameConfigValidator';
-import { Config as GameEntityConfig, GameEntity } from '../../GameEntity';
-import { Config as PlayerEntityConfig, PlayerEntity } from '../../PlayerEntity';
-import { Config as RoomEntityConfig, RoomEntity } from '../../RoomEntity';
+import { GameEntity } from '../../GameEntity';
+import { PlayerEntity } from '../../PlayerEntity';
+import { RoomEntity } from '../../RoomEntity';
 
 export function createGameEntityMock(
-  config: Partial<GameEntityConfig & { isStarted: boolean }> = {},
+  config: Partial<GameEntity> = {},
 ): GameEntity {
-  const { isStarted = false } = config;
+  const { isStarted = false, players = [] } = config;
 
   return {
     isStarted,
-  } as GameEntity;
+    players,
+  };
 }
 
-export function createRoomEntityMock(config: Partial<RoomEntityConfig> = {}) {
+export function createRoomEntityMock(config: Partial<RoomEntity> = {}) {
   const {
     id = random.word(),
     name = random.word(),
     description = random.words(),
   } = config;
 
-  return new RoomEntity({
+  return {
     id,
     name,
     description,
-  });
+  };
 }
 
 export function createGameConfigValidatorMock(): GameConfigValidator {
@@ -35,7 +36,7 @@ export function createGameConfigValidatorMock(): GameConfigValidator {
 }
 
 export function createPlayerEntityMock(
-  config: Partial<PlayerEntityConfig> = {},
+  config: Partial<PlayerEntity> = {},
 ): PlayerEntity {
   const { name = random.word() } = config;
 

@@ -7,9 +7,9 @@ export class GameEntityMapper {
     dataEntity: GameData,
     players: PlayerEntity[] = [],
   ): GameEntity {
-    return new GameEntity({
+    return {
       isStarted: dataEntity.isStarted,
       players,
-    });
+    };
   }
 }

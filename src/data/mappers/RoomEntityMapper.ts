@@ -3,11 +3,12 @@ import { RoomData } from '../entities/RoomData';
 
 export class RoomEntityMapper {
   fromEntityToData(entity: RoomEntity, gameId: string): RoomData {
-    return new RoomData({
+    return {
       id: entity.id,
       name: entity.name,
       description: entity.description,
       gameId: gameId,
-    });
+      exits: [],
+    };
   }
 }

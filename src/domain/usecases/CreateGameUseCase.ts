@@ -1,6 +1,5 @@
 import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
-import { RoomEntity } from '../entities/RoomEntity';
 import { GameRepository } from '../repositories/GameRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
@@ -20,9 +19,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     const gameId = await this.gameRepository.createGame();
 
     await Promise.all(
-      roomConfigs.map((room) =>
-        this.roomRepository.createRoom(gameId, new RoomEntity(room)),
-      ),
+      roomConfigs.map((room) => this.roomRepository.createRoom(gameId, room)),
     );
 
     const roomsWithExits = roomConfigs.filter(
@@ -40,7 +37,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
         this.roomRepository.linkRooms(roomConfig.id, {
           id: exit.id,
           name: exit.name,
-          destinationId: exit.roomId,
+          destinationRoomId: exit.roomId,
         }),
       ),
     );

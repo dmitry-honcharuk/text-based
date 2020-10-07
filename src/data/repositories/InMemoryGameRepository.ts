@@ -16,7 +16,7 @@ export class InMemoryGameRepository implements GameRepository {
 
   async createGame(): Promise<string> {
     const id = this.idGenerator.next();
-    const gameDataEntity = new GameData({ id });
+    const gameDataEntity: GameData = { id, isStarted: false };
 
     this.games.push(gameDataEntity);
 

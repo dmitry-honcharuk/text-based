@@ -24,17 +24,24 @@ describe('InMemoryPlayerRepository', () => {
     it('should create player', async () => {
       expect.assertions(6);
 
+      const playerDataId = random.word();
       const playerName = random.word();
       const gameId = random.word();
       const expectedPlayerEntity = createPlayerEntityMock();
-      const expectedPlayerData = createPlayerDataMock();
+      const expectedPlayerData: PlayerData = {
+        id: playerDataId,
+        name: playerName,
+        gameId,
+      };
 
-      (PlayerData as jest.Mock).mockReturnValueOnce(expectedPlayerData);
       (mapper.fromDataToEntity as jest.Mock).mockReturnValueOnce(
         expectedPlayerEntity,
       );
 
-      const repo = new InMemoryPlayerRepository(idGenerator, mapper);
+      const repo = new InMemoryPlayerRepository(
+        createIdGeneratorMock([playerDataId]),
+        mapper,
+      );
 
       expect(repo.players).toHaveLength(0);
 

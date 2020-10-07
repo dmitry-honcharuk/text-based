@@ -1,23 +1,19 @@
 import { random } from 'faker';
-import { Config as GameDataConfig, GameData } from '../../GameData';
+import { GameData } from '../../GameData';
 import { IdGenerator } from '../../IdGenerator';
-import { Config as PlayerDataConfig, PlayerData } from '../../PlayerData';
-import { Config as RoomDataConfig, RoomData } from '../../RoomData';
+import { PlayerData } from '../../PlayerData';
+import { RoomData } from '../../RoomData';
 
-export function createGameDataMock(
-  config: Partial<GameDataConfig & { isStarted: boolean }> = {},
-): GameData {
+export function createGameDataMock(config: Partial<GameData> = {}): GameData {
   const { id = random.word(), isStarted = false } = config;
 
   return {
     id,
     isStarted,
-  } as GameData;
+  };
 }
 
-export function createRoomDataMock(
-  config: Partial<RoomDataConfig> = {},
-): RoomData {
+export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
   const {
     id = random.word(),
     name = random.word(),
@@ -26,14 +22,13 @@ export function createRoomDataMock(
     exits = [],
   } = config;
 
-  return ({
+  return {
     id,
     name,
     description,
     gameId,
     exits,
-    addExit: jest.fn(),
-  } as unknown) as RoomData;
+  };
 }
 
 export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
@@ -51,7 +46,7 @@ export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
 }
 
 export function createPlayerDataMock(
-  config: Partial<PlayerDataConfig> = {},
+  config: Partial<PlayerData> = {},
 ): PlayerData {
   const {
     id = random.word(),

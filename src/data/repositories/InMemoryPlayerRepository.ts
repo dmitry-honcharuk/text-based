@@ -16,11 +16,11 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     playerName: string,
     gameId: string,
   ): Promise<PlayerEntity> {
-    const playerData = new PlayerData({
+    const playerData: PlayerData = {
       id: this.idGenerator.next(),
       name: playerName,
       gameId,
-    });
+    };
 
     this.players.push(playerData);
 

@@ -3,7 +3,7 @@ import { RoomEntity } from '../entities/RoomEntity';
 export interface RoomExit {
   id: string;
   name: string;
-  destinationId: string;
+  destinationRoomId: string;
 }
 
 export interface RoomRepository {

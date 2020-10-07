@@ -1,7 +1,7 @@
 import { random } from 'faker';
 import { createRoomEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
 import { NoRoomError } from '../../../domain/Errors/NoRoomError';
-import { RoomData } from '../../entities/RoomData';
+import { RoomData, RoomDataExit } from '../../entities/RoomData';
 import { createRoomDataMock } from '../../entities/__tests__/utils/mocks';
 import { createRoomEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
 import { InMemoryRoomRepository } from '../InMemoryRoomRepository';
@@ -34,7 +34,7 @@ describe('InMemoryRoomRepository', () => {
       roomRepository.linkRooms(id, {
         id: random.word(),
         name: random.word(),
-        destinationId: random.word(),
+        destinationRoomId: random.word(),
       }),
     ).rejects.toThrowError(new NoRoomError(id));
   });
@@ -49,7 +49,7 @@ describe('InMemoryRoomRepository', () => {
     );
     const gameId = random.word();
     const sourceId = random.word();
-    const destinationId = random.word();
+    const destinationRoomId = random.word();
 
     await roomRepository.createRoom(
       gameId,
@@ -62,24 +62,24 @@ describe('InMemoryRoomRepository', () => {
       roomRepository.linkRooms(sourceId, {
         id: random.word(),
         name: random.word(),
-        destinationId,
+        destinationRoomId,
       }),
-    ).rejects.toThrowError(new NoRoomError(destinationId));
+    ).rejects.toThrowError(new NoRoomError(destinationRoomId));
   });
 
   it('should link two rooms', async () => {
-    expect.assertions(3);
+    expect.assertions(2);
 
     const gameId = random.word();
     const sourceId = random.word();
-    const destinationId = random.word();
+    const destinationRoomId = random.word();
 
     const sourceRoomData = createRoomDataMock({
       id: sourceId,
     });
 
     const destinationRoomData = createRoomDataMock({
-      id: destinationId,
+      id: destinationRoomId,
     });
 
     const sourceRoomEntity = createRoomEntityMock({
@@ -87,11 +87,19 @@ describe('InMemoryRoomRepository', () => {
     });
 
     const destinationRoomEntity = createRoomEntityMock({
-      id: destinationId,
+      id: destinationRoomId,
     });
 
+    const exitId = random.word();
+    const exitName = random.word();
+    const expectedExit: RoomDataExit = {
+      id: exitId,
+      name: exitName,
+      destinationRoomId: destinationRoomId,
+    };
+
     const fromEntityToData = (room: RoomData) => {
-      if (room.id === destinationId) {
+      if (room.id === destinationRoomId) {
         return destinationRoomData;
       }
 
@@ -109,22 +117,14 @@ describe('InMemoryRoomRepository', () => {
     await roomRepository.createRoom(gameId, sourceRoomEntity);
     await roomRepository.createRoom(gameId, destinationRoomEntity);
 
-    const exitId = random.word();
-    const exitName = random.word();
-
     await expect(
       roomRepository.linkRooms(sourceId, {
         id: exitId,
         name: exitName,
-        destinationId,
+        destinationRoomId,
       }),
     ).resolves.not.toThrowError();
 
-    expect(sourceRoomData.addExit).toHaveBeenCalled();
-    expect(sourceRoomData.addExit).toHaveBeenCalledWith({
-      id: exitId,
-      name: exitName,
-      destination: destinationRoomData,
-    });
+    expect(sourceRoomData.exits).toEqual([expectedExit]);
   });
 });

@@ -23,13 +23,17 @@ export class InMemoryRoomRepository implements RoomRepository {
       throw new NoRoomError(sourceId);
     }
 
-    const destination = await this.getRoomDataById(exit.destinationId);
+    const destination = await this.getRoomDataById(exit.destinationRoomId);
 
     if (!destination) {
-      throw new NoRoomError(exit.destinationId);
+      throw new NoRoomError(exit.destinationRoomId);
     }
 
-    source.addExit({ id: exit.id, name: exit.name, destination });
+    source.exits.push({
+      id: exit.id,
+      name: exit.name,
+      destinationRoomId: destination.id,
+    });
   }
 
   private async getRoomDataById(roomId: string): Promise<RoomData | null> {
