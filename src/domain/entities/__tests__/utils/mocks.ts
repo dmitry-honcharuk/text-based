@@ -7,10 +7,9 @@ import { Config as RoomEntityConfig, RoomEntity } from '../../RoomEntity';
 export function createGameEntityMock(
   config: Partial<GameEntityConfig & { isStarted: boolean }> = {},
 ): GameEntity {
-  const { id = random.word(), isStarted = false } = config;
+  const { isStarted = false } = config;
 
   return {
-    id,
     isStarted,
   } as GameEntity;
 }
@@ -20,14 +19,12 @@ export function createRoomEntityMock(config: Partial<RoomEntityConfig> = {}) {
     id = random.word(),
     name = random.word(),
     description = random.words(),
-    gameId = random.word(),
   } = config;
 
   return new RoomEntity({
     id,
     name,
     description,
-    gameId,
   });
 }
 
@@ -40,10 +37,7 @@ export function createGameConfigValidatorMock(): GameConfigValidator {
 export function createPlayerEntityMock(
   config: Partial<PlayerEntityConfig> = {},
 ): PlayerEntity {
-  const { id = random.word(), name = random.word() } = config;
+  const { name = random.word() } = config;
 
-  return {
-    id,
-    name,
-  };
+  return { name };
 }

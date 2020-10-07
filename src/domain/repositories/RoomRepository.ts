@@ -7,7 +7,7 @@ export interface RoomExit {
 }
 
 export interface RoomRepository {
-  createRoom(room: RoomEntity): Promise<void>;
+  createRoom(gameId: string, room: RoomEntity): Promise<void>;
 
   linkRooms(sourceId: string, exit: RoomExit): Promise<void>;
 }

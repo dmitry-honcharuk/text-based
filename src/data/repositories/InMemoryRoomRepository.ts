@@ -12,8 +12,8 @@ export class InMemoryRoomRepository implements RoomRepository {
 
   constructor(private roomMapper: RoomEntityMapper) {}
 
-  async createRoom(room: RoomEntity) {
-    this._rooms.push(this.roomMapper.fromEntityToData(room));
+  async createRoom(gameId: string, room: RoomEntity) {
+    this._rooms.push(this.roomMapper.fromEntityToData(room, gameId));
   }
 
   async linkRooms(sourceId: string, exit: RoomExit) {

@@ -10,13 +10,14 @@ describe('InMemoryRoomRepository', () => {
   it('should create a room', async () => {
     expect.assertions(2);
 
+    const gameId = random.word();
     const roomRepository = new InMemoryRoomRepository(
       createRoomEntityMapperMock(),
     );
 
     expect(roomRepository.rooms).toHaveLength(0);
 
-    await roomRepository.createRoom(createRoomEntityMock());
+    await roomRepository.createRoom(gameId, createRoomEntityMock());
 
     expect(roomRepository.rooms).toHaveLength(1);
   });
@@ -46,10 +47,12 @@ describe('InMemoryRoomRepository', () => {
         fromEntityToData: createRoomDataMock,
       }),
     );
+    const gameId = random.word();
     const sourceId = random.word();
     const destinationId = random.word();
 
     await roomRepository.createRoom(
+      gameId,
       createRoomEntityMock({
         id: sourceId,
       }),
@@ -67,6 +70,7 @@ describe('InMemoryRoomRepository', () => {
   it('should link two rooms', async () => {
     expect.assertions(3);
 
+    const gameId = random.word();
     const sourceId = random.word();
     const destinationId = random.word();
 
@@ -102,8 +106,8 @@ describe('InMemoryRoomRepository', () => {
       }),
     );
 
-    await roomRepository.createRoom(sourceRoomEntity);
-    await roomRepository.createRoom(destinationRoomEntity);
+    await roomRepository.createRoom(gameId, sourceRoomEntity);
+    await roomRepository.createRoom(gameId, destinationRoomEntity);
 
     const exitId = random.word();
     const exitName = random.word();

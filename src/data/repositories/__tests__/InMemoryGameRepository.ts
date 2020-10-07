@@ -37,20 +37,22 @@ describe('InMemoryGameRepository', () => {
   });
 
   describe('createGame', () => {
-    it('should create a game', async () => {
+    it('should return an id of created game', async () => {
       expect.assertions(3);
+
+      const expectedGameId = random.word();
 
       const gameRepository = new InMemoryGameRepository(
         mapper,
-        idGenerator,
+        createIdGeneratorMock([expectedGameId]),
         playerRepo,
       );
 
       expect(gameRepository.games).toHaveLength(0);
 
-      const game = await gameRepository.createGame();
+      const actualGameId = await gameRepository.createGame();
 
-      expect(game).toBe(mappingResult);
+      expect(actualGameId).toBe(expectedGameId);
 
       expect(gameRepository.games).toHaveLength(1);
     });

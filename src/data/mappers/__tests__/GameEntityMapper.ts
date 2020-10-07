@@ -10,7 +10,6 @@ describe('GameEntityMapper', () => {
 
     const gameEntity = mapper.fromDataToEntity(gameData);
 
-    expect(gameEntity.id).toBe(gameData.id);
     expect(gameEntity.isStarted).toBe(gameData.isStarted);
     expect(gameEntity.players).toHaveLength(0);
   });

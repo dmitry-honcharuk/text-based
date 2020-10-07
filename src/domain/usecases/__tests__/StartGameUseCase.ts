@@ -34,7 +34,7 @@ describe('StartGameUseCase', () => {
     expect.assertions(1);
 
     const gameId = random.word();
-    const gameEntity = createGameEntityMock({ id: gameId, isStarted: true });
+    const gameEntity = createGameEntityMock({ isStarted: true });
     const gameRepo = createGameRepositoryMock();
 
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);
@@ -50,7 +50,7 @@ describe('StartGameUseCase', () => {
     expect.assertions(5);
 
     const gameId = random.word();
-    const gameEntity = createGameEntityMock({ id: gameId });
+    const gameEntity = createGameEntityMock();
     const gameRepo = createGameRepositoryMock();
 
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);

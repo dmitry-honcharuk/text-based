@@ -1,7 +1,6 @@
 import { random } from 'faker';
 import { GameConfig } from '../../entities/game-config';
 import { GameConfigValidator } from '../../entities/GameConfigValidator';
-import { createGameEntityMock } from '../../entities/__tests__/utils/mocks';
 import { GameRepository } from '../../repositories/GameRepository';
 import { RoomRepository } from '../../repositories/RoomRepository';
 import { createGameRepositoryMock } from '../../repositories/__tests__/utils/mocks';
@@ -19,7 +18,7 @@ describe('CreateGameUseCase', () => {
     const gameRepository: GameRepository = createGameRepositoryMock();
 
     ((gameRepository.createGame as unknown) as jest.Mock).mockReturnValue(
-      Promise.resolve(createGameEntityMock({ id: gameId })),
+      Promise.resolve(gameId),
     );
 
     const gameConfigValidator: GameConfigValidator = ({

@@ -8,7 +8,6 @@ export class GameEntityMapper {
     players: PlayerEntity[] = [],
   ): GameEntity {
     return new GameEntity({
-      id: dataEntity.id,
       isStarted: dataEntity.isStarted,
       players,
     });

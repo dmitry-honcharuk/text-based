@@ -14,12 +14,13 @@ export class InMemoryGameRepository implements GameRepository {
     private playerRepository: PlayerRepository,
   ) {}
 
-  async createGame(): Promise<GameEntity> {
-    const gameDataEntity = new GameData({ id: this.idGenerator.next() });
+  async createGame(): Promise<string> {
+    const id = this.idGenerator.next();
+    const gameDataEntity = new GameData({ id });
 
     this.games.push(gameDataEntity);
 
-    return this.gameEntityMapper.fromDataToEntity(gameDataEntity);
+    return id;
   }
 
   async startGame(gameId: string): Promise<void> {

@@ -8,7 +8,6 @@ describe('PlayerEntityMapper', () => {
 
     const entity = mapper.fromDataToEntity(data);
 
-    expect(entity.id).toBe(data.id);
     expect(entity.name).toBe(data.name);
   });
 });

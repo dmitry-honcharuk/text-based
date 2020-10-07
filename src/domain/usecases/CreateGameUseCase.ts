@@ -1,10 +1,9 @@
-import { GameRepository } from '../repositories/GameRepository';
-import { RoomRepository } from '../repositories/RoomRepository';
-import { RoomEntity } from '../entities/RoomEntity';
-import { UseCase } from './UseCase';
-
 import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
+import { RoomEntity } from '../entities/RoomEntity';
+import { GameRepository } from '../repositories/GameRepository';
+import { RoomRepository } from '../repositories/RoomRepository';
+import { UseCase } from './UseCase';
 
 export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
   constructor(
@@ -18,13 +17,11 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     const { rooms: roomConfigs } = config;
 
-    const game = await this.gameRepository.createGame();
+    const gameId = await this.gameRepository.createGame();
 
     await Promise.all(
       roomConfigs.map((room) =>
-        this.roomRepository.createRoom(
-          new RoomEntity({ ...room, gameId: game.id }),
-        ),
+        this.roomRepository.createRoom(gameId, new RoomEntity(room)),
       ),
     );
 
@@ -34,7 +31,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     await Promise.all(roomsWithExits.map((room) => this.addExits(room)));
 
-    return game.id;
+    return gameId;
   }
 
   private async addExits(roomConfig: RoomWithExitsConfig) {
