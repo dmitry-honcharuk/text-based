@@ -2,19 +2,23 @@ import { Router } from 'express';
 import { createGameConfigValidatorMock } from '../../../../domain/entities/__tests__/utils/mocks';
 import {
   createGameRepositoryMock,
+  createMapRepositoryMock,
   createPlayerRepositoryMock,
   createRoomRepositoryMock,
 } from '../../../../domain/repositories/__tests__/utils/mocks';
 import { buildCreateGameRoute } from '../buildCreateGameRoute';
 import { buildStartGameRoute } from '../buildStartGameRoute';
-import { createRouter } from '../routes';
+import {
+  createRouter,
+  Dependencies as CreateRouterDependencies,
+} from '../routes';
 
 jest.mock('express');
 jest.mock('../buildCreateGameRoute');
 jest.mock('../buildStartGameRoute');
 
 describe('Api server router', () => {
-  let expressRouter: Router;
+  let expressRouter: Router, dependencies: CreateRouterDependencies;
 
   beforeEach(() => {
     expressRouter = ({
@@ -22,15 +26,18 @@ describe('Api server router', () => {
     } as unknown) as Router;
 
     (Router as jest.Mock).mockReturnValue(expressRouter);
-  });
 
-  it('should create router', () => {
-    const router = createRouter({
+    dependencies = {
       gameRepository: createGameRepositoryMock(),
       roomRepository: createRoomRepositoryMock(),
       gameConfigValidator: createGameConfigValidatorMock(),
       playerRepository: createPlayerRepositoryMock(),
-    });
+      mapRepository: createMapRepositoryMock(),
+    };
+  });
+
+  it('should create router', () => {
+    const router = createRouter(dependencies);
 
     expect(router).toEqual(expressRouter);
   });
@@ -42,12 +49,7 @@ describe('Api server router', () => {
     (buildCreateGameRoute as jest.Mock).mockReturnValue(createGameRoute);
     (buildStartGameRoute as jest.Mock).mockReturnValue(startGameRoute);
 
-    createRouter({
-      gameRepository: createGameRepositoryMock(),
-      roomRepository: createRoomRepositoryMock(),
-      gameConfigValidator: createGameConfigValidatorMock(),
-      playerRepository: createPlayerRepositoryMock(),
-    });
+    createRouter(dependencies);
 
     expect(expressRouter.post).toHaveBeenNthCalledWith(1, '/', createGameRoute);
     expect(expressRouter.post).toHaveBeenNthCalledWith(

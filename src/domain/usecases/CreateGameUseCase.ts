@@ -1,14 +1,16 @@
 import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
 import { GameRepository } from '../repositories/GameRepository';
+import { MapRepository } from '../repositories/MapRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
 
 export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
   constructor(
+    private gameConfigValidator: GameConfigValidator,
     private roomRepository: RoomRepository,
     private gameRepository: GameRepository,
-    private gameConfigValidator: GameConfigValidator,
+    private mapRepository: MapRepository,
   ) {}
 
   async execute(config: GameConfig) {
@@ -27,6 +29,8 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     ) as RoomWithExitsConfig[];
 
     await Promise.all(roomsWithExits.map((room) => this.addExits(room)));
+
+    await this.mapRepository.createMap(gameId, config.startingRoom);
 
     return gameId;
   }

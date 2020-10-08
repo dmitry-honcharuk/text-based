@@ -1,5 +1,4 @@
 import { random } from 'faker';
-import { createPlayerEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
 import { IdGenerator } from '../../entities/IdGenerator';
 import { PlayerData } from '../../entities/PlayerData';
 import {
@@ -22,39 +21,32 @@ describe('InMemoryPlayerRepository', () => {
 
   describe('createPlayer', () => {
     it('should create player', async () => {
-      expect.assertions(6);
+      expect.assertions(4);
 
-      const playerDataId = random.word();
       const playerName = random.word();
       const gameId = random.word();
-      const expectedPlayerEntity = createPlayerEntityMock();
+
+      const expectedPlayerDataId = random.word();
       const expectedPlayerData: PlayerData = {
-        id: playerDataId,
+        id: expectedPlayerDataId,
         name: playerName,
         gameId,
       };
 
-      (mapper.fromDataToEntity as jest.Mock).mockReturnValueOnce(
-        expectedPlayerEntity,
-      );
-
       const repo = new InMemoryPlayerRepository(
-        createIdGeneratorMock([playerDataId]),
+        createIdGeneratorMock([expectedPlayerDataId]),
         mapper,
       );
 
       expect(repo.players).toHaveLength(0);
 
-      const actualPlayerEntity = await repo.createPlayer(playerName, gameId);
+      const actualPlayerId = await repo.createPlayer(gameId, playerName);
 
       expect(repo.players).toHaveLength(1);
 
       expect(repo.players).toEqual([expectedPlayerData]);
 
-      expect(actualPlayerEntity).toBe(expectedPlayerEntity);
-
-      expect(mapper.fromDataToEntity).toHaveBeenCalledTimes(1);
-      expect(mapper.fromDataToEntity).toHaveBeenCalledWith(expectedPlayerData);
+      expect(actualPlayerId).toBe(expectedPlayerDataId);
     });
   });
 

@@ -1,6 +1,7 @@
 import { random } from 'faker';
 import { GameData } from '../../GameData';
 import { IdGenerator } from '../../IdGenerator';
+import { MapData } from '../../MapData';
 import { PlayerData } from '../../PlayerData';
 import { RoomData } from '../../RoomData';
 
@@ -36,7 +37,7 @@ export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
 
   return {
     next: jest.fn(() => {
-      if (ids.length >= currentIndex) {
+      if (ids.length > currentIndex) {
         return ids[currentIndex++];
       }
 
@@ -58,5 +59,19 @@ export function createPlayerDataMock(
     id,
     name,
     gameId,
+  };
+}
+
+export function createMapDataMock(config: Partial<MapData> = {}): MapData {
+  const {
+    gameId = random.word(),
+    startingRoomId = random.word(),
+    playerLocations = new Map(),
+  } = config;
+
+  return {
+    gameId,
+    startingRoomId,
+    playerLocations,
   };
 }

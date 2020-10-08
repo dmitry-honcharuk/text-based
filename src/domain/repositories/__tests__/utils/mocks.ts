@@ -1,4 +1,5 @@
 import { GameRepository } from '../../GameRepository';
+import { MapRepository } from '../../MapRepository';
 import { PlayerRepository } from '../../PlayerRepository';
 import { RoomRepository } from '../../RoomRepository';
 
@@ -21,5 +22,13 @@ export function createPlayerRepositoryMock(): PlayerRepository {
   return {
     createPlayer: jest.fn(),
     getGamePlayers: jest.fn(),
+  };
+}
+
+export function createMapRepositoryMock(): MapRepository {
+  return {
+    getGameStartingRoomId: jest.fn(),
+    createMap: jest.fn(),
+    spawnPlayer: jest.fn(),
   };
 }

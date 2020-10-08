@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import { random } from 'faker';
-
+import { GameConfigValidator } from '../../../../domain/entities/GameConfigValidator';
+import { createGameConfigValidatorMock } from '../../../../domain/entities/__tests__/utils/mocks';
+import { GameRepository } from '../../../../domain/repositories/GameRepository';
+import { MapRepository } from '../../../../domain/repositories/MapRepository';
+import { RoomRepository } from '../../../../domain/repositories/RoomRepository';
 import {
   createGameRepositoryMock,
   createRoomRepositoryMock,
 } from '../../../../domain/repositories/__tests__/utils/mocks';
-import { buildCreateGameRoute } from '../buildCreateGameRoute';
-import { createGameConfigValidatorMock } from '../../../../domain/entities/__tests__/utils/mocks';
-
 import { CreateGameUseCase } from '../../../../domain/usecases/CreateGameUseCase';
-import { GameRepository } from '../../../../domain/repositories/GameRepository';
-import { RoomRepository } from '../../../../domain/repositories/RoomRepository';
-import { GameConfigValidator } from '../../../../domain/entities/GameConfigValidator';
+import { buildCreateGameRoute } from '../buildCreateGameRoute';
 
 jest.mock('../../../../domain/usecases/CreateGameUseCase');
 
@@ -19,8 +18,9 @@ describe('buildCreateGameRoute', () => {
   let body: any,
     expressRequest: Request,
     expressResponse: Response,
-    gameRepository: GameRepository,
-    roomRepository: RoomRepository,
+    gameRepo: GameRepository,
+    roomRepo: RoomRepository,
+    mapRepo: MapRepository,
     gameConfigValidator: GameConfigValidator,
     next: NextFunction,
     createGameUseCase: CreateGameUseCase;
@@ -32,8 +32,8 @@ describe('buildCreateGameRoute', () => {
       json: jest.fn(),
     } as unknown) as Response;
     next = jest.fn();
-    gameRepository = createGameRepositoryMock();
-    roomRepository = createRoomRepositoryMock();
+    gameRepo = createGameRepositoryMock();
+    roomRepo = createRoomRepositoryMock();
     gameConfigValidator = createGameConfigValidatorMock();
     createGameUseCase = ({
       execute: jest.fn(),
@@ -45,18 +45,20 @@ describe('buildCreateGameRoute', () => {
     expect.assertions(3);
 
     const createGame = buildCreateGameRoute({
-      gameRepository,
-      roomRepository,
       gameConfigValidator,
+      gameRepository: gameRepo,
+      roomRepository: roomRepo,
+      mapRepository: mapRepo,
     });
 
     await createGame(expressRequest, expressResponse, next);
 
     expect(expressResponse.json).toHaveBeenCalled();
     expect(CreateGameUseCase).toHaveBeenCalledWith(
-      roomRepository,
-      gameRepository,
       gameConfigValidator,
+      roomRepo,
+      gameRepo,
+      mapRepo,
     );
 
     expect(createGameUseCase.execute).toHaveBeenCalledWith(body);
@@ -72,9 +74,10 @@ describe('buildCreateGameRoute', () => {
     });
 
     const createGame = buildCreateGameRoute({
-      gameRepository,
-      roomRepository,
       gameConfigValidator,
+      gameRepository: gameRepo,
+      roomRepository: roomRepo,
+      mapRepository: mapRepo,
     });
 
     await createGame(expressRequest, expressResponse, next);

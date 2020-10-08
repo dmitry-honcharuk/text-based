@@ -1,23 +1,23 @@
 import { random } from 'faker';
 import { GameConfig } from '../../entities/game-config';
 import { GameConfigValidator } from '../../entities/GameConfigValidator';
-import { GameRepository } from '../../repositories/GameRepository';
-import { RoomRepository } from '../../repositories/RoomRepository';
-import { createGameRepositoryMock } from '../../repositories/__tests__/utils/mocks';
+import {
+  createGameRepositoryMock,
+  createMapRepositoryMock,
+  createRoomRepositoryMock,
+} from '../../repositories/__tests__/utils/mocks';
 import { CreateGameUseCase } from '../CreateGameUseCase';
 
 describe('CreateGameUseCase', () => {
   it('should create a game', async () => {
-    expect.assertions(6);
+    expect.assertions(8);
 
     const gameId = random.word();
-    const roomRepository: RoomRepository = {
-      linkRooms: jest.fn(),
-      createRoom: jest.fn(),
-    };
-    const gameRepository: GameRepository = createGameRepositoryMock();
+    const roomRepo = createRoomRepositoryMock();
+    const gameRepo = createGameRepositoryMock();
+    const mapRepo = createMapRepositoryMock();
 
-    ((gameRepository.createGame as unknown) as jest.Mock).mockReturnValue(
+    ((gameRepo.createGame as unknown) as jest.Mock).mockReturnValue(
       Promise.resolve(gameId),
     );
 
@@ -26,9 +26,10 @@ describe('CreateGameUseCase', () => {
     } as unknown) as GameConfigValidator;
 
     const createGameUseCase = new CreateGameUseCase(
-      roomRepository,
-      gameRepository,
       gameConfigValidator,
+      roomRepo,
+      gameRepo,
+      mapRepo,
     );
 
     const startingRoomId = random.word();
@@ -62,8 +63,13 @@ describe('CreateGameUseCase', () => {
     await expect(actual).resolves.toBe(gameId);
 
     expect(gameConfigValidator.validate).toHaveBeenCalledTimes(1);
-    expect(gameRepository.createGame).toHaveBeenCalledTimes(1);
-    expect(roomRepository.createRoom).toHaveBeenCalledTimes(2);
-    expect(roomRepository.linkRooms).toHaveBeenCalledTimes(1);
+
+    expect(gameRepo.createGame).toHaveBeenCalledTimes(1);
+    expect(roomRepo.createRoom).toHaveBeenCalledTimes(2);
+
+    expect(roomRepo.linkRooms).toHaveBeenCalledTimes(1);
+
+    expect(mapRepo.createMap).toHaveBeenCalledTimes(1);
+    expect(mapRepo.createMap).toHaveBeenCalledWith(gameId, startingRoomId);
   });
 });

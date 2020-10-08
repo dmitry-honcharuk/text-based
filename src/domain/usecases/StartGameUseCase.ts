@@ -1,6 +1,8 @@
 import { GameAlreadyStartedError } from '../Errors/GameAlreadyStartedError';
 import { NoGameError } from '../Errors/NoGameError';
+import { NoStartingRoomError } from '../Errors/NoStartingRoomError';
 import { GameRepository } from '../repositories/GameRepository';
+import { MapRepository } from '../repositories/MapRepository';
 import { PlayerRepository } from '../repositories/PlayerRepository';
 import { UseCase } from './UseCase';
 
@@ -13,6 +15,7 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
   constructor(
     private gameRepository: GameRepository,
     private playerRepository: PlayerRepository,
+    private mapRepository: MapRepository,
   ) {}
 
   async execute(input: InputProps) {
@@ -28,7 +31,18 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
       throw new GameAlreadyStartedError(gameId);
     }
 
-    await this.playerRepository.createPlayer(playerName, gameId);
+    const startingRoomId = await this.mapRepository.getGameStartingRoomId(gameId);
+
+    if (!startingRoomId) {
+      throw new NoStartingRoomError(gameId);
+    }
+
+    const playerId = await this.playerRepository.createPlayer(
+      gameId,
+      playerName,
+    );
+
+    await this.mapRepository.spawnPlayer(gameId, playerId, startingRoomId);
     await this.gameRepository.startGame(gameId);
   }
 }
