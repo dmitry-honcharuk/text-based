@@ -3,6 +3,7 @@
 import { GameEntityMapper } from './data/mappers/GameEntityMapper';
 import { PlayerEntityMapper } from './data/mappers/PlayerEntityMapper';
 import { RoomEntityMapper } from './data/mappers/RoomEntityMapper';
+import { InMemoryCommandRepository } from './data/repositories/InMemoryCommandRepository';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
 import { InMemoryMapRepository } from './data/repositories/InMemoryMapRepository';
 import { InMemoryPlayerRepository } from './data/repositories/InMemoryPlayerRepository';
@@ -12,23 +13,34 @@ import { GameConfigValidator } from './domain/entities/GameConfigValidator';
 import { IncrementingIdGenerator } from './IncrementingIdGenerator';
 import { Server } from './presentation/api-server/Server';
 
-// @TODO Add request data validation
+const gameConfigValidator = new GameConfigValidator(gameConfigValidationSchema);
 
 const playerRepository = new InMemoryPlayerRepository(
   new IncrementingIdGenerator(),
-  new PlayerEntityMapper(),
+  new PlayerEntityMapper()
 );
+const roomRepository = new InMemoryRoomRepository(
+  new RoomEntityMapper(),
+  new IncrementingIdGenerator()
+);
+const gameRepository = new InMemoryGameRepository(
+  new GameEntityMapper(),
+  new IncrementingIdGenerator(),
+  playerRepository
+);
+const mapRepository = new InMemoryMapRepository(
+  new IncrementingIdGenerator(),
+  roomRepository
+);
+const commandRepository = new InMemoryCommandRepository();
 
 const server = new Server(
-  new InMemoryGameRepository(
-    new GameEntityMapper(),
-    new IncrementingIdGenerator(),
-    playerRepository,
-  ),
-  new InMemoryRoomRepository(new RoomEntityMapper()),
-  new GameConfigValidator(gameConfigValidationSchema),
+  gameRepository,
+  roomRepository,
+  gameConfigValidator,
   playerRepository,
-  new InMemoryMapRepository(new IncrementingIdGenerator()),
+  mapRepository,
+  commandRepository
 );
 
 server.run({ port: 5001 });

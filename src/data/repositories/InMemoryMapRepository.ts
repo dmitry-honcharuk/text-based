@@ -1,4 +1,6 @@
+import { RoomEntity } from '../../domain/entities/RoomEntity';
 import { MapRepository } from '../../domain/repositories/MapRepository';
+import { RoomRepository } from '../../domain/repositories/RoomRepository';
 import { DeferredNullable } from '../../domain/utils/DeferredNullable';
 import { IdGenerator } from '../entities/IdGenerator';
 import { MapData } from '../entities/MapData';
@@ -6,7 +8,10 @@ import { MapData } from '../entities/MapData';
 export class InMemoryMapRepository implements MapRepository {
   public readonly maps: MapData[] = [];
 
-  constructor(private idGenerator: IdGenerator) {}
+  constructor(
+    private idGenerator: IdGenerator,
+    private roomRepo: RoomRepository
+  ) {}
 
   async getGameStartingRoomId(gameId: string): DeferredNullable<string> {
     const mapData = this.getMapDataByGameId(gameId);
@@ -18,12 +23,15 @@ export class InMemoryMapRepository implements MapRepository {
     return mapData.startingRoomId;
   }
 
-  async createMap(gameId: string, startingRoomId: string): Promise<string> {
+  async createMap(
+    gameId: string,
+    startingCustomRoomId: string
+  ): Promise<string> {
     const id = this.idGenerator.next();
 
     this.maps.push({
       gameId,
-      startingRoomId,
+      startingRoomId: startingCustomRoomId,
       playerLocations: new Map(),
     });
 
@@ -33,7 +41,7 @@ export class InMemoryMapRepository implements MapRepository {
   async spawnPlayer(
     gameId: string,
     playerId: string,
-    roomId: string,
+    roomId: string
   ): Promise<boolean> {
     const mapData = this.getMapDataByGameId(gameId);
 
@@ -44,6 +52,35 @@ export class InMemoryMapRepository implements MapRepository {
     mapData.playerLocations.set(playerId, roomId);
 
     return true;
+  }
+
+  async getPlayerRoom(
+    gameId: string,
+    playerId: string
+  ): DeferredNullable<RoomEntity> {
+    const playerMap = this.getMapDataByGameId(gameId);
+
+    if (!playerMap) {
+      return null;
+    }
+
+    const location = playerMap.playerLocations.get(playerId);
+
+    if (!location) {
+      return null;
+    }
+
+    return this.roomRepo.getRoomById(location);
+  }
+
+  async setPlayerLocation(
+    gameId: string,
+    playerId: string,
+    roomId: string
+  ): Promise<void> {
+    const playerMap = this.getMapDataByGameId(gameId);
+
+    playerMap?.playerLocations.set(playerId, roomId);
   }
 
   private getMapDataByGameId(id: string): MapData | null {

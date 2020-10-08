@@ -2,10 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { random } from 'faker';
 import { GameConfigValidator } from '../../../../domain/entities/GameConfigValidator';
 import { createGameConfigValidatorMock } from '../../../../domain/entities/__tests__/utils/mocks';
+import { CommandRepository } from '../../../../domain/repositories/CommandRepository';
 import { GameRepository } from '../../../../domain/repositories/GameRepository';
 import { MapRepository } from '../../../../domain/repositories/MapRepository';
 import { RoomRepository } from '../../../../domain/repositories/RoomRepository';
 import {
+  createCommandRepositoryMock,
   createGameRepositoryMock,
   createRoomRepositoryMock,
 } from '../../../../domain/repositories/__tests__/utils/mocks';
@@ -21,6 +23,7 @@ describe('buildCreateGameRoute', () => {
     gameRepo: GameRepository,
     roomRepo: RoomRepository,
     mapRepo: MapRepository,
+    commandRepo: CommandRepository,
     gameConfigValidator: GameConfigValidator,
     next: NextFunction,
     createGameUseCase: CreateGameUseCase;
@@ -34,6 +37,7 @@ describe('buildCreateGameRoute', () => {
     next = jest.fn();
     gameRepo = createGameRepositoryMock();
     roomRepo = createRoomRepositoryMock();
+    commandRepo = createCommandRepositoryMock();
     gameConfigValidator = createGameConfigValidatorMock();
     createGameUseCase = ({
       execute: jest.fn(),
@@ -49,6 +53,7 @@ describe('buildCreateGameRoute', () => {
       gameRepository: gameRepo,
       roomRepository: roomRepo,
       mapRepository: mapRepo,
+      commandRepository: commandRepo,
     });
 
     await createGame(expressRequest, expressResponse, next);
@@ -59,6 +64,7 @@ describe('buildCreateGameRoute', () => {
       roomRepo,
       gameRepo,
       mapRepo,
+      commandRepo
     );
 
     expect(createGameUseCase.execute).toHaveBeenCalledWith(body);
@@ -78,6 +84,7 @@ describe('buildCreateGameRoute', () => {
       gameRepository: gameRepo,
       roomRepository: roomRepo,
       mapRepository: mapRepo,
+      commandRepository: commandRepo,
     });
 
     await createGame(expressRequest, expressResponse, next);

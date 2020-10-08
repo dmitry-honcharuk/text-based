@@ -1,7 +1,6 @@
 name: Testing
 
-on:
-  pull_request
+on: pull_request
 
 jobs:
   test:
@@ -12,4 +11,4 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Testing
-        run: yarn test:ci:coverage
+        run: yarn test

@@ -1,5 +1,11 @@
-import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
+import {
+  GameConfig,
+  RoomConfig,
+  RoomWithExitsConfig,
+} from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
+import { RoomEntity } from '../entities/RoomEntity';
+import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
@@ -11,6 +17,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     private roomRepository: RoomRepository,
     private gameRepository: GameRepository,
     private mapRepository: MapRepository,
+    private commandRepository: CommandRepository,
   ) {}
 
   async execute(config: GameConfig) {
@@ -20,25 +27,57 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     const gameId = await this.gameRepository.createGame();
 
+    const startingRoomConfig = roomConfigs.find(
+      ({ id }) => id === config.startingRoom,
+    );
+
+    const startingRoomId = await this.roomRepository.createRoom(
+      gameId,
+      this.getRoomFromConfig(startingRoomConfig as RoomConfig),
+    );
+
     await Promise.all(
-      roomConfigs.map((room) => this.roomRepository.createRoom(gameId, room)),
+      roomConfigs
+        .filter(({ id }) => id !== config.startingRoom)
+        .map((room) =>
+          this.roomRepository.createRoom(gameId, this.getRoomFromConfig(room)),
+        ),
     );
 
     const roomsWithExits = roomConfigs.filter(
       ({ exits }) => !!exits,
     ) as RoomWithExitsConfig[];
 
-    await Promise.all(roomsWithExits.map((room) => this.addExits(room)));
+    await Promise.all(
+      roomsWithExits.map((room) => this.addExits(gameId, room)),
+    );
 
-    await this.mapRepository.createMap(gameId, config.startingRoom);
+    this.commandRepository.addCommand({
+      gameId,
+      command: 'go',
+      effect: 'PlayerLocationChange',
+    });
+
+    await this.mapRepository.createMap(gameId, startingRoomId);
 
     return gameId;
   }
 
-  private async addExits(roomConfig: RoomWithExitsConfig) {
+  private getRoomFromConfig(roomConfig: RoomConfig): RoomEntity {
+    return {
+      ...roomConfig,
+      exits:
+        roomConfig.exits?.map((exitConfig) => ({
+          ...exitConfig,
+          destinationRoomId: exitConfig.roomId,
+        })) ?? [],
+    };
+  }
+
+  private async addExits(gameId: string, roomConfig: RoomWithExitsConfig) {
     await Promise.all(
       roomConfig.exits.map((exit) =>
-        this.roomRepository.linkRooms(roomConfig.id, {
+        this.roomRepository.linkRooms(gameId, roomConfig.id, {
           id: exit.id,
           name: exit.name,
           destinationRoomId: exit.roomId,

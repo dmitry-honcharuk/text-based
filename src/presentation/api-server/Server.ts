@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express, { Express, json } from 'express';
 import { GameConfigValidator } from '../../domain/entities/GameConfigValidator';
+import { CommandRepository } from '../../domain/repositories/CommandRepository';
 import { GameRepository } from '../../domain/repositories/GameRepository';
 import { MapRepository } from '../../domain/repositories/MapRepository';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
@@ -20,6 +21,7 @@ export class Server {
     private gameConfigValidator: GameConfigValidator,
     private playerRepository: PlayerRepository,
     private mapRepository: MapRepository,
+    private commandRepository: CommandRepository,
   ) {
     this.server = express();
 
@@ -50,6 +52,7 @@ export class Server {
         gameConfigValidator: this.gameConfigValidator,
         playerRepository: this.playerRepository,
         mapRepository: this.mapRepository,
+        commandRepository: this.commandRepository,
       }),
     );
   }

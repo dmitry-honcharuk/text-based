@@ -11,14 +11,14 @@ type InputProps = {
   playerName: string;
 };
 
-export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
+export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
   constructor(
     private gameRepository: GameRepository,
     private playerRepository: PlayerRepository,
-    private mapRepository: MapRepository,
+    private mapRepository: MapRepository
   ) {}
 
-  async execute(input: InputProps) {
+  async execute(input: InputProps): Promise<string> {
     const { gameId, playerName } = input;
 
     const game = await this.gameRepository.getGameById(gameId);
@@ -31,7 +31,9 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
       throw new GameAlreadyStartedError(gameId);
     }
 
-    const startingRoomId = await this.mapRepository.getGameStartingRoomId(gameId);
+    const startingRoomId = await this.mapRepository.getGameStartingRoomId(
+      gameId
+    );
 
     if (!startingRoomId) {
       throw new NoStartingRoomError(gameId);
@@ -39,10 +41,13 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<void>> {
 
     const playerId = await this.playerRepository.createPlayer(
       gameId,
-      playerName,
+      playerName
     );
 
     await this.mapRepository.spawnPlayer(gameId, playerId, startingRoomId);
+    await this.gameRepository.addPlayer(playerId);
     await this.gameRepository.startGame(gameId);
+
+    return playerId;
   }
 }

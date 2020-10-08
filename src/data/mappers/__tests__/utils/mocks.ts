@@ -24,9 +24,10 @@ export function createPlayerEntityMapperMock(
 }
 
 export function createRoomEntityMapperMock(
-  impl?: Omit<MapperImplementations, 'fromDataToEntity'>,
+  impl?: MapperImplementations,
 ): RoomEntityMapper {
   return {
+    fromDataToEntity: jest.fn(impl?.fromDataToEntity),
     fromEntityToData: jest.fn(impl?.fromEntityToData),
   };
 }

@@ -16,7 +16,7 @@ jest.mock('../../../../domain/usecases/StartGameUseCase');
 describe('buildStartGameRoute', () => {
   let params: { gameId: string },
     body: { playerName: string },
-    expressRequest: Request,
+    expressRequest: Request<{ gameId: string }>,
     expressResponse: Response,
     gameRepo: GameRepository,
     playerRepo: PlayerRepository,
@@ -27,7 +27,9 @@ describe('buildStartGameRoute', () => {
   beforeEach(() => {
     params = { gameId: random.word() };
     body = { playerName: random.word() };
-    expressRequest = ({ params, body } as unknown) as Request;
+    expressRequest = ({ params, body } as unknown) as Request<{
+      gameId: string;
+    }>;
     expressResponse = ({
       json: jest.fn(),
     } as unknown) as Response;
@@ -81,7 +83,7 @@ describe('buildStartGameRoute', () => {
     expect(StartGameUseCase).toHaveBeenCalledWith(
       gameRepo,
       playerRepo,
-      mapRepo,
+      mapRepo
     );
 
     expect(startGameUseCase.execute).toHaveBeenCalledTimes(1);

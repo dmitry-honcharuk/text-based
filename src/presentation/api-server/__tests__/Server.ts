@@ -3,11 +3,13 @@ import express, { Express, json } from 'express';
 import { random } from 'faker';
 import { GameConfigValidator } from '../../../domain/entities/GameConfigValidator';
 import { createGameConfigValidatorMock } from '../../../domain/entities/__tests__/utils/mocks';
+import { CommandRepository } from '../../../domain/repositories/CommandRepository';
 import { GameRepository } from '../../../domain/repositories/GameRepository';
 import { MapRepository } from '../../../domain/repositories/MapRepository';
 import { PlayerRepository } from '../../../domain/repositories/PlayerRepository';
 import { RoomRepository } from '../../../domain/repositories/RoomRepository';
 import {
+  createCommandRepositoryMock,
   createGameRepositoryMock,
   createMapRepositoryMock,
   createPlayerRepositoryMock,
@@ -25,6 +27,7 @@ describe('Server', () => {
     roomRepo: RoomRepository,
     playerRepo: PlayerRepository,
     mapRepo: MapRepository,
+    commandRepo: CommandRepository,
     gameConfigValidator: GameConfigValidator,
     expressAppMock: Express;
 
@@ -33,6 +36,7 @@ describe('Server', () => {
     roomRepo = createRoomRepositoryMock();
     playerRepo = createPlayerRepositoryMock();
     mapRepo = createMapRepositoryMock();
+    commandRepo = createCommandRepositoryMock();
     gameConfigValidator = createGameConfigValidatorMock();
     expressAppMock = ({
       use: jest.fn(),
@@ -50,6 +54,7 @@ describe('Server', () => {
       gameConfigValidator,
       playerRepo,
       mapRepo,
+      commandRepo,
     );
 
     expect(() => {
@@ -66,6 +71,7 @@ describe('Server', () => {
       gameConfigValidator,
       playerRepo,
       mapRepo,
+      commandRepo,
     );
 
     server.run({ port });
@@ -92,6 +98,7 @@ describe('Server', () => {
       gameConfigValidator,
       playerRepo,
       mapRepo,
+      commandRepo,
     );
 
     server.run({ port });

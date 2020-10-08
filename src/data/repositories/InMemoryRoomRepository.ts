@@ -4,26 +4,40 @@ import {
   RoomExit,
   RoomRepository,
 } from '../../domain/repositories/RoomRepository';
+import { DeferredNullable } from '../../domain/utils/DeferredNullable';
+import { IdGenerator } from '../entities/IdGenerator';
 import { RoomData } from '../entities/RoomData';
 import { RoomEntityMapper } from '../mappers/RoomEntityMapper';
 
 export class InMemoryRoomRepository implements RoomRepository {
-  private _rooms: RoomData[] = [];
+  public readonly rooms: RoomData[] = [];
 
-  constructor(private roomMapper: RoomEntityMapper) {}
+  constructor(
+    private roomMapper: RoomEntityMapper,
+    private idGenerator: IdGenerator
+  ) {}
 
-  async createRoom(gameId: string, room: RoomEntity) {
-    this._rooms.push(this.roomMapper.fromEntityToData(room, gameId));
+  async createRoom(gameId: string, room: RoomEntity): Promise<string> {
+    const id = this.idGenerator.next();
+
+    const roomData = this.roomMapper.fromEntityToData(room, gameId);
+
+    this.rooms.push({ id, ...roomData });
+
+    return id;
   }
 
-  async linkRooms(sourceId: string, exit: RoomExit) {
-    const source = this.getRoomDataById(sourceId);
+  async linkRooms(gameId: string, sourceCustomRoomId: string, exit: RoomExit) {
+    const source = this.getRoomDataByCustomId(gameId, sourceCustomRoomId);
 
     if (!source) {
-      throw new NoRoomError(sourceId);
+      throw new NoRoomError(sourceCustomRoomId);
     }
 
-    const destination = this.getRoomDataById(exit.destinationRoomId);
+    const destination = this.getRoomDataByCustomId(
+      gameId,
+      exit.destinationRoomId
+    );
 
     if (!destination) {
       throw new NoRoomError(exit.destinationRoomId);
@@ -36,13 +50,42 @@ export class InMemoryRoomRepository implements RoomRepository {
     });
   }
 
+  async getRoomById(roomId: string): DeferredNullable<RoomEntity> {
+    const roomData = this.getRoomDataById(roomId);
+
+    if (!roomData) {
+      return null;
+    }
+
+    return this.roomMapper.fromDataToEntity(roomData);
+  }
+
+  async getRoomIdByCustomId(
+    gameId: string,
+    customRoomId: string
+  ): DeferredNullable<string> {
+    const roomData = this.rooms.find(
+      (room) => room.customId === customRoomId && room.gameId === gameId
+    );
+
+    return roomData?.id ?? null;
+  }
+
   private getRoomDataById(roomId: string): RoomData | null {
-    const room = this._rooms.find(({ id }) => id === roomId);
+    const room = this.rooms.find(({ id }) => id === roomId);
 
     return room ?? null;
   }
 
-  get rooms(): RoomData[] {
-    return this._rooms;
+  private getRoomDataByCustomId(
+    gameId: string,
+    roomCustomId: string
+  ): RoomData | null {
+    const room = this.rooms.find(
+      ({ gameId: roomGameId, customId }) =>
+        customId === roomCustomId && roomGameId === gameId
+    );
+
+    return room ?? null;
   }
 }

@@ -6,6 +6,7 @@ export type RoomDataExit = {
 
 export type RoomData = {
   id: string;
+  customId: string;
   gameId: string;
   name: string;
   description: string;
