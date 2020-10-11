@@ -1,9 +1,10 @@
 /* istanbul ignore file */
 
-import { GameDataEntityMapper } from './data/mappers/GameDataEntityMapper';
-import { PlayerDataEntityMapper } from './data/mappers/PlayerDataEntityMapper';
-import { RoomEntityDataMapper } from './data/mappers/RoomEntityDataMapper';
+import { GameEntityMapper } from './data/mappers/GameEntityMapper';
+import { PlayerEntityMapper } from './data/mappers/PlayerEntityMapper';
+import { RoomEntityMapper } from './data/mappers/RoomEntityMapper';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
+import { InMemoryMapRepository } from './data/repositories/InMemoryMapRepository';
 import { InMemoryPlayerRepository } from './data/repositories/InMemoryPlayerRepository';
 import { InMemoryRoomRepository } from './data/repositories/InMemoryRoomRepository';
 import { gameConfigValidationSchema } from './domain/entities/game-config';
@@ -15,18 +16,19 @@ import { Server } from './presentation/api-server/Server';
 
 const playerRepository = new InMemoryPlayerRepository(
   new IncrementingIdGenerator(),
-  new PlayerDataEntityMapper(),
+  new PlayerEntityMapper(),
 );
 
 const server = new Server(
   new InMemoryGameRepository(
-    new GameDataEntityMapper(),
+    new GameEntityMapper(),
     new IncrementingIdGenerator(),
     playerRepository,
   ),
-  new InMemoryRoomRepository(new RoomEntityDataMapper()),
+  new InMemoryRoomRepository(new RoomEntityMapper()),
   new GameConfigValidator(gameConfigValidationSchema),
   playerRepository,
+  new InMemoryMapRepository(new IncrementingIdGenerator()),
 );
 
 server.run({ port: 5001 });

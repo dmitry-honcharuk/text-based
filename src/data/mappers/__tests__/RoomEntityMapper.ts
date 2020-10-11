@@ -1,16 +1,18 @@
+import { random } from 'faker';
 import { createRoomEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
-import { RoomEntityDataMapper } from '../RoomEntityDataMapper';
+import { RoomEntityMapper } from '../RoomEntityMapper';
 
-describe('RoomEntityDataMapper', () => {
+describe('RoomEntityMapper', () => {
   it('should map RoomEntity to RoomData', () => {
-    const roomEntityDataMapper = new RoomEntityDataMapper();
+    const mapper = new RoomEntityMapper();
+    const gameId = random.word();
 
     const roomEntity = createRoomEntityMock();
 
-    const roomData = roomEntityDataMapper.map(roomEntity);
+    const roomData = mapper.fromEntityToData(roomEntity, gameId);
 
     expect(roomData.id).toBe(roomEntity.id);
-    expect(roomData.gameId).toBe(roomEntity.gameId);
+    expect(roomData.gameId).toBe(gameId);
     expect(roomData.description).toBe(roomEntity.description);
     expect(roomData.name).toBe(roomEntity.name);
   });

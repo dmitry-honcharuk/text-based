@@ -1,23 +1,20 @@
 import { random } from 'faker';
-import { Config as GameDataConfig, GameData } from '../../GameData';
+import { GameData } from '../../GameData';
 import { IdGenerator } from '../../IdGenerator';
-import { Config as PlayerDataConfig, PlayerData } from '../../PlayerData';
-import { Config as RoomDataConfig, RoomData } from '../../RoomData';
+import { MapData } from '../../MapData';
+import { PlayerData } from '../../PlayerData';
+import { RoomData } from '../../RoomData';
 
-export function createGameDataMock(
-  config: Partial<GameDataConfig & { isStarted: boolean }> = {},
-): GameData {
+export function createGameDataMock(config: Partial<GameData> = {}): GameData {
   const { id = random.word(), isStarted = false } = config;
 
   return {
     id,
     isStarted,
-  } as GameData;
+  };
 }
 
-export function createRoomDataMock(
-  config: Partial<RoomDataConfig> = {},
-): RoomData {
+export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
   const {
     id = random.word(),
     name = random.word(),
@@ -26,14 +23,13 @@ export function createRoomDataMock(
     exits = [],
   } = config;
 
-  return ({
+  return {
     id,
     name,
     description,
     gameId,
     exits,
-    addExit: jest.fn(),
-  } as unknown) as RoomData;
+  };
 }
 
 export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
@@ -41,7 +37,7 @@ export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
 
   return {
     next: jest.fn(() => {
-      if (ids.length >= currentIndex) {
+      if (ids.length > currentIndex) {
         return ids[currentIndex++];
       }
 
@@ -51,7 +47,7 @@ export function createIdGeneratorMock(ids: string[] = []): IdGenerator {
 }
 
 export function createPlayerDataMock(
-  config: Partial<PlayerDataConfig> = {},
+  config: Partial<PlayerData> = {},
 ): PlayerData {
   const {
     id = random.word(),
@@ -63,5 +59,19 @@ export function createPlayerDataMock(
     id,
     name,
     gameId,
+  };
+}
+
+export function createMapDataMock(config: Partial<MapData> = {}): MapData {
+  const {
+    gameId = random.word(),
+    startingRoomId = random.word(),
+    playerLocations = new Map(),
+  } = config;
+
+  return {
+    gameId,
+    startingRoomId,
+    playerLocations,
   };
 }

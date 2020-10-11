@@ -2,34 +2,33 @@ import { PlayerEntity } from '../../domain/entities/PlayerEntity';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
 import { IdGenerator } from '../entities/IdGenerator';
 import { PlayerData } from '../entities/PlayerData';
-import { PlayerDataEntityMapper } from '../mappers/PlayerDataEntityMapper';
+import { PlayerEntityMapper } from '../mappers/PlayerEntityMapper';
 
 export class InMemoryPlayerRepository implements PlayerRepository {
   public readonly players: PlayerData[] = [];
 
   constructor(
     private idGenerator: IdGenerator,
-    private playerDataEntityMapper: PlayerDataEntityMapper,
+    private playerMapper: PlayerEntityMapper,
   ) {}
 
-  async createPlayer(
-    playerName: string,
-    gameId: string,
-  ): Promise<PlayerEntity> {
-    const playerData = new PlayerData({
-      id: this.idGenerator.next(),
+  async createPlayer(gameId: string, playerName: string): Promise<string> {
+    const playerId = this.idGenerator.next();
+
+    const playerData: PlayerData = {
+      id: playerId,
       name: playerName,
       gameId,
-    });
+    };
 
     this.players.push(playerData);
 
-    return this.playerDataEntityMapper.map(playerData);
+    return playerId;
   }
 
   async getGamePlayers(gameId: string): Promise<PlayerEntity[]> {
     return this.players
       .filter((player) => player.gameId === gameId)
-      .map((player) => this.playerDataEntityMapper.map(player));
+      .map((player) => this.playerMapper.fromDataToEntity(player));
   }
 }

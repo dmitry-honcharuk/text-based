@@ -1,16 +1,16 @@
-import { GameRepository } from '../repositories/GameRepository';
-import { RoomRepository } from '../repositories/RoomRepository';
-import { RoomEntity } from '../entities/RoomEntity';
-import { UseCase } from './UseCase';
-
 import { GameConfig, RoomWithExitsConfig } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
+import { GameRepository } from '../repositories/GameRepository';
+import { MapRepository } from '../repositories/MapRepository';
+import { RoomRepository } from '../repositories/RoomRepository';
+import { UseCase } from './UseCase';
 
 export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
   constructor(
+    private gameConfigValidator: GameConfigValidator,
     private roomRepository: RoomRepository,
     private gameRepository: GameRepository,
-    private gameConfigValidator: GameConfigValidator,
+    private mapRepository: MapRepository,
   ) {}
 
   async execute(config: GameConfig) {
@@ -18,14 +18,10 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     const { rooms: roomConfigs } = config;
 
-    const game = await this.gameRepository.createGame();
+    const gameId = await this.gameRepository.createGame();
 
     await Promise.all(
-      roomConfigs.map((room) =>
-        this.roomRepository.createRoom(
-          new RoomEntity({ ...room, gameId: game.id }),
-        ),
-      ),
+      roomConfigs.map((room) => this.roomRepository.createRoom(gameId, room)),
     );
 
     const roomsWithExits = roomConfigs.filter(
@@ -34,7 +30,9 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     await Promise.all(roomsWithExits.map((room) => this.addExits(room)));
 
-    return game.id;
+    await this.mapRepository.createMap(gameId, config.startingRoom);
+
+    return gameId;
   }
 
   private async addExits(roomConfig: RoomWithExitsConfig) {
@@ -43,7 +41,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
         this.roomRepository.linkRooms(roomConfig.id, {
           id: exit.id,
           name: exit.name,
-          destinationId: exit.roomId,
+          destinationRoomId: exit.roomId,
         }),
       ),
     );

@@ -1,51 +1,52 @@
 import { random } from 'faker';
-import { createPlayerEntityMock } from '../../../domain/entities/__tests__/utils/mocks';
 import { IdGenerator } from '../../entities/IdGenerator';
 import { PlayerData } from '../../entities/PlayerData';
 import {
   createIdGeneratorMock,
   createPlayerDataMock,
 } from '../../entities/__tests__/utils/mocks';
-import { PlayerDataEntityMapper } from '../../mappers/PlayerDataEntityMapper';
-import { createPlayerDataEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
+import { PlayerEntityMapper } from '../../mappers/PlayerEntityMapper';
+import { createPlayerEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
 import { InMemoryPlayerRepository } from '../InMemoryPlayerRepository';
 
 jest.mock('../../entities/PlayerData');
 
 describe('InMemoryPlayerRepository', () => {
-  let idGenerator: IdGenerator, mapper: PlayerDataEntityMapper;
+  let idGenerator: IdGenerator, mapper: PlayerEntityMapper;
 
   beforeEach(() => {
     idGenerator = createIdGeneratorMock();
-    mapper = createPlayerDataEntityMapperMock();
+    mapper = createPlayerEntityMapperMock();
   });
 
   describe('createPlayer', () => {
     it('should create player', async () => {
-      expect.assertions(6);
+      expect.assertions(4);
 
       const playerName = random.word();
       const gameId = random.word();
-      const expectedPlayerEntity = createPlayerEntityMock();
-      const expectedPlayerData = createPlayerDataMock();
 
-      (PlayerData as jest.Mock).mockReturnValueOnce(expectedPlayerData);
-      (mapper.map as jest.Mock).mockReturnValueOnce(expectedPlayerEntity);
+      const expectedPlayerDataId = random.word();
+      const expectedPlayerData: PlayerData = {
+        id: expectedPlayerDataId,
+        name: playerName,
+        gameId,
+      };
 
-      const repo = new InMemoryPlayerRepository(idGenerator, mapper);
+      const repo = new InMemoryPlayerRepository(
+        createIdGeneratorMock([expectedPlayerDataId]),
+        mapper,
+      );
 
       expect(repo.players).toHaveLength(0);
 
-      const actualPlayerEntity = await repo.createPlayer(playerName, gameId);
+      const actualPlayerId = await repo.createPlayer(gameId, playerName);
 
       expect(repo.players).toHaveLength(1);
 
       expect(repo.players).toEqual([expectedPlayerData]);
 
-      expect(actualPlayerEntity).toBe(expectedPlayerEntity);
-
-      expect(mapper.map).toHaveBeenCalledTimes(1);
-      expect(mapper.map).toHaveBeenCalledWith(expectedPlayerData);
+      expect(actualPlayerId).toBe(expectedPlayerDataId);
     });
   });
 
@@ -85,9 +86,9 @@ describe('InMemoryPlayerRepository', () => {
       const actualPlayers = await repo.getGamePlayers('1');
 
       expect(actualPlayers).toHaveLength(2);
-      expect(mapper.map).toHaveBeenCalledTimes(2);
-      expect(mapper.map).toHaveBeenNthCalledWith(1, playerData1);
-      expect(mapper.map).toHaveBeenNthCalledWith(2, playerData2);
+      expect(mapper.fromDataToEntity).toHaveBeenCalledTimes(2);
+      expect(mapper.fromDataToEntity).toHaveBeenNthCalledWith(1, playerData1);
+      expect(mapper.fromDataToEntity).toHaveBeenNthCalledWith(2, playerData2);
     });
   });
 });

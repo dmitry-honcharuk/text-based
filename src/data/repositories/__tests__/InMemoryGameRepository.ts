@@ -11,11 +11,12 @@ import {
   createGameDataMock,
   createIdGeneratorMock,
 } from '../../entities/__tests__/utils/mocks';
-import { GameDataEntityMapper } from '../../mappers/GameDataEntityMapper';
+import { GameEntityMapper } from '../../mappers/GameEntityMapper';
+import { createGameEntityMapperMock } from '../../mappers/__tests__/utils/mocks';
 import { InMemoryGameRepository } from '../InMemoryGameRepository';
 
 describe('InMemoryGameRepository', () => {
-  let mapper: GameDataEntityMapper,
+  let mapper: GameEntityMapper,
     mappingResult: GameEntity,
     idGenerator: IdGenerator,
     playerRepo: PlayerRepository;
@@ -23,33 +24,35 @@ describe('InMemoryGameRepository', () => {
   beforeEach(() => {
     mappingResult = createGameEntityMock();
 
-    mapper = {
-      map: jest.fn(() => mappingResult),
-    };
+    mapper = createGameEntityMapperMock({
+      fromDataToEntity: () => mappingResult,
+    });
 
     idGenerator = createIdGeneratorMock();
     playerRepo = createPlayerRepositoryMock();
   });
 
   afterEach(() => {
-    (mapper.map as jest.Mock).mockClear();
+    (mapper.fromDataToEntity as jest.Mock).mockClear();
   });
 
   describe('createGame', () => {
-    it('should create a game', async () => {
+    it('should return an id of created game', async () => {
       expect.assertions(3);
+
+      const expectedGameId = random.word();
 
       const gameRepository = new InMemoryGameRepository(
         mapper,
-        idGenerator,
+        createIdGeneratorMock([expectedGameId]),
         playerRepo,
       );
 
       expect(gameRepository.games).toHaveLength(0);
 
-      const game = await gameRepository.createGame();
+      const actualGameId = await gameRepository.createGame();
 
-      expect(game).toBe(mappingResult);
+      expect(actualGameId).toBe(expectedGameId);
 
       expect(gameRepository.games).toHaveLength(1);
     });
@@ -83,7 +86,9 @@ describe('InMemoryGameRepository', () => {
         createPlayerEntityMock(),
       ];
 
-      (mapper.map as jest.Mock).mockReturnValue(expectedGameEntity);
+      (mapper.fromDataToEntity as jest.Mock).mockReturnValue(
+        expectedGameEntity,
+      );
       (playerRepo.getGamePlayers as jest.Mock).mockReturnValue(expectedPlayers);
 
       const gameRepository = new InMemoryGameRepository(
@@ -98,8 +103,8 @@ describe('InMemoryGameRepository', () => {
 
       expect(game).toBe(expectedGameEntity);
 
-      expect(mapper.map).toHaveBeenCalledTimes(1);
-      expect(mapper.map).toHaveBeenCalledWith(
+      expect(mapper.fromDataToEntity).toHaveBeenCalledTimes(1);
+      expect(mapper.fromDataToEntity).toHaveBeenCalledWith(
         expectedGameData,
         expectedPlayers,
       );
@@ -126,10 +131,12 @@ describe('InMemoryGameRepository', () => {
 
       const idGenerator = createIdGeneratorMock([gameId]);
 
-      (mapper.map as jest.Mock).mockImplementation(({ id, isStarted }) => ({
-        id,
-        isStarted,
-      }));
+      (mapper.fromDataToEntity as jest.Mock).mockImplementation(
+        ({ id, isStarted }) => ({
+          id,
+          isStarted,
+        }),
+      );
 
       const gameRepository = new InMemoryGameRepository(
         mapper,

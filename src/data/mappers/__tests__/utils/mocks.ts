@@ -1,12 +1,32 @@
-import { PlayerDataEntityMapper } from '../../PlayerDataEntityMapper';
-import { RoomEntityDataMapper } from '../../RoomEntityDataMapper';
+import { GameEntityMapper } from '../../GameEntityMapper';
+import { PlayerEntityMapper } from '../../PlayerEntityMapper';
+import { RoomEntityMapper } from '../../RoomEntityMapper';
 
-export function createRoomEntityDataMapperMock() {
-  return new RoomEntityDataMapper();
+type MapperImplementations = {
+  fromDataToEntity?: () => any;
+  fromEntityToData?: () => any;
+};
+
+export function createGameEntityMapperMock(
+  impl?: Omit<MapperImplementations, 'fromEntityToData'>,
+): GameEntityMapper {
+  return {
+    fromDataToEntity: jest.fn(impl?.fromDataToEntity),
+  };
 }
 
-export function createPlayerDataEntityMapperMock(): PlayerDataEntityMapper {
+export function createPlayerEntityMapperMock(
+  impl?: Omit<MapperImplementations, 'fromEntityToData'>,
+): PlayerEntityMapper {
   return {
-    map: jest.fn(),
+    fromDataToEntity: jest.fn(impl?.fromDataToEntity),
+  };
+}
+
+export function createRoomEntityMapperMock(
+  impl?: Omit<MapperImplementations, 'fromDataToEntity'>,
+): RoomEntityMapper {
+  return {
+    fromEntityToData: jest.fn(impl?.fromEntityToData),
   };
 }

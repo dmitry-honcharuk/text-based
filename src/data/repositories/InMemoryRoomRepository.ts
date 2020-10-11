@@ -1,38 +1,42 @@
+import { RoomEntity } from '../../domain/entities/RoomEntity';
+import { NoRoomError } from '../../domain/Errors/NoRoomError';
 import {
   RoomExit,
   RoomRepository,
 } from '../../domain/repositories/RoomRepository';
-import { RoomEntity } from '../../domain/entities/RoomEntity';
 import { RoomData } from '../entities/RoomData';
-import { RoomEntityDataMapper } from '../mappers/RoomEntityDataMapper';
-import { NoRoomError } from '../../domain/Errors/NoRoomError';
+import { RoomEntityMapper } from '../mappers/RoomEntityMapper';
 
 export class InMemoryRoomRepository implements RoomRepository {
   private _rooms: RoomData[] = [];
 
-  constructor(private roomEntityDataMapper: RoomEntityDataMapper) {}
+  constructor(private roomMapper: RoomEntityMapper) {}
 
-  async createRoom(room: RoomEntity) {
-    this._rooms.push(this.roomEntityDataMapper.map(room));
+  async createRoom(gameId: string, room: RoomEntity) {
+    this._rooms.push(this.roomMapper.fromEntityToData(room, gameId));
   }
 
   async linkRooms(sourceId: string, exit: RoomExit) {
-    const source = await this.getRoomDataById(sourceId);
+    const source = this.getRoomDataById(sourceId);
 
     if (!source) {
       throw new NoRoomError(sourceId);
     }
 
-    const destination = await this.getRoomDataById(exit.destinationId);
+    const destination = this.getRoomDataById(exit.destinationRoomId);
 
     if (!destination) {
-      throw new NoRoomError(exit.destinationId);
+      throw new NoRoomError(exit.destinationRoomId);
     }
 
-    source.addExit({ id: exit.id, name: exit.name, destination });
+    source.exits.push({
+      id: exit.id,
+      name: exit.name,
+      destinationRoomId: destination.id,
+    });
   }
 
-  private async getRoomDataById(roomId: string): Promise<RoomData | null> {
+  private getRoomDataById(roomId: string): RoomData | null {
     const room = this._rooms.find(({ id }) => id === roomId);
 
     return room ?? null;
