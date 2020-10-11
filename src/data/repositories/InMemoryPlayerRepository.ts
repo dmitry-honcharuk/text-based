@@ -12,19 +12,18 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     private playerMapper: PlayerEntityMapper,
   ) {}
 
-  async createPlayer(
-    playerName: string,
-    gameId: string,
-  ): Promise<PlayerEntity> {
+  async createPlayer(gameId: string, playerName: string): Promise<string> {
+    const playerId = this.idGenerator.next();
+
     const playerData: PlayerData = {
-      id: this.idGenerator.next(),
+      id: playerId,
       name: playerName,
       gameId,
     };
 
     this.players.push(playerData);
 
-    return this.playerMapper.fromDataToEntity(playerData);
+    return playerId;
   }
 
   async getGamePlayers(gameId: string): Promise<PlayerEntity[]> {

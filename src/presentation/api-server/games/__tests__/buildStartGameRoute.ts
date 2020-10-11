@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { random } from 'faker';
 import { GameRepository } from '../../../../domain/repositories/GameRepository';
+import { MapRepository } from '../../../../domain/repositories/MapRepository';
 import { PlayerRepository } from '../../../../domain/repositories/PlayerRepository';
 import {
   createGameRepositoryMock,
+  createMapRepositoryMock,
   createPlayerRepositoryMock,
 } from '../../../../domain/repositories/__tests__/utils/mocks';
 import { StartGameUseCase } from '../../../../domain/usecases/StartGameUseCase';
@@ -18,6 +20,7 @@ describe('buildStartGameRoute', () => {
     expressResponse: Response,
     gameRepo: GameRepository,
     playerRepo: PlayerRepository,
+    mapRepo: MapRepository,
     expressNext: NextFunction,
     startGameUseCase: StartGameUseCase;
 
@@ -31,6 +34,7 @@ describe('buildStartGameRoute', () => {
     expressNext = jest.fn();
     gameRepo = createGameRepositoryMock();
     playerRepo = createPlayerRepositoryMock();
+    mapRepo = createMapRepositoryMock();
     startGameUseCase = ({
       execute: jest.fn(),
     } as unknown) as StartGameUseCase;
@@ -53,6 +57,7 @@ describe('buildStartGameRoute', () => {
     const startGameRoute = buildStartGameRoute({
       gameRepository: gameRepo,
       playerRepository: playerRepo,
+      mapRepository: mapRepo,
     });
 
     await startGameRoute(expressRequest, expressResponse, expressNext);
@@ -67,12 +72,17 @@ describe('buildStartGameRoute', () => {
     const startGameRoute = buildStartGameRoute({
       gameRepository: gameRepo,
       playerRepository: playerRepo,
+      mapRepository: mapRepo,
     });
 
     await startGameRoute(expressRequest, expressResponse, expressNext);
 
     expect(StartGameUseCase).toHaveBeenCalledTimes(1);
-    expect(StartGameUseCase).toHaveBeenCalledWith(gameRepo, playerRepo);
+    expect(StartGameUseCase).toHaveBeenCalledWith(
+      gameRepo,
+      playerRepo,
+      mapRepo,
+    );
 
     expect(startGameUseCase.execute).toHaveBeenCalledTimes(1);
     expect(startGameUseCase.execute).toHaveBeenCalledWith({

@@ -4,6 +4,7 @@ import { GameEntityMapper } from './data/mappers/GameEntityMapper';
 import { PlayerEntityMapper } from './data/mappers/PlayerEntityMapper';
 import { RoomEntityMapper } from './data/mappers/RoomEntityMapper';
 import { InMemoryGameRepository } from './data/repositories/InMemoryGameRepository';
+import { InMemoryMapRepository } from './data/repositories/InMemoryMapRepository';
 import { InMemoryPlayerRepository } from './data/repositories/InMemoryPlayerRepository';
 import { InMemoryRoomRepository } from './data/repositories/InMemoryRoomRepository';
 import { gameConfigValidationSchema } from './domain/entities/game-config';
@@ -27,6 +28,7 @@ const server = new Server(
   new InMemoryRoomRepository(new RoomEntityMapper()),
   new GameConfigValidator(gameConfigValidationSchema),
   playerRepository,
+  new InMemoryMapRepository(new IncrementingIdGenerator()),
 );
 
 server.run({ port: 5001 });
