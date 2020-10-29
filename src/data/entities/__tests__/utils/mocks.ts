@@ -17,6 +17,7 @@ export function createGameDataMock(config: Partial<GameData> = {}): GameData {
 export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
   const {
     id = random.word(),
+    customId = random.word(),
     name = random.word(),
     description = random.word(),
     gameId = random.word(),
@@ -25,6 +26,7 @@ export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
 
   return {
     id,
+    customId,
     name,
     description,
     gameId,

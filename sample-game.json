@@ -4,7 +4,19 @@
     {
       "id": "lobby",
       "name": "Great lobby",
-      "description": "Enormous dark scary lobby"
+      "description": "Enormous dark scary lobby with only one exit west.",
+      "exits": [
+        {
+          "id": "west",
+          "name": "west",
+          "roomId": "hallway"
+        }
+      ]
+    },
+    {
+      "id": "hallway",
+      "name": "Hallway",
+      "description": "Hallway"
     }
   ]
 }

@@ -2,6 +2,7 @@ import { random } from 'faker';
 import { GameConfig } from '../../entities/game-config';
 import { GameConfigValidator } from '../../entities/GameConfigValidator';
 import {
+  createCommandRepositoryMock,
   createGameRepositoryMock,
   createMapRepositoryMock,
   createRoomRepositoryMock,
@@ -16,9 +17,15 @@ describe('CreateGameUseCase', () => {
     const roomRepo = createRoomRepositoryMock();
     const gameRepo = createGameRepositoryMock();
     const mapRepo = createMapRepositoryMock();
+    const commandRepo = createCommandRepositoryMock();
+    const startingRoomRepoId = random.word();
 
     ((gameRepo.createGame as unknown) as jest.Mock).mockReturnValue(
-      Promise.resolve(gameId),
+      Promise.resolve(gameId)
+    );
+
+    ((roomRepo.createRoom as unknown) as jest.Mock).mockReturnValueOnce(
+      Promise.resolve(startingRoomRepoId)
     );
 
     const gameConfigValidator: GameConfigValidator = ({
@@ -30,15 +37,16 @@ describe('CreateGameUseCase', () => {
       roomRepo,
       gameRepo,
       mapRepo,
+      commandRepo
     );
 
-    const startingRoomId = random.word();
+    const customStartingRoomId = random.word();
     const exitRoomId = random.word();
     const gameConfig: GameConfig = {
-      startingRoom: startingRoomId,
+      startingRoom: customStartingRoomId,
       rooms: [
         {
-          id: startingRoomId,
+          id: customStartingRoomId,
           name: random.word(),
           description: random.words(),
           exits: [
@@ -70,6 +78,6 @@ describe('CreateGameUseCase', () => {
     expect(roomRepo.linkRooms).toHaveBeenCalledTimes(1);
 
     expect(mapRepo.createMap).toHaveBeenCalledTimes(1);
-    expect(mapRepo.createMap).toHaveBeenCalledWith(gameId, startingRoomId);
+    expect(mapRepo.createMap).toHaveBeenCalledWith(gameId, startingRoomRepoId);
   });
 });

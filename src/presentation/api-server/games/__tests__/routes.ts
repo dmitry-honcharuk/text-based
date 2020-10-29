@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createGameConfigValidatorMock } from '../../../../domain/entities/__tests__/utils/mocks';
 import {
+  createCommandRepositoryMock,
   createGameRepositoryMock,
   createMapRepositoryMock,
   createPlayerRepositoryMock,
@@ -33,6 +34,7 @@ describe('Api server router', () => {
       gameConfigValidator: createGameConfigValidatorMock(),
       playerRepository: createPlayerRepositoryMock(),
       mapRepository: createMapRepositoryMock(),
+      commandRepository: createCommandRepositoryMock(),
     };
   });
 
@@ -52,10 +54,5 @@ describe('Api server router', () => {
     createRouter(dependencies);
 
     expect(expressRouter.post).toHaveBeenNthCalledWith(1, '/', createGameRoute);
-    expect(expressRouter.post).toHaveBeenNthCalledWith(
-      2,
-      '/:gameId/start',
-      startGameRoute,
-    );
   });
 });

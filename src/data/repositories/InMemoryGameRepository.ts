@@ -7,11 +7,12 @@ import { GameEntityMapper } from '../mappers/GameEntityMapper';
 
 export class InMemoryGameRepository implements GameRepository {
   public readonly games: GameData[] = [];
+  private readonly players: Set<string> = new Set();
 
   constructor(
     private gameEntityMapper: GameEntityMapper,
     private idGenerator: IdGenerator,
-    private playerRepository: PlayerRepository,
+    private playerRepository: PlayerRepository
   ) {}
 
   async createGame(): Promise<string> {
@@ -41,5 +42,13 @@ export class InMemoryGameRepository implements GameRepository {
     const players = await this.playerRepository.getGamePlayers(gameId);
 
     return this.gameEntityMapper.fromDataToEntity(gameData, players);
+  }
+
+  async addPlayer(playerId: string) {
+    this.players.add(playerId);
+  }
+
+  async hasPlayer(playerId: string): Promise<boolean> {
+    return this.players.has(playerId);
   }
 }

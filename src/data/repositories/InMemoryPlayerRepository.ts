@@ -9,7 +9,7 @@ export class InMemoryPlayerRepository implements PlayerRepository {
 
   constructor(
     private idGenerator: IdGenerator,
-    private playerMapper: PlayerEntityMapper,
+    private playerMapper: PlayerEntityMapper
   ) {}
 
   async createPlayer(gameId: string, playerName: string): Promise<string> {

@@ -6,6 +6,7 @@ import {
 import {
   buildStartGameRoute,
   Dependencies as StartGameRoute,
+  validateStartGameRoute,
 } from './buildStartGameRoute';
 
 export type Dependencies = CreateGameRoute & StartGameRoute;
@@ -14,7 +15,11 @@ export function createRouter(dependencies: Dependencies) {
   const routes = Router();
 
   routes.post('/', buildCreateGameRoute(dependencies));
-  routes.post('/:gameId/start', buildStartGameRoute(dependencies));
+  routes.post(
+    '/:gameId/start',
+    validateStartGameRoute(),
+    buildStartGameRoute(dependencies)
+  );
 
   return routes;
 }

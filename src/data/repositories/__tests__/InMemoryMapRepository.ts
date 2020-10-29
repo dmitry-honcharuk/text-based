@@ -1,4 +1,5 @@
 import { random } from 'faker';
+import { createRoomRepositoryMock } from '../../../domain/repositories/__tests__/utils/mocks';
 import { createIdGeneratorMock } from '../../entities/__tests__/utils/mocks';
 import { InMemoryMapRepository } from '../InMemoryMapRepository';
 
@@ -7,7 +8,10 @@ describe('InMemoryMapRepository', () => {
     it('should return NULL if there is no game starting room', async () => {
       expect.assertions(1);
 
-      const repo = new InMemoryMapRepository(createIdGeneratorMock());
+      const repo = new InMemoryMapRepository(
+        createIdGeneratorMock(),
+        createRoomRepositoryMock(),
+      );
 
       const actualRoomId = await repo.getGameStartingRoomId(random.word());
 
@@ -20,7 +24,10 @@ describe('InMemoryMapRepository', () => {
       const expectedGameId = random.word();
       const expectedStartingRoomId = random.word();
 
-      const repo = new InMemoryMapRepository(createIdGeneratorMock());
+      const repo = new InMemoryMapRepository(
+        createIdGeneratorMock(),
+        createRoomRepositoryMock(),
+      );
 
       await repo.createMap(expectedGameId, expectedStartingRoomId);
 
@@ -37,7 +44,10 @@ describe('InMemoryMapRepository', () => {
       const expectedGameId = random.word();
       const expectedStartingRoomId = random.word();
 
-      const repo = new InMemoryMapRepository(createIdGeneratorMock());
+      const repo = new InMemoryMapRepository(
+        createIdGeneratorMock(),
+        createRoomRepositoryMock(),
+      );
 
       expect(repo.maps).toHaveLength(0);
 
@@ -61,7 +71,10 @@ describe('InMemoryMapRepository', () => {
       const expectedGlayerId = random.word();
       const expectedRoomId = random.word();
 
-      const repo = new InMemoryMapRepository(createIdGeneratorMock());
+      const repo = new InMemoryMapRepository(
+        createIdGeneratorMock(),
+        createRoomRepositoryMock(),
+      );
 
       const result = await repo.spawnPlayer(
         expectedGameId,
@@ -79,7 +92,10 @@ describe('InMemoryMapRepository', () => {
       const expectedPlayerId = random.word();
       const expectedRoomId = random.word();
 
-      const repo = new InMemoryMapRepository(createIdGeneratorMock());
+      const repo = new InMemoryMapRepository(
+        createIdGeneratorMock(),
+        createRoomRepositoryMock(),
+      );
 
       await repo.createMap(expectedGameId, expectedRoomId);
 
