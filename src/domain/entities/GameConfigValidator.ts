@@ -1,5 +1,4 @@
 import * as Joi from 'joi';
-
 import { WrongGameConfigError } from '../Errors/WrongGameConfigError';
 import { GameConfig, RoomWithExitsConfig } from './game-config';
 
@@ -22,7 +21,7 @@ export class GameConfigValidator {
 
     if (!roomIds.includes(startingRoom)) {
       throw new WrongGameConfigError(
-        `There is no starting room configuration. ${startingRoom}`,
+        `There is no starting room configuration. (${startingRoom})`,
       );
     }
 

@@ -3,23 +3,30 @@ import TextInput from 'ink-text-input';
 import React, { FunctionComponent } from 'react';
 
 type Props = {
-  onStart: (gameId: string, name: string) => void;
+  gameId: string;
+  setGameId: (gameId: string) => void;
+  setPlayerName: (playerName: string) => void;
 };
 
-export const StartGame: FunctionComponent<Props> = ({ onStart }) => {
-  const [isIdEntered, setIdEntered] = React.useState(false);
-  const [gameId, setGameId] = React.useState('');
-  const [playerName, setPlayerName] = React.useState('');
+export const StartGame: FunctionComponent<Props> = ({
+  gameId,
+  setGameId,
+  setPlayerName,
+}) => {
+  const [gameIdInput, setGameIdInput] = React.useState('');
+  const [playerNameInput, setPlayerNameInput] = React.useState('');
 
-  const handleGameIdSubmit = (gameId: string) => {
-    if (gameId.length) {
-      setIdEntered(true);
+  const handleIdSubmit = (id: string) => {
+    if (id.length) {
+      setGameId(id);
+      setGameIdInput('');
     }
   };
 
-  const handleNameSubmit = (name: string) => {
-    if (name.length) {
-      onStart(gameId, playerName);
+  const handlePlayerSubmit = (player: string) => {
+    if (player.length) {
+      setPlayerName(player);
+      setPlayerNameInput('');
     }
   };
 
@@ -27,13 +34,13 @@ export const StartGame: FunctionComponent<Props> = ({ onStart }) => {
     <>
       <Box>
         <Box marginRight={1}>
-          <Text>Enter {isIdEntered ? 'your name' : 'game id'}:</Text>
+          <Text>Enter {gameId ? 'your name' : 'game id'}:</Text>
         </Box>
 
         <TextInput
-          value={isIdEntered ? playerName : gameId}
-          onChange={isIdEntered ? setPlayerName : setGameId}
-          onSubmit={isIdEntered ? handleNameSubmit : handleGameIdSubmit}
+          value={gameId ? playerNameInput : gameIdInput}
+          onChange={gameId ? setPlayerNameInput : setGameIdInput}
+          onSubmit={gameId ? handlePlayerSubmit : handleIdSubmit}
         />
       </Box>
     </>
