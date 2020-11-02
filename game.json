@@ -1,5 +1,9 @@
 {
   "startingRoom": "lobby",
+  "playerAttributes": [
+    { "name": "hp", "value": 10 },
+    { "name": "stamina", "value": 20 }
+  ],
   "rooms": [
     {
       "id": "lobby",

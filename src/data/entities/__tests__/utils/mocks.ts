@@ -1,4 +1,5 @@
 import { random } from 'faker';
+import { createEntityAttributesMock } from '../../../../domain/entities/__tests__/utils/mocks';
 import { GameData } from '../../GameData';
 import { IdGenerator } from '../../IdGenerator';
 import { MapData } from '../../MapData';
@@ -55,12 +56,14 @@ export function createPlayerDataMock(
     id = random.word(),
     name = random.word(),
     gameId = random.word(),
+    attributes = createEntityAttributesMock(),
   } = config;
 
   return {
     id,
     name,
     gameId,
+    attributes,
   };
 }
 

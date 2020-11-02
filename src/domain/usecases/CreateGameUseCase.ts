@@ -23,12 +23,18 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
   async execute(config: GameConfig) {
     this.gameConfigValidator.validate(config);
 
-    const { rooms: roomConfigs } = config;
+    const {
+      rooms: roomConfigs,
+      startingRoom: startingRoom,
+      playerAttributes = [],
+    } = config;
 
     const gameId = await this.gameRepository.createGame();
 
+    await this.gameRepository.setDefaultPlayerAttributes(playerAttributes);
+
     const startingRoomConfig = roomConfigs.find(
-      ({ id }) => id === config.startingRoom,
+      ({ id }) => id === startingRoom,
     );
 
     const startingRoomId = await this.roomRepository.createRoom(
@@ -38,7 +44,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     await Promise.all(
       roomConfigs
-        .filter(({ id }) => id !== config.startingRoom)
+        .filter(({ id }) => id !== startingRoom)
         .map((room) =>
           this.roomRepository.createRoom(gameId, this.getRoomFromConfig(room)),
         ),

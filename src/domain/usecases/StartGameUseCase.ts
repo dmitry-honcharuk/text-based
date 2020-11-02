@@ -15,7 +15,7 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
   constructor(
     private gameRepository: GameRepository,
     private playerRepository: PlayerRepository,
-    private mapRepository: MapRepository
+    private mapRepository: MapRepository,
   ) {}
 
   async execute(input: InputProps): Promise<string> {
@@ -32,7 +32,7 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
     }
 
     const startingRoomId = await this.mapRepository.getGameStartingRoomId(
-      gameId
+      gameId,
     );
 
     if (!startingRoomId) {
@@ -41,7 +41,8 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
 
     const playerId = await this.playerRepository.createPlayer(
       gameId,
-      playerName
+      playerName,
+      game.defaultPlayerAttributes,
     );
 
     await this.mapRepository.spawnPlayer(gameId, playerId, startingRoomId);

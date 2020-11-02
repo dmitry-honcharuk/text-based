@@ -1,8 +1,9 @@
-import * as Joi from 'joi';
+import Joi from 'joi';
 
 export interface GameConfig {
   startingRoom: string;
   rooms: RoomConfig[];
+  playerAttributes?: ConfigAttribute[];
 }
 
 export interface RoomConfig {
@@ -22,8 +23,21 @@ export interface RoomExitConfig {
   roomId: string;
 }
 
+export interface ConfigAttribute {
+  name: string;
+  value: number;
+}
+
+const attributesValidation = Joi.array().items(
+  Joi.object({
+    name: Joi.string().required(),
+    value: Joi.number().required(),
+  }),
+);
+
 export const gameConfigValidationSchema = Joi.object({
   startingRoom: Joi.string().required(),
+  playerAttributes: attributesValidation.optional(),
   rooms: Joi.array()
     .items(
       Joi.object({

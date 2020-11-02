@@ -21,7 +21,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private mapRepo: MapRepository,
     private commandRepo: CommandRepository,
     private roomReppo: RoomRepository,
-    private gameRepo: GameRepository
+    private gameRepo: GameRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {

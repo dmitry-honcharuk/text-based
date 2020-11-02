@@ -1,3 +1,4 @@
+import { ConfigAttribute } from '../entities/game-config';
 import { GameEntity } from '../entities/GameEntity';
 import { DeferredNullable } from '../utils/DeferredNullable';
 
@@ -7,4 +8,5 @@ export interface GameRepository {
   startGame(gameId: string): Promise<void>;
   addPlayer(playerId: string): DeferredNullable<void>;
   hasPlayer(playerId: string): Promise<boolean>;
+  setDefaultPlayerAttributes(attributes: ConfigAttribute[]): Promise<void>;
 }

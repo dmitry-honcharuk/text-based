@@ -1,3 +1,4 @@
+import { EntityAttributes } from '../../domain/entities/EntityAttributes';
 import { PlayerEntity } from '../../domain/entities/PlayerEntity';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
 import { IdGenerator } from '../entities/IdGenerator';
@@ -9,16 +10,21 @@ export class InMemoryPlayerRepository implements PlayerRepository {
 
   constructor(
     private idGenerator: IdGenerator,
-    private playerMapper: PlayerEntityMapper
+    private playerMapper: PlayerEntityMapper,
   ) {}
 
-  async createPlayer(gameId: string, playerName: string): Promise<string> {
+  async createPlayer(
+    gameId: string,
+    playerName: string,
+    attributes: EntityAttributes,
+  ): Promise<string> {
     const playerId = this.idGenerator.next();
 
     const playerData: PlayerData = {
       id: playerId,
       name: playerName,
       gameId,
+      attributes,
     };
 
     this.players.push(playerData);

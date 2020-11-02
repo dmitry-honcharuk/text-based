@@ -5,6 +5,7 @@ export class PlayerEntityMapper {
   fromDataToEntity(playerData: PlayerData): PlayerEntity {
     return {
       name: playerData.name,
+      attributes: playerData.attributes,
     };
   }
 }

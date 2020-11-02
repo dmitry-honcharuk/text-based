@@ -11,6 +11,7 @@ export function createGameRepositoryMock(): GameRepository {
     startGame: jest.fn(),
     addPlayer: jest.fn(),
     hasPlayer: jest.fn(),
+    setDefaultPlayerAttributes: jest.fn(),
   };
 }
 

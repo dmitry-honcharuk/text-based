@@ -107,6 +107,7 @@ describe('InMemoryGameRepository', () => {
       expect(mapper.fromDataToEntity).toHaveBeenCalledWith(
         expectedGameData,
         expectedPlayers,
+        gameRepository.defaultPlayerAttributes,
       );
     });
 
