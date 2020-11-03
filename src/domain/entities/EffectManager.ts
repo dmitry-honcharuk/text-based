@@ -12,7 +12,7 @@ export class EffectManager {
   ) {}
 
   getEffect(effectType: EffectType): Effect {
-    if (effectType === 'PlayerLocationChange') {
+    if (effectType === EffectType.PlayerLocationChange) {
       return new PlayerPositionChangeEffect(
         this.mapRepository,
         this.roomRepository,

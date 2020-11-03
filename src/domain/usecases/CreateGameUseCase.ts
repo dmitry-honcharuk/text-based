@@ -1,3 +1,4 @@
+import { EffectType } from '../Effects/EffectType';
 import {
   GameConfig,
   RoomConfig,
@@ -61,7 +62,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     this.commandRepository.addCommand({
       gameId,
       command: 'go',
-      effect: 'PlayerLocationChange',
+      effect: EffectType.PlayerLocationChange,
     });
 
     await this.mapRepository.createMap(gameId, startingRoomId);

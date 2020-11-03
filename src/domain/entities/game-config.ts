@@ -1,9 +1,10 @@
 import Joi from 'joi';
+import { EffectType } from '../Effects/EffectType';
 
 export interface GameConfig {
   startingRoom: string;
   rooms: RoomConfig[];
-  playerAttributes?: ConfigAttribute[];
+  playerAttributes?: AttributeConfig[];
 }
 
 export interface RoomConfig {
@@ -23,21 +24,30 @@ export interface RoomExitConfig {
   roomId: string;
 }
 
-export interface ConfigAttribute {
+export interface TriggerConfig {
+  command: string;
+  effects: {
+    [EffectType.AttributeDecrease]?: AttributeDecreaseEffectConfig;
+  };
+}
+
+type AttributeDecreaseEffectConfig = {
+  attribute: string;
+} & ({ value: number } | { attributeValue: string });
+
+export interface AttributeConfig {
   name: string;
   value: number;
 }
 
-const attributesValidation = Joi.array().items(
-  Joi.object({
-    name: Joi.string().required(),
-    value: Joi.number().required(),
-  }),
-);
+const attributeValidation = Joi.object({
+  name: Joi.string().required(),
+  value: Joi.number().required(),
+});
 
 export const gameConfigValidationSchema = Joi.object({
   startingRoom: Joi.string().required(),
-  playerAttributes: attributesValidation.optional(),
+  playerAttributes: Joi.array().items(attributeValidation).optional(),
   rooms: Joi.array()
     .items(
       Joi.object({
