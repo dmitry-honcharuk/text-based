@@ -1,6 +1,6 @@
-import { Box, Text } from 'ink';
-import TextInput from 'ink-text-input';
+import { Text } from 'ink';
 import React, { FunctionComponent } from 'react';
+import { TextField } from '../TextField/TextField';
 
 type Props = {
   setConfigPath: (configPath: string) => void;
@@ -17,19 +17,16 @@ export const CreateGame: FunctionComponent<Props> = ({ setConfigPath }) => {
   };
 
   return (
-    <>
-      <Box>
-        <Box marginRight={1}>
+    <TextField
+      label={
+        <>
           <Text>Enter path to game config: </Text>
           <Text color='gray'>[{DEFAULT_PATH}]</Text>
-        </Box>
-
-        <TextInput
-          value={pathInput}
-          onChange={setPathInput}
-          onSubmit={handlePathSubmit}
-        />
-      </Box>
-    </>
+        </>
+      }
+      value={pathInput}
+      onChange={setPathInput}
+      onSubmit={handlePathSubmit}
+    />
   );
 };

@@ -1,6 +1,5 @@
-import { Box, Text } from 'ink';
-import TextInput from 'ink-text-input';
 import React, { FunctionComponent } from 'react';
+import { TextField } from '../TextField/TextField';
 
 type Props = {
   gameId: string;
@@ -31,18 +30,11 @@ export const StartGame: FunctionComponent<Props> = ({
   };
 
   return (
-    <>
-      <Box>
-        <Box marginRight={1}>
-          <Text>Enter {gameId ? 'your name' : 'game id'}:</Text>
-        </Box>
-
-        <TextInput
-          value={gameId ? playerNameInput : gameIdInput}
-          onChange={gameId ? setPlayerNameInput : setGameIdInput}
-          onSubmit={gameId ? handlePlayerSubmit : handleIdSubmit}
-        />
-      </Box>
-    </>
+    <TextField
+      label={`Enter ${gameId ? 'your name' : 'game id'}: `}
+      value={gameId ? playerNameInput : gameIdInput}
+      onChange={gameId ? setPlayerNameInput : setGameIdInput}
+      onSubmit={gameId ? handlePlayerSubmit : handleIdSubmit}
+    />
   );
 };
