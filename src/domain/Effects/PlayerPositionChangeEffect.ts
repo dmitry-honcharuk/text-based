@@ -1,25 +1,23 @@
-import { NoPlayerRoomError } from '../Errors/NoPlayerRoomError';
 import { NoRoomError } from '../Errors/NoRoomError';
 import { WrongMovementDirection } from '../Errors/WrongMovementDirection';
 import { MapRepository } from '../repositories/MapRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
-import { Effect } from './Effect';
+import { Effect, Options } from './Effect';
 
 export class PlayerPositionChangeEffect implements Effect {
   constructor(
     private mapRepository: MapRepository,
-    private roomRepository: RoomRepository
+    private roomRepository: RoomRepository,
   ) {}
 
-  async execute(gameId: string, playerId: string, targets: string[]) {
-    const playerRoom = await this.mapRepository.getPlayerRoom(gameId, playerId);
-
-    if (!playerRoom) {
-      throw new NoPlayerRoomError(playerId);
-    }
-
+  async execute({
+    gameId,
+    playerRoom,
+    issuerId: playerId,
+    possibleTargets: targets,
+  }: Options) {
     const exit = playerRoom.exits.find(
-      ({ id, name }) => targets.includes(id) || targets.includes(name)
+      ({ id, name }) => targets.includes(id) || targets.includes(name),
     );
 
     if (!exit) {
@@ -28,7 +26,7 @@ export class PlayerPositionChangeEffect implements Effect {
 
     const destinationRoomId = await this.roomRepository.getRoomIdByCustomId(
       gameId,
-      exit.destinationRoomId
+      exit.destinationRoomId,
     );
 
     if (!destinationRoomId) {
@@ -38,7 +36,7 @@ export class PlayerPositionChangeEffect implements Effect {
     await this.mapRepository.setPlayerLocation(
       gameId,
       playerId,
-      destinationRoomId
+      destinationRoomId,
     );
   }
 }

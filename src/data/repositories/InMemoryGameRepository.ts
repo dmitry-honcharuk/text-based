@@ -1,5 +1,7 @@
-import { EntityAttributes } from '../../domain/entities/EntityAttributes';
-import { ConfigAttribute } from '../../domain/entities/game-config';
+import {
+  AttributeConfig,
+  EntityAttributes,
+} from '../../domain/entities/EntityAttributes';
 import { GameEntity } from '../../domain/entities/GameEntity';
 import { GameRepository } from '../../domain/repositories/GameRepository';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
@@ -60,7 +62,7 @@ export class InMemoryGameRepository implements GameRepository {
   }
 
   async setDefaultPlayerAttributes(
-    attributes: ConfigAttribute[],
+    attributes: AttributeConfig[],
   ): Promise<void> {
     for (const attribute of attributes) {
       this.defaultPlayerAttributes.set(attribute.name, attribute.value);

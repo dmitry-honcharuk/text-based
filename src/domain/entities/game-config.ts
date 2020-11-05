@@ -1,5 +1,7 @@
 import Joi from 'joi';
 import { EffectType } from '../Effects/EffectType';
+import { TriggerConfig } from './EffectTrigger';
+import { AttributeConfig } from './EntityAttributes';
 
 export interface GameConfig {
   startingRoom: string;
@@ -12,6 +14,7 @@ export interface RoomConfig {
   name: string;
   description: string;
   exits?: RoomExitConfig[];
+  objects?: ObjectConfig[];
 }
 
 export interface RoomWithExitsConfig extends RoomConfig {
@@ -24,25 +27,34 @@ export interface RoomExitConfig {
   roomId: string;
 }
 
-export interface TriggerConfig {
-  command: string;
-  effects: {
-    [EffectType.AttributeDecrease]?: AttributeDecreaseEffectConfig;
-  };
-}
-
-type AttributeDecreaseEffectConfig = {
-  attribute: string;
-} & ({ value: number } | { attributeValue: string });
-
-export interface AttributeConfig {
+export interface ObjectConfig {
+  id: string;
   name: string;
-  value: number;
+  attributes?: AttributeConfig[];
+  triggers: TriggerConfig[];
 }
 
 const attributeValidation = Joi.object({
   name: Joi.string().required(),
   value: Joi.number().required(),
+});
+
+const triggerValidation = Joi.object({
+  command: Joi.string().required(),
+  effects: Joi.object({
+    [EffectType.AttributeDecrease]: Joi.object({
+      attribute: Joi.string().required(),
+      value: Joi.number(),
+      attributeValue: Joi.string(),
+    }).xor('value', 'attributeValue'),
+  }).required(),
+});
+
+const objectValidation = Joi.object({
+  id: Joi.string().required(),
+  name: Joi.string().required(),
+  attributes: Joi.array().items(attributeValidation).optional(),
+  triggers: Joi.array().items(triggerValidation).required(),
 });
 
 export const gameConfigValidationSchema = Joi.object({
@@ -63,6 +75,7 @@ export const gameConfigValidationSchema = Joi.object({
             }),
           )
           .optional(),
+        objects: Joi.array().items(objectValidation).optional(),
       }).required(),
     )
     .required(),

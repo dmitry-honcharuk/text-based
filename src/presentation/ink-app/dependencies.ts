@@ -4,6 +4,7 @@ import { RoomEntityMapper } from '../../data/mappers/RoomEntityMapper';
 import { InMemoryCommandRepository } from '../../data/repositories/InMemoryCommandRepository';
 import { InMemoryGameRepository } from '../../data/repositories/InMemoryGameRepository';
 import { InMemoryMapRepository } from '../../data/repositories/InMemoryMapRepository';
+import { InMemoryObjectRepository } from '../../data/repositories/InMemoryObjectRepository';
 import { InMemoryPlayerRepository } from '../../data/repositories/InMemoryPlayerRepository';
 import { InMemoryRoomRepository } from '../../data/repositories/InMemoryRoomRepository';
 import { IncrementingIdGenerator } from '../../IncrementingIdGenerator';
@@ -29,4 +30,6 @@ export const mapRepo = new InMemoryMapRepository(
   roomRepo,
 );
 
-export const commandRepo = new InMemoryCommandRepository();
+export const objectRepo = new InMemoryObjectRepository();
+
+export const commandRepo = new InMemoryCommandRepository(objectRepo);

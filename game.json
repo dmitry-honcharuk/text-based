@@ -20,7 +20,24 @@
     {
       "id": "hallway",
       "name": "Hallway",
-      "description": "Hallway"
+      "description": "Hallway",
+      "objects": [
+        {
+          "id": "final-boss",
+          "name": "Huge stupid orc",
+          "triggers": [
+            {
+              "command": "attack",
+              "effects": {
+                "attributeDecrease": {
+                  "attribute": "hp",
+                  "value": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

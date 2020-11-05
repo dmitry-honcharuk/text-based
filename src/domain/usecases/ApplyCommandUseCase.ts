@@ -3,10 +3,12 @@ import { EffectManager } from '../entities/EffectManager';
 import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 import { NoGameError } from '../Errors/NoGameError';
 import { NoPlayerInGameError } from '../Errors/NoPlayerInGameError';
+import { NoPlayerRoomError } from '../Errors/NoPlayerRoomError';
 import { UnknownEffectError } from '../Errors/UnknownEffectError';
 import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
+import { ObjectRepository } from '../repositories/ObjectRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
 
@@ -22,6 +24,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private commandRepo: CommandRepository,
     private roomReppo: RoomRepository,
     private gameRepo: GameRepository,
+    private objectRepo: ObjectRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {
@@ -41,11 +44,49 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       throw new NoPlayerInGameError(gameId, issuerId);
     }
 
+    const roomIdPair = await this.mapRepo.getPlayerRoom(gameId, issuerId);
+
+    if (!roomIdPair) {
+      throw new NoPlayerRoomError(issuerId);
+    }
+
+    const [playerRoomId, playerRoom] = roomIdPair;
+
     const commandParser = new CommandParser();
-    const effectManager = new EffectManager(this.mapRepo, this.roomReppo);
+    const effectManager = new EffectManager(
+      this.mapRepo,
+      this.roomReppo,
+      this.objectRepo,
+    );
 
     const [command, possibleTargets] = commandParser.parse(commandInput);
-    const effectType = await this.commandRepo.getEffect({ gameId, command });
+    const roomEffects = await this.commandRepo.getRoomEffects({
+      roomId: playerRoomId,
+      command,
+    });
+
+    if (roomEffects.length === 0) {
+      throw new UnknownEffectError(command);
+    }
+
+    for (const { effectType, object, context } of roomEffects) {
+      const effect = effectManager.getObjectEffect(effectType, object, context);
+
+      try {
+        return await effect.execute({
+          gameId,
+          issuerId,
+          issuerRoomId: playerRoomId,
+          playerRoom,
+          possibleTargets,
+        });
+      } catch (e) {}
+    }
+
+    const effectType = await this.commandRepo.getGlobalEffect({
+      gameId,
+      command,
+    });
 
     if (!effectType) {
       throw new UnknownEffectError(command);
@@ -53,6 +94,12 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
 
     const effect = effectManager.getEffect(effectType);
 
-    await effect.execute(gameId, issuerId, possibleTargets);
+    await effect.execute({
+      gameId,
+      issuerId,
+      issuerRoomId: playerRoomId,
+      playerRoom,
+      possibleTargets,
+    });
   }
 }

@@ -43,7 +43,7 @@ export function createMapRepositoryMock(): MapRepository {
 
 export function createCommandRepositoryMock(): CommandRepository {
   return {
-    addCommand: jest.fn(),
-    getEffect: jest.fn(),
+    addGlobalCommand: jest.fn(),
+    getGlobalEffect: jest.fn(),
   };
 }
