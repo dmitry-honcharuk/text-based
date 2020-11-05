@@ -5,6 +5,7 @@ import {
   createCommandRepositoryMock,
   createGameRepositoryMock,
   createMapRepositoryMock,
+  createObjectRepositoryMock,
   createRoomRepositoryMock,
 } from '../../repositories/__tests__/utils/mocks';
 import { CreateGameUseCase } from '../CreateGameUseCase';
@@ -18,14 +19,16 @@ describe('CreateGameUseCase', () => {
     const gameRepo = createGameRepositoryMock();
     const mapRepo = createMapRepositoryMock();
     const commandRepo = createCommandRepositoryMock();
+    const objectRepo = createObjectRepositoryMock();
+
     const startingRoomRepoId = random.word();
 
     ((gameRepo.createGame as unknown) as jest.Mock).mockReturnValue(
-      Promise.resolve(gameId)
+      Promise.resolve(gameId),
     );
 
     ((roomRepo.createRoom as unknown) as jest.Mock).mockReturnValueOnce(
-      Promise.resolve(startingRoomRepoId)
+      Promise.resolve(startingRoomRepoId),
     );
 
     const gameConfigValidator: GameConfigValidator = ({
@@ -37,7 +40,8 @@ describe('CreateGameUseCase', () => {
       roomRepo,
       gameRepo,
       mapRepo,
-      commandRepo
+      commandRepo,
+      objectRepo,
     );
 
     const customStartingRoomId = random.word();
