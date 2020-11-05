@@ -4,6 +4,7 @@ import { join } from 'path';
 import React, { FunctionComponent } from 'react';
 import { createGame } from '../../services/createGame';
 import { startGame } from '../../services/startGame';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { CreateGame } from './CreateGame';
 import { MAIN_MENU_ITEMS } from './menu-items';
 import { Option } from './MenuOptions';
@@ -62,11 +63,7 @@ export const StartScreen: FunctionComponent<Props> = ({ onGameStart }) => {
 
   return (
     <>
-      {!!error && (
-        <Box borderStyle='bold' borderColor='red' paddingX={1}>
-          <Text>{error}</Text>
-        </Box>
-      )}
+      <ErrorMessage message={error} />
       <Box borderStyle='classic' padding={1} justifyContent='center'>
         <Text bold>Text based</Text>
       </Box>
