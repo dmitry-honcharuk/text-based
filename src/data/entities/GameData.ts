@@ -1,4 +1,7 @@
+import { GameOptions, GameStatus } from '../../domain/entities/GameEntity';
+
 export type GameData = {
   id: string;
-  isStarted: boolean;
+  status: GameStatus;
+  options: GameOptions;
 };

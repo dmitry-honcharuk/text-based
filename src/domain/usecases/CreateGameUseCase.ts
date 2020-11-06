@@ -36,7 +36,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       playerAttributes = [],
     } = config;
 
-    const gameId = await this.gameRepository.createGame();
+    const gameId = await this.gameRepository.createGame(config.game);
 
     await this.gameRepository.setDefaultPlayerAttributes(playerAttributes);
 
@@ -44,16 +44,12 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       ({ id }) => id === startingRoom,
     );
 
-    const startingRoomId = await this.roomRepository.createRoom(
-      gameId,
-      getRoomFromConfig(startingRoomConfig as RoomConfig),
-    );
-
-    await Promise.all(
-      roomConfigs
+    const [startingRoomId] = await Promise.all([
+      this.createRoom(gameId, startingRoomConfig as RoomConfig),
+      ...roomConfigs
         .filter(({ id }) => id !== startingRoom)
         .map((room) => this.createRoom(gameId, room)),
-    );
+    ]);
 
     const roomsWithExits = roomConfigs.filter(
       ({ exits }) => !!exits,
@@ -63,7 +59,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       roomsWithExits.map((room) => this.addExits(gameId, room)),
     );
 
-    this.commandRepository.addGlobalCommand({
+    await this.commandRepository.addGlobalCommand({
       gameId,
       command: 'go',
       effect: EffectType.PlayerLocationChange,
@@ -95,6 +91,8 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     if (room.objects) {
       await this.createObjects(roomId, room.objects);
     }
+
+    return roomId;
   }
 
   private async createObjects(roomId: string, objects: ObjectConfig[]) {

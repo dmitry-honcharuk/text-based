@@ -2,8 +2,15 @@ import {
   AttributeConfig,
   EntityAttributes,
 } from '../../domain/entities/EntityAttributes';
-import { GameEntity } from '../../domain/entities/GameEntity';
-import { GameRepository } from '../../domain/repositories/GameRepository';
+import {
+  GameEntity,
+  GameOptions,
+  GameStatus,
+} from '../../domain/entities/GameEntity';
+import {
+  GameRepository,
+  UpdateGameFields,
+} from '../../domain/repositories/GameRepository';
 import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
 import { GameData } from '../entities/GameData';
 import { IdGenerator } from '../entities/IdGenerator';
@@ -20,9 +27,13 @@ export class InMemoryGameRepository implements GameRepository {
     private playerRepository: PlayerRepository,
   ) {}
 
-  async createGame(): Promise<string> {
+  async createGame(options: GameOptions): Promise<string> {
     const id = this.idGenerator.next();
-    const gameDataEntity: GameData = { id, isStarted: false };
+    const gameDataEntity: GameData = {
+      id,
+      options,
+      status: GameStatus.Pending,
+    };
 
     this.games.push(gameDataEntity);
 
@@ -33,7 +44,7 @@ export class InMemoryGameRepository implements GameRepository {
     const game = this.games.find(({ id }) => id === gameId);
 
     if (game) {
-      game.isStarted = true;
+      game.status = GameStatus.Started;
     }
   }
 
@@ -67,5 +78,14 @@ export class InMemoryGameRepository implements GameRepository {
     for (const attribute of attributes) {
       this.defaultPlayerAttributes.set(attribute.name, attribute.value);
     }
+  }
+
+  async updateGame(gameId: string, fields: UpdateGameFields): Promise<void> {
+    const index = this.games.findIndex(({ id }) => id === gameId);
+
+    this.games[index] = {
+      ...this.games[index],
+      ...fields,
+    };
   }
 }

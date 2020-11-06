@@ -10,9 +10,10 @@ export class GameEntityMapper {
     defaultPlayerAttributes: EntityAttributes,
   ): GameEntity {
     return {
-      isStarted: dataEntity.isStarted,
       players,
       defaultPlayerAttributes,
+      status: dataEntity.status,
+      options: dataEntity.options,
     };
   }
 }

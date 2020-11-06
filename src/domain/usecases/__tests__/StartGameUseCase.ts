@@ -1,4 +1,5 @@
 import { random } from 'faker';
+import { GameStatus } from '../../entities/GameEntity';
 import {
   createEntityAttributesMock,
   createGameEntityMock,
@@ -43,7 +44,7 @@ describe('StartGameUseCase', () => {
     expect.assertions(1);
 
     const gameId = random.word();
-    const gameEntity = createGameEntityMock({ isStarted: true });
+    const gameEntity = createGameEntityMock({ status: GameStatus.Started });
 
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);
 

@@ -13,6 +13,7 @@ export function createGameRepositoryMock(): GameRepository {
     addPlayer: jest.fn(),
     hasPlayer: jest.fn(),
     setDefaultPlayerAttributes: jest.fn(),
+    updateGame: jest.fn(),
   };
 }
 
@@ -22,6 +23,7 @@ export function createRoomRepositoryMock(): RoomRepository {
     createRoom: jest.fn(),
     linkRooms: jest.fn(),
     getRoomIdByCustomId: jest.fn(),
+    getGameRoomIds: jest.fn(),
   };
 }
 
@@ -56,5 +58,6 @@ export function createObjectRepositoryMock(): ObjectRepository {
     createObject: jest.fn(),
     getRoomObject: jest.fn(),
     updateObjectAttribute: jest.fn(),
+    getObjectsFromRooms: jest.fn(),
   };
 }

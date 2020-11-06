@@ -1,9 +1,12 @@
 import Joi from 'joi';
 import { EffectType } from '../Effects/EffectType';
+import { ConditionType } from './Condition';
 import { TriggerConfig } from './EffectTrigger';
 import { AttributeConfig } from './EntityAttributes';
+import { GameOptions } from './GameEntity';
 
 export interface GameConfig {
+  game: GameOptions;
   startingRoom: string;
   rooms: RoomConfig[];
   playerAttributes?: AttributeConfig[];
@@ -57,7 +60,29 @@ const objectValidation = Joi.object({
   triggers: Joi.array().items(triggerValidation).required(),
 });
 
+const attributeValueReachConditionValidation = Joi.object({
+  target: Joi.string().required(),
+  attribute: Joi.string().required(),
+  value: Joi.number().required(),
+}).required();
+
+const conditionValidation = Joi.object({
+  condition: Joi.string().valid(...Object.values(ConditionType)),
+  options: Joi.alternatives().conditional('condition', {
+    switch: [
+      {
+        is: ConditionType.AttributeValueReach,
+        then: attributeValueReachConditionValidation,
+      },
+    ],
+  }),
+});
+
 export const gameConfigValidationSchema = Joi.object({
+  game: Joi.object({
+    winConditions: Joi.array().items(conditionValidation).required(),
+    looseConditions: Joi.array().items(conditionValidation).required(),
+  }).required(),
   startingRoom: Joi.string().required(),
   playerAttributes: Joi.array().items(attributeValidation).optional(),
   rooms: Joi.array()

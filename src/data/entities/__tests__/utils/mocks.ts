@@ -1,5 +1,9 @@
 import { random } from 'faker';
-import { createEntityAttributesMock } from '../../../../domain/entities/__tests__/utils/mocks';
+import { GameStatus } from '../../../../domain/entities/GameEntity';
+import {
+  createEntityAttributesMock,
+  createGameOptionsMock,
+} from '../../../../domain/entities/__tests__/utils/mocks';
 import { GameData } from '../../GameData';
 import { IdGenerator } from '../../IdGenerator';
 import { MapData } from '../../MapData';
@@ -7,11 +11,16 @@ import { PlayerData } from '../../PlayerData';
 import { RoomData } from '../../RoomData';
 
 export function createGameDataMock(config: Partial<GameData> = {}): GameData {
-  const { id = random.word(), isStarted = false } = config;
+  const {
+    id = random.word(),
+    status = GameStatus.Pending,
+    options = createGameOptionsMock(),
+  } = config;
 
   return {
     id,
-    isStarted,
+    status,
+    options,
   };
 }
 

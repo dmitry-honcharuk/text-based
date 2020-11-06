@@ -1,6 +1,7 @@
 import { random } from 'faker';
-import { GameConfigValidator } from '../GameConfigValidator';
 import { GameConfig, gameConfigValidationSchema } from '../game-config';
+import { GameConfigValidator } from '../GameConfigValidator';
+import { createGameOptionsMock } from './utils/mocks';
 
 describe('GameConfigValidator', () => {
   let validator: GameConfigValidator;
@@ -216,7 +217,7 @@ describe('GameConfigValidator', () => {
     }).toThrowError();
   });
 
-  it('should throw if there is no exit roomId', () => {
+  it('should throw if there is no exit playerRoomId', () => {
     const startingRoomId = random.word();
 
     const startingRoom = {
@@ -248,7 +249,7 @@ describe('GameConfigValidator', () => {
     }).toThrowError();
   });
 
-  it('should NOT throw', () => {
+  it('should throw if there is no game config', () => {
     const startingRoomId = random.word();
     const secondRoomId = random.word();
 
@@ -274,6 +275,39 @@ describe('GameConfigValidator', () => {
       startingRoom: startingRoomId,
       rooms: [startingRoom, secondRoom],
     } as GameConfig;
+
+    expect(() => {
+      validator.validate(config);
+    }).toThrowError();
+  });
+
+  it('should NOT throw', () => {
+    const startingRoomId = random.word();
+    const secondRoomId = random.word();
+
+    const startingRoom = {
+      id: startingRoomId,
+      name: random.word(),
+      description: random.word(),
+      exits: [
+        {
+          id: random.word(),
+          name: random.word(),
+          roomId: secondRoomId,
+        },
+      ],
+    };
+    const secondRoom = {
+      id: secondRoomId,
+      name: random.word(),
+      description: random.word(),
+    };
+
+    const config: GameConfig = {
+      game: createGameOptionsMock(),
+      startingRoom: startingRoomId,
+      rooms: [startingRoom, secondRoom],
+    };
 
     expect(() => {
       validator.validate(config);
