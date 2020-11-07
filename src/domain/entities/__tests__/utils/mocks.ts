@@ -1,6 +1,7 @@
 import { random } from 'faker';
+import { EntityAttributes } from '../../EntityAttributes';
 import { GameConfigValidator } from '../../GameConfigValidator';
-import { GameEntity } from '../../GameEntity';
+import { GameEntity, GameOptions, GameStatus } from '../../GameEntity';
 import { MapEntity } from '../../MapEntity';
 import { PlayerEntity } from '../../PlayerEntity';
 import { RoomEntity, RoomEntityExit } from '../../RoomEntity';
@@ -8,11 +9,25 @@ import { RoomEntity, RoomEntityExit } from '../../RoomEntity';
 export function createGameEntityMock(
   config: Partial<GameEntity> = {},
 ): GameEntity {
-  const { isStarted = false, players = [] } = config;
+  const {
+    status = GameStatus.Pending,
+    players = [],
+    defaultPlayerAttributes = createEntityAttributesMock(),
+    options = createGameOptionsMock(),
+  } = config;
 
   return {
-    isStarted,
+    status,
     players,
+    defaultPlayerAttributes,
+    options,
+  };
+}
+
+export function createGameOptionsMock(): GameOptions {
+  return {
+    winConditions: [],
+    looseConditions: [],
   };
 }
 
@@ -59,9 +74,12 @@ export function createGameConfigValidatorMock(): GameConfigValidator {
 export function createPlayerEntityMock(
   config: Partial<PlayerEntity> = {},
 ): PlayerEntity {
-  const { name = random.word() } = config;
+  const {
+    name = random.word(),
+    attributes = createEntityAttributesMock(),
+  } = config;
 
-  return { name };
+  return { name, attributes };
 }
 
 export function createMapEntityMock(
@@ -76,4 +94,8 @@ export function createMapEntityMock(
     startingRoom,
     playerLocations,
   };
+}
+
+export function createEntityAttributesMock(): EntityAttributes {
+  return new Map();
 }

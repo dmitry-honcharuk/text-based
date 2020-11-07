@@ -1,3 +1,6 @@
-export type EffectType = 'PlayerLocationChange';
+export enum EffectType {
+  PlayerLocationChange = 'playerLocationChange',
+  AttributeDecrease = 'attributeDecrease',
+}
 
-export const effects: EffectType[] = ['PlayerLocationChange'];
+export const effects: EffectType[] = Object.values(EffectType);

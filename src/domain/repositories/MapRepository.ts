@@ -12,7 +12,10 @@ export interface MapRepository {
     roomId: string,
   ): Promise<boolean>;
 
-  getPlayerRoom(gameId: string, playerId: string): DeferredNullable<RoomEntity>;
+  getPlayerRoom(
+    gameId: string,
+    playerId: string,
+  ): DeferredNullable<GetPlayerRoomResponseDto>;
 
   setPlayerLocation(
     gameId: string,
@@ -20,3 +23,5 @@ export interface MapRepository {
     roomId: string,
   ): Promise<void>;
 }
+
+export type GetPlayerRoomResponseDto = [roomId: string, room: RoomEntity];

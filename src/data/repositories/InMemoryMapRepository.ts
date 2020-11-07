@@ -1,5 +1,7 @@
-import { RoomEntity } from '../../domain/entities/RoomEntity';
-import { MapRepository } from '../../domain/repositories/MapRepository';
+import {
+  GetPlayerRoomResponseDto,
+  MapRepository,
+} from '../../domain/repositories/MapRepository';
 import { RoomRepository } from '../../domain/repositories/RoomRepository';
 import { DeferredNullable } from '../../domain/utils/DeferredNullable';
 import { IdGenerator } from '../entities/IdGenerator';
@@ -10,7 +12,7 @@ export class InMemoryMapRepository implements MapRepository {
 
   constructor(
     private idGenerator: IdGenerator,
-    private roomRepo: RoomRepository
+    private roomRepo: RoomRepository,
   ) {}
 
   async getGameStartingRoomId(gameId: string): DeferredNullable<string> {
@@ -25,7 +27,7 @@ export class InMemoryMapRepository implements MapRepository {
 
   async createMap(
     gameId: string,
-    startingCustomRoomId: string
+    startingCustomRoomId: string,
   ): Promise<string> {
     const id = this.idGenerator.next();
 
@@ -41,7 +43,7 @@ export class InMemoryMapRepository implements MapRepository {
   async spawnPlayer(
     gameId: string,
     playerId: string,
-    roomId: string
+    roomId: string,
   ): Promise<boolean> {
     const mapData = this.getMapDataByGameId(gameId);
 
@@ -56,27 +58,33 @@ export class InMemoryMapRepository implements MapRepository {
 
   async getPlayerRoom(
     gameId: string,
-    playerId: string
-  ): DeferredNullable<RoomEntity> {
+    playerId: string,
+  ): DeferredNullable<GetPlayerRoomResponseDto> {
     const playerMap = this.getMapDataByGameId(gameId);
 
     if (!playerMap) {
       return null;
     }
 
-    const location = playerMap.playerLocations.get(playerId);
+    const locationId = playerMap.playerLocations.get(playerId);
+
+    if (!locationId) {
+      return null;
+    }
+
+    const location = await this.roomRepo.getRoomById(locationId);
 
     if (!location) {
       return null;
     }
 
-    return this.roomRepo.getRoomById(location);
+    return [locationId, location];
   }
 
   async setPlayerLocation(
     gameId: string,
     playerId: string,
-    roomId: string
+    roomId: string,
   ): Promise<void> {
     const playerMap = this.getMapDataByGameId(gameId);
 

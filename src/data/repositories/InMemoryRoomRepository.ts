@@ -14,7 +14,7 @@ export class InMemoryRoomRepository implements RoomRepository {
 
   constructor(
     private roomMapper: RoomEntityMapper,
-    private idGenerator: IdGenerator
+    private idGenerator: IdGenerator,
   ) {}
 
   async createRoom(gameId: string, room: RoomEntity): Promise<string> {
@@ -36,7 +36,7 @@ export class InMemoryRoomRepository implements RoomRepository {
 
     const destination = this.getRoomDataByCustomId(
       gameId,
-      exit.destinationRoomId
+      exit.destinationRoomId,
     );
 
     if (!destination) {
@@ -62,13 +62,19 @@ export class InMemoryRoomRepository implements RoomRepository {
 
   async getRoomIdByCustomId(
     gameId: string,
-    customRoomId: string
+    customRoomId: string,
   ): DeferredNullable<string> {
     const roomData = this.rooms.find(
-      (room) => room.customId === customRoomId && room.gameId === gameId
+      (room) => room.customId === customRoomId && room.gameId === gameId,
     );
 
     return roomData?.id ?? null;
+  }
+
+  async getGameRoomIds(gameId: string): Promise<string[]> {
+    return this.rooms
+      .filter(({ gameId: roomGameId }) => roomGameId === gameId)
+      .map(({ id }) => id);
   }
 
   private getRoomDataById(roomId: string): RoomData | null {
@@ -79,11 +85,11 @@ export class InMemoryRoomRepository implements RoomRepository {
 
   private getRoomDataByCustomId(
     gameId: string,
-    roomCustomId: string
+    roomCustomId: string,
   ): RoomData | null {
     const room = this.rooms.find(
       ({ gameId: roomGameId, customId }) =>
-        customId === roomCustomId && roomGameId === gameId
+        customId === roomCustomId && roomGameId === gameId,
     );
 
     return room ?? null;

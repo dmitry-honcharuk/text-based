@@ -1,5 +1,9 @@
 import { random } from 'faker';
-import { createGameEntityMock } from '../../entities/__tests__/utils/mocks';
+import { GameStatus } from '../../entities/GameEntity';
+import {
+  createEntityAttributesMock,
+  createGameEntityMock,
+} from '../../entities/__tests__/utils/mocks';
 import { GameAlreadyStartedError } from '../../Errors/GameAlreadyStartedError';
 import { NoGameError } from '../../Errors/NoGameError';
 import { NoStartingRoomError } from '../../Errors/NoStartingRoomError';
@@ -32,7 +36,7 @@ describe('StartGameUseCase', () => {
     const startGame = new StartGameUseCase(gameRepo, playerRepo, mapRepo);
 
     expect(
-      startGame.execute({ gameId: random.word(), playerName })
+      startGame.execute({ gameId: random.word(), playerName }),
     ).rejects.toThrowError(NoGameError);
   });
 
@@ -40,14 +44,14 @@ describe('StartGameUseCase', () => {
     expect.assertions(1);
 
     const gameId = random.word();
-    const gameEntity = createGameEntityMock({ isStarted: true });
+    const gameEntity = createGameEntityMock({ status: GameStatus.Started });
 
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);
 
     const startGame = new StartGameUseCase(gameRepo, playerRepo, mapRepo);
 
     expect(startGame.execute({ gameId, playerName })).rejects.toThrowError(
-      GameAlreadyStartedError
+      GameAlreadyStartedError,
     );
   });
 
@@ -60,37 +64,39 @@ describe('StartGameUseCase', () => {
 
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);
     (playerRepo.createPlayer as jest.Mock).mockReturnValueOnce(
-      expectedPlayerId
+      expectedPlayerId,
     );
 
     const startGame = new StartGameUseCase(gameRepo, playerRepo, mapRepo);
 
     expect(
-      startGame.execute({ gameId: random.word(), playerName })
+      startGame.execute({ gameId: random.word(), playerName }),
     ).rejects.toThrowError(NoStartingRoomError);
   });
 
   it('should start a game', async () => {
     expect.assertions(7);
 
-    const gameEntity = createGameEntityMock();
+    const gameEntity = createGameEntityMock({
+      defaultPlayerAttributes: createEntityAttributesMock(),
+    });
 
     const expectedGameId = random.word();
     const expectedPlayerId = random.word();
     const expectedRoomId = random.word();
 
     (mapRepo.getGameStartingRoomId as jest.Mock).mockReturnValueOnce(
-      expectedRoomId
+      expectedRoomId,
     );
     (gameRepo.getGameById as jest.Mock).mockReturnValueOnce(gameEntity);
     (playerRepo.createPlayer as jest.Mock).mockReturnValueOnce(
-      expectedPlayerId
+      expectedPlayerId,
     );
 
     const startGame = new StartGameUseCase(gameRepo, playerRepo, mapRepo);
 
     await expect(
-      startGame.execute({ gameId: expectedGameId, playerName })
+      startGame.execute({ gameId: expectedGameId, playerName }),
     ).resolves.toBe(expectedPlayerId);
 
     expect(gameRepo.startGame).toHaveBeenCalledTimes(1);
@@ -99,14 +105,15 @@ describe('StartGameUseCase', () => {
     expect(playerRepo.createPlayer).toHaveBeenCalledTimes(1);
     expect(playerRepo.createPlayer).toHaveBeenCalledWith(
       expectedGameId,
-      playerName
+      playerName,
+      gameEntity.defaultPlayerAttributes,
     );
 
     expect(mapRepo.spawnPlayer).toHaveBeenCalledTimes(1);
     expect(mapRepo.spawnPlayer).toHaveBeenCalledWith(
       expectedGameId,
       expectedPlayerId,
-      expectedRoomId
+      expectedRoomId,
     );
   });
 });

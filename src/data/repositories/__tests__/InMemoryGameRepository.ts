@@ -1,7 +1,8 @@
 import { random } from 'faker';
-import { GameEntity } from '../../../domain/entities/GameEntity';
+import { GameEntity, GameStatus } from '../../../domain/entities/GameEntity';
 import {
   createGameEntityMock,
+  createGameOptionsMock,
   createPlayerEntityMock,
 } from '../../../domain/entities/__tests__/utils/mocks';
 import { PlayerRepository } from '../../../domain/repositories/PlayerRepository';
@@ -50,7 +51,9 @@ describe('InMemoryGameRepository', () => {
 
       expect(gameRepository.games).toHaveLength(0);
 
-      const actualGameId = await gameRepository.createGame();
+      const actualGameId = await gameRepository.createGame(
+        createGameOptionsMock(),
+      );
 
       expect(actualGameId).toBe(expectedGameId);
 
@@ -107,6 +110,7 @@ describe('InMemoryGameRepository', () => {
       expect(mapper.fromDataToEntity).toHaveBeenCalledWith(
         expectedGameData,
         expectedPlayers,
+        gameRepository.defaultPlayerAttributes,
       );
     });
 
@@ -131,12 +135,7 @@ describe('InMemoryGameRepository', () => {
 
       const idGenerator = createIdGeneratorMock([gameId]);
 
-      (mapper.fromDataToEntity as jest.Mock).mockImplementation(
-        ({ id, isStarted }) => ({
-          id,
-          isStarted,
-        }),
-      );
+      (mapper.fromDataToEntity as jest.Mock).mockImplementation((data) => data);
 
       const gameRepository = new InMemoryGameRepository(
         mapper,
@@ -144,17 +143,17 @@ describe('InMemoryGameRepository', () => {
         playerRepo,
       );
 
-      await gameRepository.createGame();
+      await gameRepository.createGame(createGameOptionsMock());
 
       const notStartedGame = await gameRepository.getGameById(gameId);
 
-      expect(notStartedGame?.isStarted).toBe(false);
+      expect(notStartedGame?.status).not.toBe(GameStatus.Started);
 
       await gameRepository.startGame(gameId);
 
       const startedGame = await gameRepository.getGameById(gameId);
 
-      expect(startedGame?.isStarted).toBe(true);
+      expect(startedGame?.status).toBe(GameStatus.Started);
     });
   });
 });
