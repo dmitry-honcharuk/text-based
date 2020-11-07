@@ -1,14 +1,19 @@
 import { EffectType } from '../Effects/EffectType';
+import { createEffectTriggers, TriggerConfig } from '../entities/EffectTrigger';
+import { createEntityAttributes } from '../entities/EntityAttributes';
 import {
   GameConfig,
+  ObjectConfig,
   RoomConfig,
   RoomWithExitsConfig,
 } from '../entities/game-config';
 import { GameConfigValidator } from '../entities/GameConfigValidator';
-import { RoomEntity } from '../entities/RoomEntity';
+import { ObjectEntity } from '../entities/ObjectEntity';
+import { getRoomFromConfig } from '../entities/RoomEntity';
 import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
+import { ObjectRepository } from '../repositories/ObjectRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
 
@@ -19,6 +24,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     private gameRepository: GameRepository,
     private mapRepository: MapRepository,
     private commandRepository: CommandRepository,
+    private objectRepository: ObjectRepository,
   ) {}
 
   async execute(config: GameConfig) {
@@ -30,7 +36,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       playerAttributes = [],
     } = config;
 
-    const gameId = await this.gameRepository.createGame();
+    const gameId = await this.gameRepository.createGame(config.game);
 
     await this.gameRepository.setDefaultPlayerAttributes(playerAttributes);
 
@@ -38,18 +44,12 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       ({ id }) => id === startingRoom,
     );
 
-    const startingRoomId = await this.roomRepository.createRoom(
-      gameId,
-      this.getRoomFromConfig(startingRoomConfig as RoomConfig),
-    );
-
-    await Promise.all(
-      roomConfigs
+    const [startingRoomId] = await Promise.all([
+      this.createRoom(gameId, startingRoomConfig as RoomConfig),
+      ...roomConfigs
         .filter(({ id }) => id !== startingRoom)
-        .map((room) =>
-          this.roomRepository.createRoom(gameId, this.getRoomFromConfig(room)),
-        ),
-    );
+        .map((room) => this.createRoom(gameId, room)),
+    ]);
 
     const roomsWithExits = roomConfigs.filter(
       ({ exits }) => !!exits,
@@ -59,7 +59,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
       roomsWithExits.map((room) => this.addExits(gameId, room)),
     );
 
-    this.commandRepository.addCommand({
+    await this.commandRepository.addGlobalCommand({
       gameId,
       command: 'go',
       effect: EffectType.PlayerLocationChange,
@@ -68,17 +68,6 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     await this.mapRepository.createMap(gameId, startingRoomId);
 
     return gameId;
-  }
-
-  private getRoomFromConfig(roomConfig: RoomConfig): RoomEntity {
-    return {
-      ...roomConfig,
-      exits:
-        roomConfig.exits?.map((exitConfig) => ({
-          ...exitConfig,
-          destinationRoomId: exitConfig.roomId,
-        })) ?? [],
-    };
   }
 
   private async addExits(gameId: string, roomConfig: RoomWithExitsConfig) {
@@ -90,6 +79,61 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
           destinationRoomId: exit.roomId,
         }),
       ),
+    );
+  }
+
+  private async createRoom(gameId: string, room: RoomConfig) {
+    const roomId = await this.roomRepository.createRoom(
+      gameId,
+      getRoomFromConfig(room),
+    );
+
+    if (room.objects) {
+      await this.createObjects(roomId, room.objects);
+    }
+
+    return roomId;
+  }
+
+  private async createObjects(roomId: string, objects: ObjectConfig[]) {
+    await Promise.all(
+      objects.map(async (objectConfig) => {
+        const object: ObjectEntity = {
+          id: objectConfig.id,
+          name: objectConfig.name,
+        };
+
+        if (objectConfig.attributes) {
+          object.attributes = createEntityAttributes(objectConfig.attributes);
+        }
+
+        await this.objectRepository.createObject(roomId, object);
+
+        await this.createObjectCommands(
+          roomId,
+          object.id,
+          objectConfig.triggers,
+        );
+      }),
+    );
+  }
+
+  private async createObjectCommands(
+    roomId: string,
+    objectId: string,
+    triggerConfigs: TriggerConfig[],
+  ) {
+    await Promise.all(
+      triggerConfigs.map(async ({ command, effects }) => {
+        const effectTriggers = createEffectTriggers(effects);
+
+        await this.commandRepository.addRoomCommand({
+          roomId,
+          objectId,
+          command,
+          effectTriggers,
+        });
+      }),
     );
   }
 }

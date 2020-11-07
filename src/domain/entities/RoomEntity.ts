@@ -1,3 +1,5 @@
+import { RoomConfig } from './game-config';
+
 export type RoomEntityExit = {
   id: string;
   name: string;
@@ -10,3 +12,14 @@ export type RoomEntity = {
   description: string;
   exits: RoomEntityExit[];
 };
+
+export function getRoomFromConfig(roomConfig: RoomConfig): RoomEntity {
+  return {
+    ...roomConfig,
+    exits:
+      roomConfig.exits?.map((exitConfig) => ({
+        ...exitConfig,
+        destinationRoomId: exitConfig.roomId,
+      })) ?? [],
+  };
+}

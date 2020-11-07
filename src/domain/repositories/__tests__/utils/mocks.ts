@@ -1,6 +1,7 @@
 import { CommandRepository } from '../../CommandRepository';
 import { GameRepository } from '../../GameRepository';
 import { MapRepository } from '../../MapRepository';
+import { ObjectRepository } from '../../ObjectRepository';
 import { PlayerRepository } from '../../PlayerRepository';
 import { RoomRepository } from '../../RoomRepository';
 
@@ -12,6 +13,7 @@ export function createGameRepositoryMock(): GameRepository {
     addPlayer: jest.fn(),
     hasPlayer: jest.fn(),
     setDefaultPlayerAttributes: jest.fn(),
+    updateGame: jest.fn(),
   };
 }
 
@@ -21,6 +23,7 @@ export function createRoomRepositoryMock(): RoomRepository {
     createRoom: jest.fn(),
     linkRooms: jest.fn(),
     getRoomIdByCustomId: jest.fn(),
+    getGameRoomIds: jest.fn(),
   };
 }
 
@@ -43,7 +46,18 @@ export function createMapRepositoryMock(): MapRepository {
 
 export function createCommandRepositoryMock(): CommandRepository {
   return {
-    addCommand: jest.fn(),
-    getEffect: jest.fn(),
+    addGlobalCommand: jest.fn(),
+    getGlobalEffect: jest.fn(),
+    addRoomCommand: jest.fn(),
+    getRoomEffects: jest.fn(),
+  };
+}
+
+export function createObjectRepositoryMock(): ObjectRepository {
+  return {
+    createObject: jest.fn(),
+    getRoomObject: jest.fn(),
+    updateObjectAttribute: jest.fn(),
+    getObjectsFromRooms: jest.fn(),
   };
 }

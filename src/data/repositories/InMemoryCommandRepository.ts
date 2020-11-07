@@ -1,42 +1,81 @@
 import { EffectType } from '../../domain/Effects/EffectType';
+import { EffectTrigger } from '../../domain/entities/EffectTrigger';
 import {
   AddCommand,
+  AddRoomCommandDto,
   CommandRepository,
   GetCommand,
+  GetRoomEffectRequestDto,
+  GetRoomEffectResponseDto,
 } from '../../domain/repositories/CommandRepository';
+import { ObjectRepository } from '../../domain/repositories/ObjectRepository';
 import { DeferredNullable } from '../../domain/utils/DeferredNullable';
-
-type CommandData = {
-  gameId: string;
-  command: string;
-  effect: EffectType;
-  roomId?: string;
-};
 
 export class InMemoryCommandRepository implements CommandRepository {
   public readonly gameCommands: Map<
     string,
-    Map<string, Pick<CommandData, 'effect' | 'roomId'>>
+    Map<string, EffectType>
   > = new Map();
 
-  async addCommand(dto: AddCommand): Promise<void> {
-    const { gameId, command: commandInput, effect, roomId } = dto;
+  public readonly roomCommands: Map<
+    string,
+    Map<string, [objectId: string, triggers: EffectTrigger[]]>
+  > = new Map();
+
+  constructor(private objectRepo: ObjectRepository) {}
+
+  async addGlobalCommand(dto: AddCommand): Promise<void> {
+    const { gameId, command: commandInput, effect } = dto;
 
     const commands = this.gameCommands.get(gameId);
 
     if (!commands) {
-      this.gameCommands.set(
-        gameId,
-        new Map([[commandInput, { effect, roomId }]]),
+      this.gameCommands.set(gameId, new Map([[commandInput, effect]]));
+    }
+
+    commands?.set(commandInput, effect);
+  }
+
+  async addRoomCommand(dto: AddRoomCommandDto): Promise<void> {
+    const { command, roomId, objectId, effectTriggers } = dto;
+
+    const roomCommands = this.roomCommands.get(roomId);
+
+    if (!roomCommands) {
+      this.roomCommands.set(
+        roomId,
+        new Map([[command, [objectId, effectTriggers]]]),
       );
     }
 
-    commands?.set(commandInput, { effect, roomId });
+    roomCommands?.set(command, [objectId, effectTriggers]);
   }
 
-  async getEffect(dto: GetCommand): DeferredNullable<EffectType> {
+  async getGlobalEffect(dto: GetCommand): DeferredNullable<EffectType> {
     const { gameId, command } = dto;
 
-    return this.gameCommands.get(gameId)?.get(command)?.effect ?? null;
+    return this.gameCommands.get(gameId)?.get(command) ?? null;
+  }
+
+  async getRoomEffects(
+    dto: GetRoomEffectRequestDto,
+  ): Promise<GetRoomEffectResponseDto> {
+    const { roomId, command } = dto;
+
+    const objectTriggersPair = this.roomCommands.get(roomId)?.get(command);
+
+    if (!objectTriggersPair) return [];
+
+    const [objectId, triggers] = objectTriggersPair;
+
+    const object = await this.objectRepo.getRoomObject(roomId, objectId);
+
+    if (!object) return [];
+
+    return triggers.map((trigger) => ({
+      effectType: trigger.type,
+      context: trigger.context,
+      object,
+    }));
   }
 }

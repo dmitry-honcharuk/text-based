@@ -1,3 +1,4 @@
+import { GameStatus } from '../../../domain/entities/GameEntity';
 import {
   createEntityAttributesMock,
   createPlayerEntityMock,
@@ -17,14 +18,13 @@ describe('GameEntityMapper', () => {
       createEntityAttributesMock(),
     );
 
-    expect(gameEntity.isStarted).toBe(gameData.isStarted);
     expect(gameEntity.players).toHaveLength(0);
   });
 
   it('should map started GameData to GameEntity', () => {
     const mapper = new GameEntityMapper();
 
-    const gameData = createGameDataMock({ isStarted: true });
+    const gameData = createGameDataMock({ status: GameStatus.Started });
 
     const gameEntity = mapper.fromDataToEntity(
       gameData,
@@ -32,7 +32,7 @@ describe('GameEntityMapper', () => {
       createEntityAttributesMock(),
     );
 
-    expect(gameEntity.isStarted).toBe(true);
+    expect(gameEntity.status).toBe(GameStatus.Started);
   });
 
   it('should map GameData to GameEntity with Players', () => {
