@@ -1,3 +1,4 @@
+import { isGameStarted } from '../entities/GameEntity';
 import { GameAlreadyStartedError } from '../Errors/GameAlreadyStartedError';
 import { NoGameError } from '../Errors/NoGameError';
 import { NoStartingRoomError } from '../Errors/NoStartingRoomError';
@@ -27,7 +28,7 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
       throw new NoGameError(gameId);
     }
 
-    if (game.isStarted) {
+    if (isGameStarted(game)) {
       throw new GameAlreadyStartedError(gameId);
     }
 

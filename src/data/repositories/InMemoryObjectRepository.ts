@@ -42,4 +42,14 @@ export class InMemoryObjectRepository implements ObjectRepository {
 
     return roomObjects.find(({ id }) => objectId === id) ?? null;
   }
+
+  async getObjectsFromRooms(
+    roomIds: string[],
+    objectIds: string[],
+  ): Promise<ObjectEntity[]> {
+    return [...this.roomObjects.entries()]
+      .filter(([roomId]) => roomIds.includes(roomId))
+      .flatMap(([, objects]) => objects)
+      .filter(({ id }) => objectIds.includes(id));
+  }
 }

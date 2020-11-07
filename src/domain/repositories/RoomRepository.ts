@@ -18,4 +18,6 @@ export interface RoomRepository {
     gameId: string,
     customRoomId: string,
   ): DeferredNullable<string>;
+
+  getGameRoomIds(gameId: string): Promise<string[]>;
 }

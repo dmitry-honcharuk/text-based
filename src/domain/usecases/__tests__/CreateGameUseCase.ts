@@ -47,6 +47,28 @@ describe('CreateGameUseCase', () => {
     const customStartingRoomId = random.word();
     const exitRoomId = random.word();
     const gameConfig: GameConfig = {
+      game: {
+        winConditions: [
+          {
+            condition: 'attributeValueReach',
+            options: {
+              target: 'final-boss',
+              attribute: 'hp',
+              value: 0,
+            },
+          },
+        ],
+        looseConditions: [
+          {
+            condition: 'attributeValueReach',
+            options: {
+              target: 'orc',
+              attribute: 'hp',
+              value: 0,
+            },
+          },
+        ],
+      },
       startingRoom: customStartingRoomId,
       rooms: [
         {

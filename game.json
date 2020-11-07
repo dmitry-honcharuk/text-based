@@ -1,14 +1,65 @@
 {
+  "game": {
+    "winConditions": [
+      {
+        "condition": "attributeValueReach",
+        "options": {
+          "target": "final-boss",
+          "attribute": "hp",
+          "value": 0
+        }
+      }
+    ],
+    "looseConditions": [
+      {
+        "condition": "attributeValueReach",
+        "options": {
+          "target": "orc",
+          "attribute": "hp",
+          "value": 0
+        }
+      }
+    ]
+  },
   "startingRoom": "lobby",
   "playerAttributes": [
-    { "name": "hp", "value": 10 },
-    { "name": "damage", "value": 1 }
+    {
+      "name": "hp",
+      "value": 10
+    },
+    {
+      "name": "damage",
+      "value": 1
+    }
   ],
   "rooms": [
     {
       "id": "lobby",
       "name": "Great lobby",
       "description": "Enormous dark scary lobby with only one exit west.",
+      "objects": [
+        {
+          "id": "orc",
+          "name": "orc",
+          "attributes": [
+            {
+              "name": "hp",
+              "value": 3
+            }
+          ],
+          "triggers": [
+            {
+              "command": "attack",
+              "effects": {
+                "attributeDecrease": {
+                  "attribute": "hp",
+                  "value": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
       "exits": [
         {
           "id": "west",
@@ -25,6 +76,12 @@
         {
           "id": "final-boss",
           "name": "Huge stupid orc",
+          "attributes": [
+            {
+              "name": "hp",
+              "value": 3
+            }
+          ],
           "triggers": [
             {
               "command": "attack",

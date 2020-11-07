@@ -11,6 +11,7 @@ export class DecreaseAttributeEffect implements Effect {
     private object: ObjectEntity,
     private objectRepo: ObjectRepository,
   ) {}
+
   async execute(options: EffectOpptions): Promise<void> {
     const { issuerRoomId, possibleTargets } = options;
 
@@ -22,9 +23,10 @@ export class DecreaseAttributeEffect implements Effect {
       throw new InvalidObjectError(this.object.id);
     }
 
-    const attributeValue = this.object.attributes?.get(this.context.attribute);
+    const attributeValue =
+      this.object.attributes?.get(this.context.attribute) ?? null;
 
-    if (!attributeValue) {
+    if (attributeValue === null) {
       throw new NoObjectAttributeError(this.object.id, this.context.attribute);
     }
 
