@@ -1,3 +1,4 @@
+import { CombatStartEffect } from '../Effects/CombatStartEffect';
 import { DecreaseAttributeEffect } from '../Effects/DecreaseAttributeEffect';
 import { Effect } from '../Effects/Effect';
 import { EffectType } from '../Effects/EffectType';
@@ -31,12 +32,18 @@ export class EffectManager {
     object: ObjectEntity,
     context: any,
   ): Effect {
+    const EffectConstructor = EffectManager.getEffectConstructor(effectType);
+
+    return new EffectConstructor(context, object, this.objectRepository);
+  }
+
+  static getEffectConstructor(effectType: EffectType) {
     if (effectType === EffectType.AttributeDecrease) {
-      return new DecreaseAttributeEffect(
-        context,
-        object,
-        this.objectRepository,
-      );
+      return DecreaseAttributeEffect;
+    }
+
+    if (effectType === EffectType.CombatStart) {
+      return CombatStartEffect;
     }
 
     throw new UnknownEffectError(effectType);

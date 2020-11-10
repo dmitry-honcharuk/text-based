@@ -1,5 +1,5 @@
 import { EffectType } from '../Effects/EffectType';
-import { createEffectTriggers, TriggerConfig } from '../entities/EffectTrigger';
+import { EffectTriggerConfig } from '../entities/EffectTrigger';
 import { createEntityAttributes } from '../entities/EntityAttributes';
 import {
   GameConfig,
@@ -121,17 +121,15 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
   private async createObjectCommands(
     roomId: string,
     objectId: string,
-    triggerConfigs: TriggerConfig[],
+    triggerConfigs: EffectTriggerConfig[],
   ) {
     await Promise.all(
       triggerConfigs.map(async ({ command, effects }) => {
-        const effectTriggers = createEffectTriggers(effects);
-
         await this.commandRepository.addRoomCommand({
           roomId,
           objectId,
           command,
-          effectTriggers,
+          effectTriggers: effects,
         });
       }),
     );

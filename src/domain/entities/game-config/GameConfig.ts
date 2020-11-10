@@ -1,4 +1,4 @@
-import { TriggerConfig } from '../EffectTrigger';
+import { EffectTriggerConfig } from '../EffectTrigger';
 import { AttributeConfig } from '../EntityAttributes';
 import { GameOptions } from '../GameEntity';
 
@@ -31,5 +31,5 @@ export interface ObjectConfig {
   id: string;
   name: string;
   attributes?: AttributeConfig[];
-  triggers: TriggerConfig[];
+  triggers: EffectTriggerConfig[];
 }

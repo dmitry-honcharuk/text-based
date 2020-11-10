@@ -1,9 +1,8 @@
 import { AttributeDecreaseEffectContext } from '../entities/EffectTrigger';
 import { ObjectEntity } from '../entities/ObjectEntity';
 import { NoObjectAttributeError } from '../Errors/InvalidContextForEffectError';
-import { InvalidObjectError } from '../Errors/InvalidObjectError';
 import { ObjectRepository } from '../repositories/ObjectRepository';
-import { Effect, Options as EffectOpptions } from './Effect';
+import { Effect, Options as EffectOptions } from './Effect';
 
 export class DecreaseAttributeEffect implements Effect {
   constructor(
@@ -12,16 +11,8 @@ export class DecreaseAttributeEffect implements Effect {
     private objectRepo: ObjectRepository,
   ) {}
 
-  async execute(options: EffectOpptions): Promise<void> {
-    const { issuerRoomId, possibleTargets } = options;
-
-    const isTargetMatch = possibleTargets.some(
-      (target) => this.object.id === target || this.object.name === target,
-    );
-
-    if (!isTargetMatch) {
-      throw new InvalidObjectError(this.object.id);
-    }
+  async execute(options: EffectOptions): Promise<void> {
+    const { issuerRoomId } = options;
 
     const attributeValue =
       this.object.attributes?.get(this.context.attribute) ?? null;
