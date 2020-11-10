@@ -10,15 +10,13 @@ export type AttributeDecreaseEffectContext = {
 } & ({ value: number } | { attributeValue: string });
 
 type TriggerEffectConfig = {
-  [EffectType.AttributeDecrease]?: AttributeDecreaseEffectConfig;
+  [EffectType.AttributeDecrease]?: AttributeDecreaseEffectContext;
 };
 
 export type TriggerConfig = {
   command: string;
   effects: TriggerEffectConfig;
 };
-
-type AttributeDecreaseEffectConfig = AttributeDecreaseEffectContext;
 
 export function createEffectTriggers(
   effects: TriggerEffectConfig,
