@@ -4,6 +4,7 @@ import { Effect } from '../Effects/Effect';
 import { EffectType } from '../Effects/EffectType';
 import { PlayerPositionChangeEffect } from '../Effects/PlayerPositionChangeEffect';
 import { UnknownEffectError } from '../Errors/UnknownEffectError';
+import { CombatRepository } from '../repositories/CombatRepository';
 import { MapRepository } from '../repositories/MapRepository';
 import { ObjectRepository } from '../repositories/ObjectRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
@@ -14,6 +15,7 @@ export class EffectManager {
     private mapRepository: MapRepository,
     private roomRepository: RoomRepository,
     private objectRepository: ObjectRepository,
+    private combatRepository: CombatRepository,
   ) {}
 
   getEffect(effectType: EffectType): Effect {
@@ -32,18 +34,22 @@ export class EffectManager {
     object: ObjectEntity,
     context: any,
   ): Effect {
-    const EffectConstructor = EffectManager.getEffectConstructor(effectType);
-
-    return new EffectConstructor(context, object, this.objectRepository);
-  }
-
-  static getEffectConstructor(effectType: EffectType) {
     if (effectType === EffectType.AttributeDecrease) {
-      return DecreaseAttributeEffect;
+      return new DecreaseAttributeEffect(
+        context,
+        object,
+        this.objectRepository,
+      );
     }
 
     if (effectType === EffectType.CombatStart) {
-      return CombatStartEffect;
+      return new CombatStartEffect(
+        context,
+        object,
+        this.objectRepository,
+        this.roomRepository,
+        this.combatRepository,
+      );
     }
 
     throw new UnknownEffectError(effectType);

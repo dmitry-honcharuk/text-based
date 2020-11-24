@@ -10,6 +10,7 @@ import { NoGameError } from '../Errors/NoGameError';
 import { NoPlayerInGameError } from '../Errors/NoPlayerInGameError';
 import { NoPlayerRoomError } from '../Errors/NoPlayerRoomError';
 import { UnknownCommandError } from '../Errors/UnknownCommandError';
+import { CombatRepository } from '../repositories/CombatRepository';
 import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
@@ -23,6 +24,7 @@ type InputProps = {
   commandInput: string;
 };
 
+// @TODO Improve commands to have aliases ( attack|smash|punch )
 export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
   constructor(
     private mapRepo: MapRepository,
@@ -30,6 +32,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private roomRepo: RoomRepository,
     private gameRepo: GameRepository,
     private objectRepo: ObjectRepository,
+    private combatRepo: CombatRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {
@@ -62,6 +65,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       this.mapRepo,
       this.roomRepo,
       this.objectRepo,
+      this.combatRepo,
     );
 
     const [command, possibleTargets] = commandParser.parse(commandInput);

@@ -9,6 +9,7 @@ export class RoomEntityMapper {
       description: entity.description,
       gameId: gameId,
       exits: entity.exits,
+      state: entity.state,
     };
   }
 
@@ -18,6 +19,7 @@ export class RoomEntityMapper {
       name: data.name,
       description: data.description,
       exits: data.exits,
+      state: data.state,
     };
   }
 }

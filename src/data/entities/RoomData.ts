@@ -1,3 +1,5 @@
+import { RoomState } from '../../domain/entities/RoomEntity';
+
 export type RoomDataExit = {
   id: string;
   name: string;
@@ -11,4 +13,5 @@ export type RoomData = {
   name: string;
   description: string;
   exits: RoomDataExit[];
+  state: RoomState;
 };

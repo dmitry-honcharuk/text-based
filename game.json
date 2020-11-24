@@ -49,7 +49,7 @@
           ],
           "triggers": [
             {
-              "command": "attack",
+              "command": "attack CURRENT - WRONG",
               "effects": [
                 {
                   "type": "attributeDecrease",
@@ -58,6 +58,38 @@
                 {
                   "type": "combatStart",
                   "options": {
+                    "actions": [
+                      {
+                        "name": "smash",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "command": "attack",
+              "effects": [
+                {
+                  "type": "combatStart",
+                  "options": {
+                    "playerActions": [
+                      {
+                        "command": "attack",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ],
                     "actions": [
                       {
                         "name": "smash",
@@ -91,7 +123,7 @@
       "objects": [
         {
           "id": "final-boss",
-          "name": "Huge stupid orc",
+          "name": "orc",
           "attributes": [
             {
               "name": "hp",

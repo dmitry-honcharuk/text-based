@@ -1,4 +1,4 @@
-import { RoomEntity } from '../entities/RoomEntity';
+import { RoomEntity, RoomState } from '../entities/RoomEntity';
 import { DeferredNullable } from '../utils/DeferredNullable';
 
 export interface RoomExit {
@@ -20,4 +20,6 @@ export interface RoomRepository {
   ): DeferredNullable<string>;
 
   getGameRoomIds(gameId: string): Promise<string[]>;
+
+  updateState(roomId: string, state: RoomState): Promise<void>;
 }
