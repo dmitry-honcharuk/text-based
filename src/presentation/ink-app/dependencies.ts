@@ -1,6 +1,7 @@
 import { GameEntityMapper } from '../../data/mappers/GameEntityMapper';
 import { PlayerEntityMapper } from '../../data/mappers/PlayerEntityMapper';
 import { RoomEntityMapper } from '../../data/mappers/RoomEntityMapper';
+import { InMemoryCombatRepository } from '../../data/repositories/InMemoryCombatRepository';
 import { InMemoryCommandRepository } from '../../data/repositories/InMemoryCommandRepository';
 import { InMemoryGameRepository } from '../../data/repositories/InMemoryGameRepository';
 import { InMemoryMapRepository } from '../../data/repositories/InMemoryMapRepository';
@@ -33,3 +34,5 @@ export const mapRepo = new InMemoryMapRepository(
 export const objectRepo = new InMemoryObjectRepository();
 
 export const commandRepo = new InMemoryCommandRepository(objectRepo);
+
+export const combatRepo = new InMemoryCombatRepository();

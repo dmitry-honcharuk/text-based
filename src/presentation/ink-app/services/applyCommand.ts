@@ -1,5 +1,6 @@
 import { ApplyCommandUseCase } from '../../../domain/usecases/ApplyCommandUseCase';
 import {
+  combatRepo,
   commandRepo,
   gameRepo,
   mapRepo,
@@ -18,6 +19,7 @@ export async function applyCommand(options: {
     roomRepo,
     gameRepo,
     objectRepo,
+    combatRepo,
   ).execute({
     commandInput: options.command,
     issuerId: options.playerId,

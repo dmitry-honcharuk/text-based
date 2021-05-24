@@ -58,6 +58,17 @@
                 {
                   "type": "combatStart",
                   "options": {
+                    "playerActions": [
+                      {
+                        "command": "attack",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ],
                     "actions": [
                       {
                         "name": "smash",

@@ -19,8 +19,14 @@ const action = Joi.object({
   effects: Joi.array().items(getEffect(combatEffects)).required(),
 });
 
+const playerAction = Joi.object({
+  command: Joi.string().required(),
+  effects: Joi.array().items(getEffect(combatEffects)).required(),
+});
+
 const combatStartEffect = Joi.object({
   actions: Joi.array().items(action).required(),
+  playerActions: Joi.array().items(playerAction).required(),
 });
 
 export const triggerValidation = Joi.object({
