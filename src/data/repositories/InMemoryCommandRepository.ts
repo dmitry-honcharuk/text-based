@@ -12,10 +12,8 @@ import { ObjectRepository } from '../../domain/repositories/ObjectRepository';
 import { DeferredNullable } from '../../domain/utils/DeferredNullable';
 
 export class InMemoryCommandRepository implements CommandRepository {
-  public readonly gameCommands: Map<
-    string,
-    Map<string, EffectType>
-  > = new Map();
+  public readonly gameCommands: Map<string, Map<string, EffectType>> =
+    new Map();
 
   public readonly roomCommands: Map<
     string,
@@ -25,15 +23,24 @@ export class InMemoryCommandRepository implements CommandRepository {
   constructor(private objectRepo: ObjectRepository) {}
 
   async addGlobalCommand(dto: AddCommand): Promise<void> {
-    const { gameId, command: commandInput, effect } = dto;
+    const { gameId, command, effect } = dto;
 
-    const commands = this.gameCommands.get(gameId);
+    const commands = Array.isArray(command) ? command : [command];
 
-    if (!commands) {
-      this.gameCommands.set(gameId, new Map([[commandInput, effect]]));
+    const existingCommands = this.gameCommands.get(gameId);
+
+    if (!existingCommands) {
+      this.gameCommands.set(
+        gameId,
+        new Map(commands.map((command) => [command, effect])),
+      );
+
+      return;
     }
 
-    commands?.set(commandInput, effect);
+    for (const command of commands) {
+      existingCommands?.set(command, effect);
+    }
   }
 
   async addRoomCommand(dto: AddRoomCommandDto): Promise<void> {
