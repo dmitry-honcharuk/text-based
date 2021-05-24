@@ -81,7 +81,7 @@ export class InMemoryCommandRepository implements CommandRepository {
 
     return triggers.map((trigger) => ({
       effectType: trigger.type,
-      context: trigger.context,
+      context: trigger.options,
       object,
     }));
   }

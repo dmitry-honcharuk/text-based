@@ -9,7 +9,8 @@ import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 import { NoGameError } from '../Errors/NoGameError';
 import { NoPlayerInGameError } from '../Errors/NoPlayerInGameError';
 import { NoPlayerRoomError } from '../Errors/NoPlayerRoomError';
-import { UnknownEffectError } from '../Errors/UnknownEffectError';
+import { UnknownCommandError } from '../Errors/UnknownCommandError';
+import { CombatRepository } from '../repositories/CombatRepository';
 import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
@@ -23,6 +24,7 @@ type InputProps = {
   commandInput: string;
 };
 
+// @TODO Improve commands to have aliases ( attack|smash|punch )
 export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
   constructor(
     private mapRepo: MapRepository,
@@ -30,6 +32,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private roomRepo: RoomRepository,
     private gameRepo: GameRepository,
     private objectRepo: ObjectRepository,
+    private combatRepo: CombatRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {
@@ -62,6 +65,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       this.mapRepo,
       this.roomRepo,
       this.objectRepo,
+      this.combatRepo,
     );
 
     const [command, possibleTargets] = commandParser.parse(commandInput);
@@ -75,22 +79,11 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       possibleTargets,
     };
 
-    const executedRoomCommand = await this.executeRoomEffect(
-      effectManager,
-      executionOptions,
-    );
-
-    if (!executedRoomCommand) {
-      const executedGlobalCommand = await this.executeGlobalCommand(
-        effectManager,
-        executionOptions,
-      );
-
-      if (!executedGlobalCommand) {
-        throw new UnknownEffectError(command);
-      }
+    try {
+      await this.executeRoomEffect(effectManager, executionOptions);
+    } catch (e) {
+      await this.executeGlobalCommand(effectManager, executionOptions);
     }
-
     const conditionChecker = new ConditionChecker();
     const gameStatusChecker = new GameStatusChecker(conditionChecker);
 
@@ -105,8 +98,10 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
 
     const gameStatus = gameStatusChecker.getNewStatus(game, objects);
 
-    if (gameStatus !== game.status)
+    if (gameStatus !== game.status) {
+      console.log('GAME STATUS CHANGED:', gameStatus);
       await this.gameRepo.updateGame(gameId, { status: gameStatus });
+    }
   }
 
   private async executeRoomEffect(
@@ -119,7 +114,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       playerRoom: RoomEntity;
       possibleTargets: string[];
     },
-  ): Promise<boolean> {
+  ): Promise<void> {
     const {
       playerRoomId,
       command,
@@ -135,25 +130,34 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     });
 
     if (roomEffects.length === 0) {
-      return false;
+      throw new UnknownCommandError(command);
     }
 
-    for (const { effectType, object, context } of roomEffects) {
+    const applicableRoomEffects = roomEffects.filter(({ object }) =>
+      this.isValidTarget(object, possibleTargets),
+    );
+
+    if (!applicableRoomEffects.length) {
+      throw new UnknownCommandError(command);
+    }
+
+    const [firstApplicable] = applicableRoomEffects;
+
+    const objectEffects = applicableRoomEffects.filter(
+      ({ object }) => object.id === firstApplicable.object.id,
+    );
+
+    for (const { effectType, object, context } of objectEffects) {
       const effect = effectManager.getObjectEffect(effectType, object, context);
 
-      try {
-        await effect.execute({
-          gameId,
-          issuerId: playerId,
-          issuerRoomId: playerRoomId,
-          playerRoom,
-          possibleTargets,
-        });
-        return true;
-      } catch (e) {}
+      await effect.execute({
+        gameId,
+        issuerId: playerId,
+        issuerRoomId: playerRoomId,
+        playerRoom,
+        possibleTargets,
+      });
     }
-
-    return false;
   }
 
   private async executeGlobalCommand(
@@ -166,7 +170,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       playerRoom: RoomEntity;
       possibleTargets: string[];
     },
-  ): Promise<boolean> {
+  ): Promise<void> {
     const {
       command,
       gameId,
@@ -182,7 +186,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     });
 
     if (!effectType) {
-      return false;
+      throw new UnknownCommandError(command);
     }
 
     const effect = effectManager.getEffect(effectType);
@@ -194,7 +198,15 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       playerRoom,
       possibleTargets,
     });
+  }
 
-    return true;
+  private isValidTarget(
+    possibleTarget: { id: string; name: string },
+    possibleTargets: string[],
+  ): boolean {
+    return possibleTargets.some(
+      (target) =>
+        possibleTarget.id === target || possibleTarget.name === target,
+    );
   }
 }

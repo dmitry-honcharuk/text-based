@@ -4,7 +4,7 @@ import { GameConfigValidator } from '../../GameConfigValidator';
 import { GameEntity, GameOptions, GameStatus } from '../../GameEntity';
 import { MapEntity } from '../../MapEntity';
 import { PlayerEntity } from '../../PlayerEntity';
-import { RoomEntity, RoomEntityExit } from '../../RoomEntity';
+import { RoomEntity, RoomEntityExit, RoomState } from '../../RoomEntity';
 
 export function createGameEntityMock(
   config: Partial<GameEntity> = {},
@@ -39,6 +39,7 @@ export function createRoomEntityMock(
     name = random.word(),
     description = random.words(),
     exits = [],
+    state = RoomState.Idle,
   } = config;
 
   return {
@@ -46,6 +47,7 @@ export function createRoomEntityMock(
     name,
     description,
     exits,
+    state,
   };
 }
 
@@ -66,18 +68,16 @@ export function createRoomEntityExitMock(
 }
 
 export function createGameConfigValidatorMock(): GameConfigValidator {
-  return ({
+  return {
     validate: jest.fn(),
-  } as unknown) as GameConfigValidator;
+  } as unknown as GameConfigValidator;
 }
 
 export function createPlayerEntityMock(
   config: Partial<PlayerEntity> = {},
 ): PlayerEntity {
-  const {
-    name = random.word(),
-    attributes = createEntityAttributesMock(),
-  } = config;
+  const { name = random.word(), attributes = createEntityAttributesMock() } =
+    config;
 
   return { name, attributes };
 }
@@ -85,10 +85,8 @@ export function createPlayerEntityMock(
 export function createMapEntityMock(
   config: Partial<MapEntity> = {},
 ): MapEntity {
-  const {
-    startingRoom = createRoomEntityMock(),
-    playerLocations = new Map(),
-  } = config;
+  const { startingRoom = createRoomEntityMock(), playerLocations = new Map() } =
+    config;
 
   return {
     startingRoom,

@@ -36,7 +36,7 @@
     {
       "id": "lobby",
       "name": "Great lobby",
-      "description": "Enormous dark scary lobby with only one exit west.",
+      "description": "Enormous dark scary lobby with only one exit to the west.",
       "objects": [
         {
           "id": "orc",
@@ -49,13 +49,61 @@
           ],
           "triggers": [
             {
-              "command": "attack",
-              "effects": {
-                "attributeDecrease": {
-                  "attribute": "hp",
-                  "value": 1
+              "command": "attack CURRENT - WRONG",
+              "effects": [
+                {
+                  "type": "attributeDecrease",
+                  "options": { "attribute": "hp", "value": 1 }
+                },
+                {
+                  "type": "combatStart",
+                  "options": {
+                    "actions": [
+                      {
+                        "name": "smash",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
-              }
+              ]
+            },
+            {
+              "command": "attack",
+              "effects": [
+                {
+                  "type": "combatStart",
+                  "options": {
+                    "playerActions": [
+                      {
+                        "command": "attack",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "name": "smash",
+                        "effects": [
+                          {
+                            "type": "attributeDecrease",
+                            "options": { "attribute": "hp", "value": 1 }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           ]
         }
@@ -85,12 +133,12 @@
           "triggers": [
             {
               "command": "attack",
-              "effects": {
-                "attributeDecrease": {
-                  "attribute": "hp",
-                  "value": 1
+              "effects": [
+                {
+                  "type": "attributeDecrease",
+                  "options": { "attribute": "hp", "value": 1 }
                 }
-              }
+              ]
             }
           ]
         }

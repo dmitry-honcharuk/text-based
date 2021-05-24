@@ -1,4 +1,4 @@
-import { RoomEntity } from '../../domain/entities/RoomEntity';
+import { RoomEntity, RoomState } from '../../domain/entities/RoomEntity';
 import { NoRoomError } from '../../domain/Errors/NoRoomError';
 import {
   RoomExit,
@@ -75,6 +75,14 @@ export class InMemoryRoomRepository implements RoomRepository {
     return this.rooms
       .filter(({ gameId: roomGameId }) => roomGameId === gameId)
       .map(({ id }) => id);
+  }
+
+  async updateState(roomId: string, state: RoomState): Promise<void> {
+    const roomData = this.getRoomDataById(roomId);
+
+    if (roomData) {
+      roomData.state = state;
+    }
   }
 
   private getRoomDataById(roomId: string): RoomData | null {

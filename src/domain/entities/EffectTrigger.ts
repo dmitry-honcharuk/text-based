@@ -2,37 +2,35 @@ import { EffectType } from '../Effects/EffectType';
 
 export type EffectTrigger<T extends EffectType = any, C = any> = {
   type: T;
-  context: C;
+  options: C;
 };
 
 export type AttributeDecreaseEffectContext = {
   attribute: string;
 } & ({ value: number } | { attributeValue: string });
 
-type TriggerEffectConfig = {
-  [EffectType.AttributeDecrease]?: AttributeDecreaseEffectConfig;
+export type AttributeDecreaseEffectTrigger = EffectTrigger<
+  EffectType.AttributeDecrease,
+  AttributeDecreaseEffectContext
+>;
+
+type CombatEffectsTriggers = AttributeDecreaseEffectTrigger;
+
+type Action = {
+  name: string;
+  effects: CombatEffectsTriggers[];
 };
 
-export type TriggerConfig = {
+export type CombatStartEffectContext = {
+  actions: Action[];
+};
+
+export type CombatStartEffect = EffectTrigger<
+  EffectType.CombatStart,
+  CombatStartEffectContext
+>;
+
+export type EffectTriggerConfig = {
   command: string;
-  effects: TriggerEffectConfig;
+  effects: EffectTrigger[];
 };
-
-type AttributeDecreaseEffectConfig = AttributeDecreaseEffectContext;
-
-export function createEffectTriggers(
-  effects: TriggerEffectConfig,
-): EffectTrigger[] {
-  const triggers: EffectTrigger[] = [];
-
-  for (const [type, context] of Object.entries(effects)) {
-    if (type === EffectType.AttributeDecrease) {
-      triggers.push({
-        type,
-        context,
-      });
-    }
-  }
-
-  return triggers;
-}
