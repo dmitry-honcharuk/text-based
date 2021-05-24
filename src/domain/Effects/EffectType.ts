@@ -2,6 +2,5 @@ export enum EffectType {
   PlayerLocationChange = 'playerLocationChange',
   AttributeDecrease = 'attributeDecrease',
   CombatStart = 'combatStart',
+  AddStatus = 'addStatus',
 }
-
-export const effects: EffectType[] = Object.values(EffectType);

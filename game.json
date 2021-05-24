@@ -39,6 +39,25 @@
       "description": "Enormous dark scary lobby with only one exit to the west.",
       "objects": [
         {
+          "id": "torch",
+          "name": "Torch",
+          "triggers": [
+            {
+              "command": "lit",
+              "effects": [
+                {
+                  "type": "addStatus",
+                  "options": {
+                    "target": "room",
+                    "targetId": "lobby",
+                    "status": ["has-light", "has-smoke"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "orc",
           "name": "orc",
           "attributes": [
