@@ -1,5 +1,6 @@
 import { random } from 'faker';
 import { GameStatus } from '../../../../domain/entities/GameEntity';
+import { RoomState } from '../../../../domain/entities/RoomEntity';
 import {
   createEntityAttributesMock,
   createGameOptionsMock,
@@ -32,6 +33,7 @@ export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
     description = random.word(),
     gameId = random.word(),
     exits = [],
+    state = RoomState.Idle,
   } = config;
 
   return {
@@ -41,6 +43,7 @@ export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
     description,
     gameId,
     exits,
+    state,
   };
 }
 

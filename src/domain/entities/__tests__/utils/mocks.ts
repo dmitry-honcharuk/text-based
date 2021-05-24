@@ -39,6 +39,7 @@ export function createRoomEntityMock(
     name = random.word(),
     description = random.words(),
     exits = [],
+    state = RoomState.Idle,
   } = config;
 
   return {
@@ -46,7 +47,7 @@ export function createRoomEntityMock(
     name,
     description,
     exits,
-    state: RoomState.Idle,
+    state,
   };
 }
 
