@@ -1,3 +1,4 @@
+import { AddStatusEffect } from '../Effects/AddStatusEffect';
 import { CombatStartEffect } from '../Effects/CombatStartEffect';
 import { DecreaseAttributeEffect } from '../Effects/DecreaseAttributeEffect';
 import { Effect } from '../Effects/Effect';
@@ -40,6 +41,10 @@ export class EffectManager {
         object,
         this.objectRepository,
       );
+    }
+
+    if (effectType === EffectType.AddStatus) {
+      return new AddStatusEffect(context, this.roomRepository);
     }
 
     if (effectType === EffectType.CombatStart) {

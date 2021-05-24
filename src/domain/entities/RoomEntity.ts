@@ -16,6 +16,7 @@ export type RoomEntity = {
   name: string;
   description: string;
   exits: RoomEntityExit[];
+  statuses?: string[];
   state: RoomState;
 };
 

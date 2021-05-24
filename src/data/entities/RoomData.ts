@@ -14,4 +14,5 @@ export type RoomData = {
   description: string;
   exits: RoomDataExit[];
   state: RoomState;
+  statuses?: string[];
 };

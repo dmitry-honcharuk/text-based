@@ -20,6 +20,7 @@ export class RoomEntityMapper {
       description: data.description,
       exits: data.exits,
       state: data.state,
+      statuses: data.statuses,
     };
   }
 }
