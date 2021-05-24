@@ -15,7 +15,7 @@ export interface CommandRepository {
 
 export type AddCommand = {
   gameId: string;
-  command: string;
+  command: string | string[];
   effect: EffectType;
   roomId?: string;
 };

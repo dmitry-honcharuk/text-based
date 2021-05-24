@@ -64,18 +64,18 @@
         {
           "id": "west",
           "name": "west",
-          "roomId": "hallway"
+          "roomId": "attic"
         }
       ]
     },
     {
-      "id": "hallway",
-      "name": "Hallway",
-      "description": "Hallway",
+      "id": "attic",
+      "name": "Attic",
+      "description": "Filthy attic. You can see a scraggy depressed goblin which shriveled in the corner",
       "objects": [
         {
           "id": "final-boss",
-          "name": "Huge stupid orc",
+          "name": "Scraggy goblin",
           "attributes": [
             {
               "name": "hp",
@@ -93,6 +93,13 @@
               }
             }
           ]
+        }
+      ],
+      "exits": [
+        {
+          "id": "east",
+          "name": "east",
+          "roomId": "lobby"
         }
       ]
     }

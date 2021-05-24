@@ -61,7 +61,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
     await this.commandRepository.addGlobalCommand({
       gameId,
-      command: 'go',
+      command: ['go', 'exit', 'move'],
       effect: EffectType.PlayerLocationChange,
     });
 

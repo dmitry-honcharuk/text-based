@@ -2,6 +2,7 @@ import { Box, Text } from 'ink';
 import React from 'react';
 import { GameContext } from '../../game-context';
 import { applyCommand } from '../../services/applyCommand';
+import { getRoomDescription } from '../../services/getRoomDescription';
 import { CommandInput } from '../CommandInput/CommandInput';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
@@ -9,6 +10,14 @@ export function Game() {
   const { gameId, playerId, playerName } = React.useContext(GameContext);
   const [commandStack, setCommandStack] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string>('');
+
+  const [roomDescription, setRoomDescription] = React.useState('');
+
+  React.useEffect(() => {
+    if (playerId) {
+      getRoomDescription({ gameId, playerId }).then(setRoomDescription);
+    }
+  }, [gameId, playerId, commandStack]);
 
   const stackCommand = (command: string) =>
     setCommandStack((commands) => [...commands, command]);
@@ -45,7 +54,9 @@ export function Game() {
           </Box>
         </Box>
       )}
-
+      <Box borderStyle='classic' padding={1} justifyContent='center'>
+        <Text>{roomDescription}</Text>
+      </Box>
       <Box>
         <CommandInput onCommand={registerCommand} />
       </Box>
