@@ -25,6 +25,7 @@ export function createRoomRepositoryMock(): RoomRepository {
     getRoomIdByCustomId: jest.fn(),
     getGameRoomIds: jest.fn(),
     updateState: jest.fn(),
+    appendRoomStatuses: jest.fn(),
   };
 }
 

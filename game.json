@@ -69,6 +69,23 @@
           "id": "west",
           "name": "west",
           "roomId": "attic"
+        },
+        {
+          "id": "library",
+          "name": "library",
+          "roomId": "library"
+        }
+      ]
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "description": "Library",
+      "exits": [
+        {
+          "id": "lobby",
+          "name": "lobby",
+          "roomId": "lobby"
         }
       ]
     },
