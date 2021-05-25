@@ -1,11 +1,20 @@
 import Joi, { SwitchCases } from 'joi';
 import { EffectType } from '../../../Effects/EffectType';
+import { StatusTarget } from '../../EffectTrigger';
 
 const attributeDecreaseEffect = Joi.object({
   attribute: Joi.string().required(),
   value: Joi.number(),
   attributeValue: Joi.string(),
 }).xor('value', 'attributeValue');
+
+const addStatusEffect = Joi.object({
+  target: Joi.string()
+    .valid(...Object.values(StatusTarget))
+    .required(),
+  targetId: Joi.string().required(),
+  status: [Joi.string().required(), Joi.array().items(Joi.string()).required()],
+});
 
 const combatEffects = [
   {
@@ -38,6 +47,10 @@ export const triggerValidation = Joi.object({
         {
           is: EffectType.CombatStart,
           then: combatStartEffect,
+        },
+        {
+          is: EffectType.AddStatus,
+          then: addStatusEffect,
         },
       ]),
     )

@@ -34,3 +34,16 @@ export type EffectTriggerConfig = {
   command: string;
   effects: EffectTrigger[];
 };
+
+export enum StatusTarget {
+  Room = 'room',
+}
+
+export type AddStatusTrigger = EffectTrigger<
+  EffectType.AddStatus,
+  {
+    target: StatusTarget;
+    targetId: string;
+    status: string | string[];
+  }
+>;

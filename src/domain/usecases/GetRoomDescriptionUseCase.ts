@@ -40,6 +40,22 @@ export class GetRoomDescriptionUseCase
 
     const [, room] = roomPair;
 
-    return room.description;
+    if (!room.statusDescriptions?.length || !room.statuses?.length) {
+      return room.description;
+    }
+
+    const matchedStatusDescriptions = room.statusDescriptions
+      .filter(({ statuses }) =>
+        statuses.every((status) => room.statuses?.includes(status)),
+      )
+      .map(({ statuses, description }) => ({
+        matchedStatuses: statuses.length,
+        description,
+      }))
+      .sort((b, a) => a.matchedStatuses - b.matchedStatuses);
+
+    const [bestMatch] = matchedStatusDescriptions;
+
+    return bestMatch?.description ?? room.description;
   }
 }

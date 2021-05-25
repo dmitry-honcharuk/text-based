@@ -22,4 +22,6 @@ export interface RoomRepository {
   getGameRoomIds(gameId: string): Promise<string[]>;
 
   updateState(roomId: string, state: RoomState): Promise<void>;
+
+  appendRoomStatuses(roomId: string, statuses: string[]): Promise<void>;
 }

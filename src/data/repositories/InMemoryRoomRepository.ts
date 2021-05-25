@@ -85,6 +85,16 @@ export class InMemoryRoomRepository implements RoomRepository {
     }
   }
 
+  async appendRoomStatuses(roomId: string, statuses: string[]): Promise<void> {
+    const roomData = this.getRoomDataById(roomId);
+
+    if (!roomData) {
+      return;
+    }
+
+    roomData.statuses = [...(roomData.statuses ?? []), ...statuses];
+  }
+
   private getRoomDataById(roomId: string): RoomData | null {
     const room = this.rooms.find(({ id }) => id === roomId);
 

@@ -11,11 +11,18 @@ export type RoomEntityExit = {
   destinationRoomId: string;
 };
 
+export type StatusDescription = {
+  statuses: string[];
+  description: string;
+};
+
 export type RoomEntity = {
   id: string;
   name: string;
   description: string;
+  statusDescriptions?: StatusDescription[];
   exits: RoomEntityExit[];
+  statuses?: string[];
   state: RoomState;
 };
 

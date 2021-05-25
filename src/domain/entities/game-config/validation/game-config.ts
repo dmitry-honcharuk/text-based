@@ -16,6 +16,14 @@ export const gameConfigValidationSchema = Joi.object({
         id: Joi.string().required(),
         name: Joi.string().required(),
         description: Joi.string().required(),
+        statusDescriptions: Joi.array()
+          .items(
+            Joi.object({
+              statuses: Joi.array().items(Joi.string()),
+              description: Joi.string().required(),
+            }),
+          )
+          .optional(),
         exits: Joi.array()
           .items(
             Joi.object({

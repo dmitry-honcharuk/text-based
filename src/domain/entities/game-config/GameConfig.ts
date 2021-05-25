@@ -1,6 +1,7 @@
 import { EffectTriggerConfig } from '../EffectTrigger';
 import { AttributeConfig } from '../EntityAttributes';
 import { GameOptions } from '../GameEntity';
+import { StatusDescription } from '../RoomEntity';
 
 export interface GameConfig {
   game: GameOptions;
@@ -13,6 +14,7 @@ export interface RoomConfig {
   id: string;
   name: string;
   description: string;
+  statusDescriptions?: StatusDescription[];
   exits?: RoomExitConfig[];
   objects?: ObjectConfig[];
 }
