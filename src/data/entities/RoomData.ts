@@ -1,4 +1,4 @@
-import { RoomState } from '../../domain/entities/RoomEntity';
+import { RoomState, StatusDescription } from '../../domain/entities/RoomEntity';
 
 export type RoomDataExit = {
   id: string;
@@ -12,6 +12,7 @@ export type RoomData = {
   gameId: string;
   name: string;
   description: string;
+  statusDescriptions?: StatusDescription[];
   exits: RoomDataExit[];
   state: RoomState;
   statuses?: string[];

@@ -3,9 +3,6 @@ import { DomainError } from '../Errors/DomainError';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { Effect, Options as EffectOptions } from './Effect';
 
-// @TODO Implement dependency between description and statuses
-//    @TODO incremental / conditional ?
-//    @TODO description builder ?
 export class AddStatusEffect implements Effect {
   constructor(
     private context: AddStatusTrigger['options'],
