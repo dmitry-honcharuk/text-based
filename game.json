@@ -95,6 +95,11 @@
           "triggers": [
             {
               "command": "unlock",
+              "conditions": [
+                {
+                  "requiredStatuses": ["has-skeleton-key"]
+                }
+              ],
               "effects": [
                 {
                   "type": "addStatus",
