@@ -1,5 +1,6 @@
-import { AddStatusTrigger } from '../entities/EffectTrigger';
+import { AddStatusTrigger, StatusTarget } from '../entities/EffectTrigger';
 import { DomainError } from '../Errors/DomainError';
+import { PlayerRepository } from '../repositories/PlayerRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { Effect, Options as EffectOptions } from './Effect';
 
@@ -7,9 +8,22 @@ export class AddStatusEffect implements Effect {
   constructor(
     private context: AddStatusTrigger['options'],
     private roomRepo: RoomRepository,
+    private playerRepo: PlayerRepository,
   ) {}
 
   async execute(options: EffectOptions): Promise<void> {
+    if (this.context.target === StatusTarget.Room) {
+      await this.addStatusesToRoom(options);
+      return;
+    }
+
+    if (this.context.target === StatusTarget.Player) {
+      await this.addStatusesToPlayer(options);
+      return;
+    }
+  }
+
+  private async addStatusesToRoom(options: EffectOptions) {
     const roomId = await this.roomRepo.getRoomIdByCustomId(
       options.gameId,
       this.context.targetId,
@@ -19,11 +33,22 @@ export class AddStatusEffect implements Effect {
       throw new DomainError('No room found');
     }
 
-    await this.roomRepo.appendRoomStatuses(
-      roomId,
-      Array.isArray(this.context.status)
-        ? this.context.status
-        : [this.context.status],
-    );
+    const statuses = Array.isArray(this.context.status)
+      ? this.context.status
+      : [this.context.status];
+
+    await this.roomRepo.appendRoomStatuses(roomId, statuses);
+  }
+
+  // @TODO Implement item aliases
+  private async addStatusesToPlayer(options: EffectOptions) {
+    const statuses = Array.isArray(this.context.status)
+      ? this.context.status
+      : [this.context.status];
+
+    await this.playerRepo.appendPlayerStatuses({
+      playerId: options.issuerId,
+      statuses,
+    });
   }
 }

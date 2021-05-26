@@ -15,6 +15,7 @@ import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
 import { ObjectRepository } from '../repositories/ObjectRepository';
+import { PlayerRepository } from '../repositories/PlayerRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
 
@@ -33,6 +34,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private gameRepo: GameRepository,
     private objectRepo: ObjectRepository,
     private combatRepo: CombatRepository,
+    private playerRepo: PlayerRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {
@@ -66,6 +68,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       this.roomRepo,
       this.objectRepo,
       this.combatRepo,
+      this.playerRepo,
     );
 
     const [command, possibleTargets] = commandParser.parse(commandInput);

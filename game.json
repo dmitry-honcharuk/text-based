@@ -45,6 +45,25 @@
       ],
       "objects": [
         {
+          "id": "skeleton-key",
+          "name": "Skeleton Key",
+          "triggers": [
+            {
+              "command": "grab",
+              "effects": [
+                {
+                  "type": "addStatus",
+                  "options": {
+                    "target": "player",
+                    "targetId": "self",
+                    "status": ["has-skeleton-key"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "torch",
           "name": "Torch",
           "triggers": [

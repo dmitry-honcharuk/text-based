@@ -5,6 +5,7 @@ import {
   gameRepo,
   mapRepo,
   objectRepo,
+  playerRepo,
   roomRepo,
 } from '../dependencies';
 
@@ -20,6 +21,7 @@ export async function applyCommand(options: {
     gameRepo,
     objectRepo,
     combatRepo,
+    playerRepo,
   ).execute({
     commandInput: options.command,
     issuerId: options.playerId,
