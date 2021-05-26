@@ -6,7 +6,7 @@ export class PlayerEntityMapper {
     return {
       name: playerData.name,
       attributes: playerData.attributes,
-      statuses: playerData.statuses,
+      statuses: [...playerData.statuses],
     };
   }
 }

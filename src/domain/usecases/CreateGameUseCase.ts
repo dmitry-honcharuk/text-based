@@ -101,6 +101,7 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
         const object: ObjectEntity = {
           id: objectConfig.id,
           name: objectConfig.name,
+          aliases: objectConfig.aliases,
         };
 
         if (objectConfig.attributes) {
@@ -109,25 +110,21 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
 
         await this.objectRepository.createObject(roomId, object);
 
-        await this.createObjectCommands(
-          roomId,
-          object.id,
-          objectConfig.triggers,
-        );
+        await this.createObjectCommands(roomId, object, objectConfig.triggers);
       }),
     );
   }
 
   private async createObjectCommands(
     roomId: string,
-    objectId: string,
+    object: ObjectEntity,
     triggerConfigs: EffectTriggerConfig[],
   ) {
     await Promise.all(
       triggerConfigs.map(async ({ command, effects }) => {
         await this.commandRepository.addRoomCommand({
           roomId,
-          objectId,
+          object,
           command,
           effectTriggers: effects,
         });

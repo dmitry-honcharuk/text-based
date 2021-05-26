@@ -4,6 +4,7 @@ import { ConditionChecker } from '../entities/ConditionChecker';
 import { EffectManager } from '../entities/EffectManager';
 import { isGameStarted } from '../entities/GameEntity';
 import { GameStatusChecker } from '../entities/GameStatusChacker';
+import { ObjectEntity } from '../entities/ObjectEntity';
 import { RoomEntity } from '../entities/RoomEntity';
 import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 import { NoGameError } from '../Errors/NoGameError';
@@ -105,6 +106,10 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       console.log('GAME STATUS CHANGED:', gameStatus);
       await this.gameRepo.updateGame(gameId, { status: gameStatus });
     }
+
+    // @TODO REMOVE LOGS
+    console.log(await this.mapRepo.getPlayerRoom(gameId, issuerId));
+    console.log(await this.playerRepo.getGamePlayers(gameId));
   }
 
   private async executeRoomEffect(
@@ -204,12 +209,13 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
   }
 
   private isValidTarget(
-    possibleTarget: { id: string; name: string },
+    possibleTarget: ObjectEntity,
     possibleTargets: string[],
   ): boolean {
     return possibleTargets.some(
       (target) =>
-        possibleTarget.id === target || possibleTarget.name === target,
+        possibleTarget.name === target ||
+        possibleTarget.aliases?.includes(target),
     );
   }
 }

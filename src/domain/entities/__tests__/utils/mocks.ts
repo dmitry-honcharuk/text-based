@@ -76,10 +76,13 @@ export function createGameConfigValidatorMock(): GameConfigValidator {
 export function createPlayerEntityMock(
   config: Partial<PlayerEntity> = {},
 ): PlayerEntity {
-  const { name = random.word(), attributes = createEntityAttributesMock() } =
-    config;
+  const {
+    name = random.word(),
+    attributes = createEntityAttributesMock(),
+    statuses = [],
+  } = config;
 
-  return { name, attributes };
+  return { name, attributes, statuses };
 }
 
 export function createMapEntityMock(

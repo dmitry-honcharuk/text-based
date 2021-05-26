@@ -11,6 +11,7 @@ export class RoomEntityMapper {
       gameId: gameId,
       exits: entity.exits,
       state: entity.state,
+      statuses: new Set(entity.statuses),
     };
   }
 
@@ -22,7 +23,7 @@ export class RoomEntityMapper {
       statusDescriptions: data.statusDescriptions,
       exits: data.exits,
       state: data.state,
-      statuses: data.statuses,
+      statuses: [...data.statuses],
     };
   }
 }

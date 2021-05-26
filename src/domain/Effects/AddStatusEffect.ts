@@ -33,22 +33,21 @@ export class AddStatusEffect implements Effect {
       throw new DomainError('No room found');
     }
 
-    const statuses = Array.isArray(this.context.status)
-      ? this.context.status
-      : [this.context.status];
+    const statuses = this.normalizeStatuses(this.context.status);
 
     await this.roomRepo.appendRoomStatuses(roomId, statuses);
   }
 
-  // @TODO Implement item aliases
   private async addStatusesToPlayer(options: EffectOptions) {
-    const statuses = Array.isArray(this.context.status)
-      ? this.context.status
-      : [this.context.status];
+    const statuses = this.normalizeStatuses(this.context.status);
 
     await this.playerRepo.appendPlayerStatuses({
       playerId: options.issuerId,
       statuses,
     });
+  }
+
+  private normalizeStatuses(status: string | string[]): string[] {
+    return Array.isArray(status) ? status : [...new Set(status)];
   }
 }

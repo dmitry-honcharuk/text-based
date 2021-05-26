@@ -34,6 +34,7 @@ export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
     gameId = random.word(),
     exits = [],
     state = RoomState.Idle,
+    statuses = new Set(),
   } = config;
 
   return {
@@ -44,6 +45,7 @@ export function createRoomDataMock(config: Partial<RoomData> = {}): RoomData {
     gameId,
     exits,
     state,
+    statuses,
   };
 }
 
@@ -69,6 +71,7 @@ export function createPlayerDataMock(
     name = random.word(),
     gameId = random.word(),
     attributes = createEntityAttributesMock(),
+    statuses = new Set(),
   } = config;
 
   return {
@@ -76,6 +79,7 @@ export function createPlayerDataMock(
     name,
     gameId,
     attributes,
+    statuses,
   };
 }
 

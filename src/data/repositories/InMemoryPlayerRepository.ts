@@ -29,7 +29,7 @@ export class InMemoryPlayerRepository implements PlayerRepository {
       name: playerName,
       gameId,
       attributes,
-      statuses,
+      statuses: new Set(statuses),
     };
 
     this.players.push(playerData);
@@ -53,6 +53,8 @@ export class InMemoryPlayerRepository implements PlayerRepository {
       return;
     }
 
-    player.statuses = [...(player.statuses ?? []), ...statuses];
+    for (const status of statuses) {
+      player.statuses.add(status);
+    }
   }
 }

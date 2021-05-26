@@ -15,5 +15,5 @@ export type RoomData = {
   statusDescriptions?: StatusDescription[];
   exits: RoomDataExit[];
   state: RoomState;
-  statuses?: string[];
+  statuses: Set<string>;
 };

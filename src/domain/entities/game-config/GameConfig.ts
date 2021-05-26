@@ -32,6 +32,7 @@ export interface RoomWithExitsConfig extends RoomConfig {
 export interface ObjectConfig {
   id: string;
   name: string;
+  aliases?: string[];
   attributes?: AttributeConfig[];
   triggers: EffectTriggerConfig[];
 }

@@ -17,7 +17,10 @@ export class InMemoryCommandRepository implements CommandRepository {
 
   public readonly roomCommands: Map<
     string,
-    Map<string, [objectId: string, triggers: EffectTrigger[]]>
+    Map<
+      string,
+      [objectId: string, triggers: EffectTrigger[], aliases: string[]]
+    >
   > = new Map();
 
   constructor(private objectRepo: ObjectRepository) {}
@@ -44,18 +47,20 @@ export class InMemoryCommandRepository implements CommandRepository {
   }
 
   async addRoomCommand(dto: AddRoomCommandDto): Promise<void> {
-    const { command, roomId, objectId, effectTriggers } = dto;
+    const { command, roomId, object, effectTriggers } = dto;
 
     const roomCommands = this.roomCommands.get(roomId);
+
+    const aliases = object.aliases ?? [];
 
     if (!roomCommands) {
       this.roomCommands.set(
         roomId,
-        new Map([[command, [objectId, effectTriggers]]]),
+        new Map([[command, [object.id, effectTriggers, aliases]]]),
       );
     }
 
-    roomCommands?.set(command, [objectId, effectTriggers]);
+    roomCommands?.set(command, [object.id, effectTriggers, aliases]);
   }
 
   async getGlobalEffect(dto: GetCommand): DeferredNullable<EffectType> {

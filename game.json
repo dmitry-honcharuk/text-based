@@ -40,13 +40,18 @@
       "statusDescriptions": [
         {
           "statuses": ["has-light"],
-          "description": "Cowered in cobweb and dusty place. You can see a door leading to west."
+          "description": "Cowered in cobweb and dusty place. Now you can see a chest, it's locked.There is only one door leading to west."
+        },
+        {
+          "statuses": ["has-light", "with-unlocked-chest"],
+          "description": "Cowered in cobweb and dusty place. There is only one door leading to west."
         }
       ],
       "objects": [
         {
           "id": "skeleton-key",
           "name": "Skeleton Key",
+          "aliases": ["key", "skeleton key", "skeleton"],
           "triggers": [
             {
               "command": "grab",
@@ -66,6 +71,7 @@
         {
           "id": "torch",
           "name": "Torch",
+          "aliases": ["torch"],
           "triggers": [
             {
               "command": "lit",
@@ -76,6 +82,26 @@
                     "target": "room",
                     "targetId": "lobby",
                     "status": ["has-light", "has-smoke"]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chest",
+          "name": "Chest",
+          "aliases": ["chest"],
+          "triggers": [
+            {
+              "command": "unlock",
+              "effects": [
+                {
+                  "type": "addStatus",
+                  "options": {
+                    "target": "room",
+                    "targetId": "lobby",
+                    "status": ["with-unlocked-chest", "with-treasure"]
                   }
                 }
               ]

@@ -27,7 +27,7 @@ export type GetCommand = {
 
 export type AddRoomCommandDto = {
   roomId: string;
-  objectId: string;
+  object: ObjectEntity;
   command: string;
   effectTriggers: EffectTrigger[];
 };

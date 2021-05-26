@@ -33,7 +33,7 @@ describe('InMemoryPlayerRepository', () => {
         name: playerName,
         gameId,
         attributes: createEntityAttributesMock(),
-        statuses: [],
+        statuses: new Set(),
       };
 
       const repo = new InMemoryPlayerRepository(
@@ -43,13 +43,11 @@ describe('InMemoryPlayerRepository', () => {
 
       expect(repo.players).toHaveLength(0);
 
-      const actualPlayerId = await repo.createPlayer(
-        {
-          gameId,
-          playerName,
-          attributes: createEntityAttributesMock(),
-        }
-      );
+      const actualPlayerId = await repo.createPlayer({
+        gameId,
+        playerName,
+        attributes: createEntityAttributesMock(),
+      });
 
       expect(repo.players).toHaveLength(1);
 
