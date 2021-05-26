@@ -1,6 +1,9 @@
-import { EntityAttributes } from '../../domain/entities/EntityAttributes';
 import { PlayerEntity } from '../../domain/entities/PlayerEntity';
-import { PlayerRepository } from '../../domain/repositories/PlayerRepository';
+import {
+  AppendStatusesDTO,
+  CreatePlayerDTO,
+  PlayerRepository,
+} from '../../domain/repositories/PlayerRepository';
 import { IdGenerator } from '../entities/IdGenerator';
 import { PlayerData } from '../entities/PlayerData';
 import { PlayerEntityMapper } from '../mappers/PlayerEntityMapper';
@@ -13,11 +16,12 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     private playerMapper: PlayerEntityMapper,
   ) {}
 
-  async createPlayer(
-    gameId: string,
-    playerName: string,
-    attributes: EntityAttributes,
-  ): Promise<string> {
+  async createPlayer({
+    gameId,
+    playerName,
+    attributes,
+    statuses = [],
+  }: CreatePlayerDTO): Promise<string> {
     const playerId = this.idGenerator.next();
 
     const playerData: PlayerData = {
@@ -25,6 +29,7 @@ export class InMemoryPlayerRepository implements PlayerRepository {
       name: playerName,
       gameId,
       attributes,
+      statuses: new Set(statuses),
     };
 
     this.players.push(playerData);
@@ -36,5 +41,20 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     return this.players
       .filter((player) => player.gameId === gameId)
       .map((player) => this.playerMapper.fromDataToEntity(player));
+  }
+
+  async appendPlayerStatuses({
+    playerId,
+    statuses,
+  }: AppendStatusesDTO): Promise<void> {
+    const player = this.players.find(({ id }) => id === playerId);
+
+    if (!player) {
+      return;
+    }
+
+    for (const status of statuses) {
+      player.statuses.add(status);
+    }
   }
 }

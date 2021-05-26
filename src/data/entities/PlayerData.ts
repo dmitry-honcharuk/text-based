@@ -3,4 +3,5 @@ export type PlayerData = {
   name: string;
   gameId: string;
   attributes: Map<string, number>;
+  statuses: Set<string>;
 };

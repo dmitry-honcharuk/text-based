@@ -37,6 +37,7 @@ export type EffectTriggerConfig = {
 
 export enum StatusTarget {
   Room = 'room',
+  Player = 'player',
 }
 
 export type AddStatusTrigger = EffectTrigger<

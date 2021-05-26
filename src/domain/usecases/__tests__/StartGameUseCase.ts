@@ -104,9 +104,11 @@ describe('StartGameUseCase', () => {
 
     expect(playerRepo.createPlayer).toHaveBeenCalledTimes(1);
     expect(playerRepo.createPlayer).toHaveBeenCalledWith(
-      expectedGameId,
-      playerName,
-      gameEntity.defaultPlayerAttributes,
+      {
+        gameId: expectedGameId,
+        attributes: gameEntity.defaultPlayerAttributes,
+        playerName,
+      }
     );
 
     expect(mapRepo.spawnPlayer).toHaveBeenCalledTimes(1);

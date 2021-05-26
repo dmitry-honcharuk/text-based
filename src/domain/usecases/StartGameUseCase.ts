@@ -40,11 +40,11 @@ export class StartGameUseCase implements UseCase<InputProps, Promise<string>> {
       throw new NoStartingRoomError(gameId);
     }
 
-    const playerId = await this.playerRepository.createPlayer(
+    const playerId = await this.playerRepository.createPlayer({
       gameId,
       playerName,
-      game.defaultPlayerAttributes,
-    );
+      attributes: game.defaultPlayerAttributes,
+    });
 
     await this.mapRepository.spawnPlayer(gameId, playerId, startingRoomId);
     await this.gameRepository.addPlayer(playerId);

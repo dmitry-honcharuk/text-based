@@ -4,6 +4,7 @@ import { ConditionChecker } from '../entities/ConditionChecker';
 import { EffectManager } from '../entities/EffectManager';
 import { isGameStarted } from '../entities/GameEntity';
 import { GameStatusChecker } from '../entities/GameStatusChacker';
+import { ObjectEntity } from '../entities/ObjectEntity';
 import { RoomEntity } from '../entities/RoomEntity';
 import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 import { NoGameError } from '../Errors/NoGameError';
@@ -15,6 +16,7 @@ import { CommandRepository } from '../repositories/CommandRepository';
 import { GameRepository } from '../repositories/GameRepository';
 import { MapRepository } from '../repositories/MapRepository';
 import { ObjectRepository } from '../repositories/ObjectRepository';
+import { PlayerRepository } from '../repositories/PlayerRepository';
 import { RoomRepository } from '../repositories/RoomRepository';
 import { UseCase } from './UseCase';
 
@@ -33,6 +35,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     private gameRepo: GameRepository,
     private objectRepo: ObjectRepository,
     private combatRepo: CombatRepository,
+    private playerRepo: PlayerRepository,
   ) {}
 
   async execute({ commandInput, gameId, issuerId }: InputProps) {
@@ -66,6 +69,7 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       this.roomRepo,
       this.objectRepo,
       this.combatRepo,
+      this.playerRepo,
     );
 
     const [command, possibleTargets] = commandParser.parse(commandInput);
@@ -102,6 +106,10 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       console.log('GAME STATUS CHANGED:', gameStatus);
       await this.gameRepo.updateGame(gameId, { status: gameStatus });
     }
+
+    // @TODO REMOVE LOGS
+    console.log(await this.mapRepo.getPlayerRoom(gameId, issuerId));
+    console.log(await this.playerRepo.getGamePlayers(gameId));
   }
 
   private async executeRoomEffect(
@@ -201,12 +209,13 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
   }
 
   private isValidTarget(
-    possibleTarget: { id: string; name: string },
+    possibleTarget: ObjectEntity,
     possibleTargets: string[],
   ): boolean {
     return possibleTargets.some(
       (target) =>
-        possibleTarget.id === target || possibleTarget.name === target,
+        possibleTarget.name === target ||
+        possibleTarget.aliases?.includes(target),
     );
   }
 }

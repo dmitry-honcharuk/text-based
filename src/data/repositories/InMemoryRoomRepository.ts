@@ -92,7 +92,13 @@ export class InMemoryRoomRepository implements RoomRepository {
       return;
     }
 
-    roomData.statuses = [...(roomData.statuses ?? []), ...statuses];
+    if (!roomData.statuses) {
+      roomData.statuses = new Set();
+    }
+
+    for (const status of statuses) {
+      roomData.statuses.add(status);
+    }
   }
 
   private getRoomDataById(roomId: string): RoomData | null {

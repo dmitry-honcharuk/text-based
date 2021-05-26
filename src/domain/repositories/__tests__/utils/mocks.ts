@@ -33,6 +33,7 @@ export function createPlayerRepositoryMock(): PlayerRepository {
   return {
     createPlayer: jest.fn(),
     getGamePlayers: jest.fn(),
+    appendPlayerStatuses: jest.fn(),
   };
 }
 
