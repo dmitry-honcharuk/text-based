@@ -157,13 +157,13 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
 
     const [firstApplicable] = applicableRoomEffects;
 
-    const areConditionsMet = await this.areConditionsMet(
+    const conditionError = await this.getConditionError(
       firstApplicable.conditions,
       { playerId, roomId: playerRoomId },
     );
 
-    if (!areConditionsMet) {
-      throw new CannotPerformActionError();
+    if (conditionError) {
+      throw new CannotPerformActionError(conditionError);
     }
 
     const objectEffects = applicableRoomEffects.filter(
@@ -238,24 +238,33 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     condition: EffectTriggerCondition,
     appliedStatuses: string[],
   ): boolean {
+    if (!condition.requiredStatuses) {
+      return true;
+    }
+
     return condition.requiredStatuses.every((requiredStatus) =>
       appliedStatuses.includes(requiredStatus),
     );
   }
 
-  private async areConditionsMet(
+  private async getConditionError(
     conditions: EffectTriggerCondition[],
     options: { roomId: string; playerId: string },
-  ): Promise<boolean> {
+  ): Promise<string | null> {
     const [roomStatuses, playerStatuses] = await Promise.all([
       await this.roomRepo.getRoomStatuses(options.roomId),
       await this.playerRepo.getPlayerStatuses(options.playerId),
     ]);
 
-    console.log('STATUSES', [...roomStatuses, ...playerStatuses]);
-
-    return conditions.every((condition) =>
-      this.isConditionMet(condition, [...roomStatuses, ...playerStatuses]),
+    const failedCondition = conditions.find(
+      (condition) =>
+        !this.isConditionMet(condition, [...roomStatuses, ...playerStatuses]),
     );
+
+    if (!failedCondition) {
+      return null;
+    }
+
+    return failedCondition.message ?? CannotPerformActionError.DEFAULT_MESSAGE;
   }
 }

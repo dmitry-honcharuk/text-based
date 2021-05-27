@@ -44,6 +44,7 @@ export const triggerValidation = Joi.object({
     .items(
       Joi.object({
         requiredStatuses: Joi.array().items(Joi.string()),
+        message: Joi.string(),
       }),
     )
     .optional(),

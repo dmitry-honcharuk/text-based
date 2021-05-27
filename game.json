@@ -97,7 +97,8 @@
               "command": "unlock",
               "conditions": [
                 {
-                  "requiredStatuses": ["has-skeleton-key"]
+                  "requiredStatuses": ["has-skeleton-key"],
+                  "message": "Chest is locked"
                 }
               ],
               "effects": [
