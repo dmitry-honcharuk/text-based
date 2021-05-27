@@ -30,8 +30,14 @@ export type CombatStartEffect = EffectTrigger<
   CombatStartEffectContext
 >;
 
+export type EffectTriggerCondition = {
+  requiredStatuses?: string[];
+  message?: string;
+};
+
 export type EffectTriggerConfig = {
   command: string;
+  conditions?: EffectTriggerCondition[];
   effects: EffectTrigger[];
 };
 

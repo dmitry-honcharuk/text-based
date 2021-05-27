@@ -101,6 +101,16 @@ export class InMemoryRoomRepository implements RoomRepository {
     }
   }
 
+  async getRoomStatuses(roomId: string): Promise<string[]> {
+    const roomData = this.getRoomDataById(roomId);
+
+    if (!roomData) {
+      return [];
+    }
+
+    return [...roomData.statuses];
+  }
+
   private getRoomDataById(roomId: string): RoomData | null {
     const room = this.rooms.find(({ id }) => id === roomId);
 

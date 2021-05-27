@@ -57,4 +57,14 @@ export class InMemoryPlayerRepository implements PlayerRepository {
       player.statuses.add(status);
     }
   }
+
+  async getPlayerStatuses(playerId: string): Promise<string[]> {
+    const player = this.players.find(({ id }) => id === playerId);
+
+    if (!player) {
+      return [];
+    }
+
+    return [...player.statuses];
+  }
 }
