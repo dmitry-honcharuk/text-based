@@ -1,5 +1,8 @@
 import { EffectType } from '../../domain/Effects/EffectType';
-import { EffectTrigger } from '../../domain/entities/EffectTrigger';
+import {
+  EffectTrigger,
+  EffectTriggerCondition,
+} from '../../domain/entities/EffectTrigger';
 import {
   AddCommand,
   AddRoomCommandDto,
@@ -22,6 +25,9 @@ export class InMemoryCommandRepository implements CommandRepository {
       [objectId: string, triggers: EffectTrigger[], aliases: string[]]
     >
   > = new Map();
+
+  readonly roomCommandConditions: Map<string, EffectTriggerCondition[]> =
+    new Map();
 
   constructor(private objectRepo: ObjectRepository) {}
 
@@ -47,7 +53,7 @@ export class InMemoryCommandRepository implements CommandRepository {
   }
 
   async addRoomCommand(dto: AddRoomCommandDto): Promise<void> {
-    const { command, roomId, object, effectTriggers } = dto;
+    const { command, roomId, object, effectTriggers, conditions } = dto;
 
     const roomCommands = this.roomCommands.get(roomId);
 
@@ -61,6 +67,8 @@ export class InMemoryCommandRepository implements CommandRepository {
     }
 
     roomCommands?.set(command, [object.id, effectTriggers, aliases]);
+
+    this.roomCommandConditions.set(command, conditions);
   }
 
   async getGlobalEffect(dto: GetCommand): DeferredNullable<EffectType> {
@@ -88,6 +96,7 @@ export class InMemoryCommandRepository implements CommandRepository {
       effectType: trigger.type,
       context: trigger.options,
       object,
+      conditions: this.roomCommandConditions.get(command) ?? [],
     }));
   }
 }

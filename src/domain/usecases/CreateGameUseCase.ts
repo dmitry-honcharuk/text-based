@@ -121,11 +121,12 @@ export class CreateGameUseCase implements UseCase<GameConfig, Promise<string>> {
     triggerConfigs: EffectTriggerConfig[],
   ) {
     await Promise.all(
-      triggerConfigs.map(async ({ command, effects }) => {
+      triggerConfigs.map(async ({ command, conditions, effects }) => {
         await this.commandRepository.addRoomCommand({
           roomId,
           object,
           command,
+          conditions: conditions ?? [],
           effectTriggers: effects,
         });
       }),

@@ -2,10 +2,12 @@ import { CommandParser } from '../entities/CommandParser';
 import { getRelevantObjectIds } from '../entities/Condition';
 import { ConditionChecker } from '../entities/ConditionChecker';
 import { EffectManager } from '../entities/EffectManager';
+import { EffectTriggerCondition } from '../entities/EffectTrigger';
 import { isGameStarted } from '../entities/GameEntity';
 import { GameStatusChecker } from '../entities/GameStatusChacker';
 import { ObjectEntity } from '../entities/ObjectEntity';
 import { RoomEntity } from '../entities/RoomEntity';
+import { CannotPerformActionError } from '../Errors/CannotPerformActionError';
 import { GameIsNotStartedError } from '../Errors/GameIsNotStartedError';
 import { NoGameError } from '../Errors/NoGameError';
 import { NoPlayerInGameError } from '../Errors/NoPlayerInGameError';
@@ -86,6 +88,10 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     try {
       await this.executeRoomEffect(effectManager, executionOptions);
     } catch (e) {
+      if (!(e instanceof UnknownCommandError)) {
+        throw e;
+      }
+
       await this.executeGlobalCommand(effectManager, executionOptions);
     }
     const conditionChecker = new ConditionChecker();
@@ -107,9 +113,9 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       await this.gameRepo.updateGame(gameId, { status: gameStatus });
     }
 
-    // @TODO REMOVE LOGS
-    console.log(await this.mapRepo.getPlayerRoom(gameId, issuerId));
-    console.log(await this.playerRepo.getGamePlayers(gameId));
+    // @TODO LOGS
+    // console.log(await this.mapRepo.getPlayerRoom(gameId, issuerId));
+    // console.log(await this.playerRepo.getGamePlayers(gameId));
   }
 
   private async executeRoomEffect(
@@ -150,6 +156,15 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
     }
 
     const [firstApplicable] = applicableRoomEffects;
+
+    const areConditionsMet = await this.areConditionsMet(
+      firstApplicable.conditions,
+      { playerId, roomId: playerRoomId },
+    );
+
+    if (!areConditionsMet) {
+      throw new CannotPerformActionError();
+    }
 
     const objectEffects = applicableRoomEffects.filter(
       ({ object }) => object.id === firstApplicable.object.id,
@@ -216,6 +231,31 @@ export class ApplyCommandUseCase implements UseCase<InputProps, Promise<void>> {
       (target) =>
         possibleTarget.name === target ||
         possibleTarget.aliases?.includes(target),
+    );
+  }
+
+  private isConditionMet(
+    condition: EffectTriggerCondition,
+    appliedStatuses: string[],
+  ): boolean {
+    return condition.requiredStatuses.every((requiredStatus) =>
+      appliedStatuses.includes(requiredStatus),
+    );
+  }
+
+  private async areConditionsMet(
+    conditions: EffectTriggerCondition[],
+    options: { roomId: string; playerId: string },
+  ): Promise<boolean> {
+    const [roomStatuses, playerStatuses] = await Promise.all([
+      await this.roomRepo.getRoomStatuses(options.roomId),
+      await this.playerRepo.getPlayerStatuses(options.playerId),
+    ]);
+
+    console.log('STATUSES', [...roomStatuses, ...playerStatuses]);
+
+    return conditions.every((condition) =>
+      this.isConditionMet(condition, [...roomStatuses, ...playerStatuses]),
     );
   }
 }

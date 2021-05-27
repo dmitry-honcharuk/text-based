@@ -7,6 +7,8 @@ export interface PlayerRepository {
   getGamePlayers(gameId: string): Promise<PlayerEntity[]>;
 
   appendPlayerStatuses(options: AppendStatusesDTO): Promise<void>;
+
+  getPlayerStatuses(playerId: string): Promise<string[]>;
 }
 
 export type CreatePlayerDTO = {

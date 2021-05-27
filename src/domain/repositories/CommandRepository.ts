@@ -1,5 +1,8 @@
 import { EffectType } from '../Effects/EffectType';
-import { EffectTrigger } from '../entities/EffectTrigger';
+import {
+  EffectTrigger,
+  EffectTriggerCondition,
+} from '../entities/EffectTrigger';
 import { ObjectEntity } from '../entities/ObjectEntity';
 import { DeferredNullable } from '../utils/DeferredNullable';
 
@@ -29,6 +32,7 @@ export type AddRoomCommandDto = {
   roomId: string;
   object: ObjectEntity;
   command: string;
+  conditions: EffectTriggerCondition[];
   effectTriggers: EffectTrigger[];
 };
 
@@ -37,4 +41,5 @@ export type GetRoomEffectResponseDto = Array<{
   effectType: EffectType;
   object: ObjectEntity;
   context: any;
+  conditions: EffectTriggerCondition[];
 }>;
