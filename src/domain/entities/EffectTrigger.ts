@@ -36,7 +36,7 @@ export type EffectTriggerCondition = {
 };
 
 export type EffectTriggerConfig = {
-  command: string;
+  command: string | string[];
   conditions?: EffectTriggerCondition[];
   effects: EffectTrigger[];
 };

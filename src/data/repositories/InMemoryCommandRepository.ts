@@ -53,7 +53,15 @@ export class InMemoryCommandRepository implements CommandRepository {
   }
 
   async addRoomCommand(dto: AddRoomCommandDto): Promise<void> {
-    const { command, roomId, object, effectTriggers, conditions } = dto;
+    const {
+      command: commandList,
+      roomId,
+      object,
+      effectTriggers,
+      conditions,
+    } = dto;
+
+    const commands = Array.isArray(commandList) ? commandList : [commandList];
 
     const roomCommands = this.roomCommands.get(roomId);
 
@@ -62,13 +70,20 @@ export class InMemoryCommandRepository implements CommandRepository {
     if (!roomCommands) {
       this.roomCommands.set(
         roomId,
-        new Map([[command, [object.id, effectTriggers, aliases]]]),
+        new Map(
+          commands.map((command) => [
+            command,
+            [object.id, effectTriggers, aliases],
+          ]),
+        ),
       );
     }
 
-    roomCommands?.set(command, [object.id, effectTriggers, aliases]);
+    for (const command of commands) {
+      roomCommands?.set(command, [object.id, effectTriggers, aliases]);
 
-    this.roomCommandConditions.set(command, conditions);
+      this.roomCommandConditions.set(command, conditions);
+    }
   }
 
   async getGlobalEffect(dto: GetCommand): DeferredNullable<EffectType> {

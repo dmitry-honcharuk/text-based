@@ -94,7 +94,7 @@
           "aliases": ["chest"],
           "triggers": [
             {
-              "command": "unlock",
+              "command": ["unlock", "open"],
               "conditions": [
                 {
                   "requiredStatuses": ["has-skeleton-key"],

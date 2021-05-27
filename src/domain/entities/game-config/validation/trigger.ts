@@ -39,7 +39,10 @@ const combatStartEffect = Joi.object({
 });
 
 export const triggerValidation = Joi.object({
-  command: Joi.string().required(),
+  command: [
+    Joi.string().required(),
+    Joi.array().items(Joi.string()).required(),
+  ],
   conditions: Joi.array()
     .items(
       Joi.object({

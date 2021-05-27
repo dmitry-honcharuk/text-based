@@ -8,9 +8,11 @@ import { DeferredNullable } from '../utils/DeferredNullable';
 
 export interface CommandRepository {
   addGlobalCommand(dto: AddCommand): Promise<void>;
+
   addRoomCommand(dto: AddRoomCommandDto): Promise<void>;
 
   getGlobalEffect(dto: GetCommand): DeferredNullable<EffectType>;
+
   getRoomEffects(
     dto: GetRoomEffectRequestDto,
   ): Promise<GetRoomEffectResponseDto>;
@@ -31,7 +33,7 @@ export type GetCommand = {
 export type AddRoomCommandDto = {
   roomId: string;
   object: ObjectEntity;
-  command: string;
+  command: string | string[];
   conditions: EffectTriggerCondition[];
   effectTriggers: EffectTrigger[];
 };
